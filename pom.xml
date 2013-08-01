@@ -252,4 +252,7 @@
 		</profile>
 	</profiles>
 
+	<modules>
+		<module>lifestream-plugins</module>
+	</modules>
 </project>
