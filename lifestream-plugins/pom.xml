@@ -10,5 +10,6 @@
   <description>Set of lifestream plugins and associated code base</description>
   <modules>
   	<module>goodreads</module>
+  	<module>lifestream-utils</module>
   </modules>
 </project>

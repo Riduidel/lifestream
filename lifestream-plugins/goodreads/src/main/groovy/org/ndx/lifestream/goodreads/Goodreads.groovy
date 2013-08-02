@@ -1,3 +1,5 @@
+package org.ndx.lifestream.goodreads;
+
 import java.io.CharArrayReader;
 import java.io.File;
 import java.io.OutputStreamWriter;
@@ -32,7 +34,7 @@ class Goodreads {
 	private String password;
 	private String outputFolder;
 	private String xsl = null;
-	
+
 	/**
 	 * Run full export by using the infamous csv stuff
 	 */
@@ -45,13 +47,13 @@ class Goodreads {
 			book.save(outputFolder);
 		}
 	}
-	
-	Collection buildBooksCollection(List<String[]> csv) {
+
+	Collection<Book> buildBooksCollection(List<String[]> csv) {
 		def columns = getColumns(csv[0])
 		def usableLines = csv[1..csv.size()-1]
 		def books = [];
 		for(line in usableLines) {
-			Expando book = new Expando();
+			Book book = new Book();
 			book.title = line[columns['Title']]
 			book.author = line[columns['Author']]
 			book.additionnalAuthors = line[columns['Additional Authors']]
@@ -92,93 +94,25 @@ class Goodreads {
 				book.tags << "read_year:"+YEAR_FORMATTER.format(d);
 				book.tags << "read_month:"+MONTH_FORMATTER.format(d);
 			}
-			
+
 			books << book
 		}
 		return books;
 	}
-	
+
 	def parseDate(String text) {
 		Date d = INPUT_FORMATTER.parse(text);
 		return OUTPUT_FORMATTER.format(d);
 	}
-	
-	def createSave() {
-		return {folder ->
-			File toWrite = new File(folder+"/"+isbn13+".jsg.xml")
-			def writer = new StringWriter()
-			def xml = new MarkupBuilder(writer)
-			
-			xml.div(class:"book") {
-				ul(class:"authors") {
-					li(class:"author", author)
-					if(additionnalAuthors.size()>0) {
-						for(String author : additionnalAuthors.split(",")) {
-							li(class:"author", author)
-						}
-					}
-				}
-				// TODO a little amazoning !
-				div(id:"cover") {
-					img(src:"http://books.google.com/books?vid=ISBN"+isbn13+"&printsec=frontcover")
-				}
-				div(id:"rating"){
-					span(class:"progress", id:"personnal", rating)
-					span(class:"progress", id:"average", average)
-				}
-				div(class:"initialPublication", initialPublication)
-				
-			}
-			def bookHtml = writer.toString();
-			
-			writer = new StringWriter()
-			xml = new MarkupBuilder(writer)
-			xml.pi("xml":["version":"1.0"])
-			if(xsl!=null && xsl.trim().length()>0) {
-				xml.pi("xml-stylesheet":["href":xsl, "type":"text/xsl"])
-			}
-			xml.post() {
-				title(title)
-				book {
-					title(title)
-					author(author+(additionnalAuthors.size()>0 ? ", "+additionnalAuthors : ""))
-					isbn10(isbn10)
-					isbn13(isbn13)
-					rating{
-						personnal(rating)
-						average(average)
-					}
-					initialPublication(initialPublication)
-				}
-				if(read!=null)
-					date(read)
-				tags {
-					tags.each { t ->
-						tag(t);
-					}
-				}
-				body {
-					yieldUnescaped("<![CDATA["+bookHtml+"<div class=\"review\">"+review+"</div>]]>")
-				}
-			}
-			toWrite.setWritable(true);
-			toWrite.parentFile.mkdirs();
-			if(toWrite.exists()) {
-				toWrite.delete()
-			}
-			toWrite.write(writer.toString(), 'UTF-8')
-		}
-	}
-	
+
 	def getColumns(String[] firstLine) {
 		def columns=[:]
-		firstLine.eachWithIndex {key, index -> 
+		firstLine.eachWithIndex {key, index ->
 			columns[key]=index;
 		}
 		return columns;
 	}
 
-	@Grab(group='net.sf.opencsv', module='opencsv', version='2.1')
 	public List<String[]> getCSV() throws Exception {
 		WebClient client = new WebClient(com.gargoylesoftware.htmlunit.BrowserVersion.FIREFOX_3);
 		client.setUseInsecureSSL(true)
@@ -198,8 +132,7 @@ class Goodreads {
 			throw new RuntimeException("unable to sign in Goodreads using mail $username and password $password. can you check it by opening a browser at http://www.goodreads.com/user/sign_in ?");
 		}
 	}
-	
-	@Grab(group='net.sourceforge.htmlunit', module='htmlunit', version='2.8')
+
 	static void main(args) throws Exception {
 		println "This is goodreads export script 0.1"
 		println "You like that script ? You already have a flattr account ? Then please go to http://flattr.com/thing/54246/Goodreads-backup-script !"
