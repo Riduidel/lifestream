@@ -1,7 +1,10 @@
 package org.ndx.lifestream.goodreads;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
@@ -28,5 +31,13 @@ public class Book {
 	 * Date book is read
 	 */
 	public String read;
+	public Collection<String> getAuthors() {
+		List<String> returned = new ArrayList<>();
+		returned.add(author);
+		for(String additional : additionnalAuthors.split(",")) {
+			returned.add(additional.trim());
+		}
+		return returned;
+	}
 
 }

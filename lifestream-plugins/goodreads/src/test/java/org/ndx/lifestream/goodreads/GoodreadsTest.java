@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.hamcrest.core.Is;
+import org.hamcrest.core.IsCollectionContaining;
 import org.hamcrest.core.IsNot;
 import org.hamcrest.core.IsNull;
 import org.junit.Before;
@@ -33,7 +34,7 @@ public class GoodreadsTest {
 	@Test(expected=AuthenticationFailedException.class)
 	public void cantReadBooksWithInvalidCredentials() throws Exception {
 		tested.username = "an invalid login for test purpose, coming from https://github.com/Riduidel/lifestream";
-		List<String[]> rows = tested.getCSV();
+		tested.getCSV();
 	}
 
 	@Test
@@ -54,13 +55,18 @@ public class GoodreadsTest {
 	public void canCreateAValidBookObjectFromAnUnreadBook() {
 		String headers = "Book Id, Title, Author, Author l-f, Additional Authors, ISBN, ISBN13, My Rating, Average Rating, Publisher, Binding, Number of Pages, Year Published, Original Publication Year, Date Read, Date Added, Bookshelves, Bookshelves with positions, Exclusive Shelf, My Review, Spoiler, Private Notes, Read Count, Recommended For, Recommended By, Owned Copies, Original Purchase Date, Original Purchase Location, Condition, Condition Description, BCID";
 		String[] headersArray = headers.split(", ");
-		String[] unreadBook = new String[] { "2387115", "Contes du Loup Blanc : Par-delà le multivers", "Michael Moorcock", "Moorcock, Michael",
-						"Richard Gilliam, Edward F. Kramer", "=\"2266071254", "=\"9782266071253", "0", "3.97", "Pocket", "Mass Market Paperback", "253",
+		String moorcock = "Michael Moorcock";
+		String gilliam = "Richard Gilliam";
+		String kramer = "Edward F. Kramer";
+		String[] unreadBook = new String[] { "2387115", "Contes du Loup Blanc : Par-delà le multivers", moorcock, "Moorcock, Michael",
+						gilliam +", "+kramer, "=\"2266071254", "=\"9782266071253", "0", "3.97", "Pocket", "Mass Market Paperback", "253",
 						"1996", "1977", "", "2009/06/28", "to-read, rayon-fantasy-et-sf", "to-read (#25), rayon-fantasy-et-sf (#385)", "to-read", "", "", "",
 						"", "", "", "0", "", "", "", "", "" };
 		Map<String, Integer> headersMap = tested.getColumnsNamesToColumnsIndices(headersArray);
 		assertThat(unreadBook.length, Is.is(headersArray.length));
 		Book unread = tested.createBook(headersMap, unreadBook);
+		assertThat(unread.getAuthors(), IsCollectionContaining.hasItems(moorcock, gilliam, kramer));
+		assertThat(unread.tags.contains("to-read"), Is.is(true));
 	}
 
 	@Test

@@ -98,14 +98,14 @@ class Goodreads {
 		book.notes = line[columns.get("Private Notes")];
 		book.owns = new Integer(line[columns.get("Owned Copies")]);
 		// adds special author tags
-		book.tags.add("author:"+book.author);
-		if(book.additionnalAuthors.length()>0) {
-			for(String author : book.additionnalAuthors.split(",")) {
-				book.tags.add("author:"+author);
+		if(book.getAuthors().size()>0) {
+			for(String author : book.getAuthors()) {
+				book.tags.add("author:"+author.replace(' ', '_'));
 			}
 		}
 		// Add a tag for book score
-		book.tags.add("rating:"+book.rating);
+		if(book.rating.floatValue()>0)
+			book.tags.add("rating:"+book.rating);
 		// Add a tag for book read year
 		if(book.read!=null) {
 			try {
