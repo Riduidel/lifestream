@@ -15,8 +15,6 @@ public class XHTMLTransformerLazyLoader {
 			try {
 				xhtmlTransformer = getFactory().newTransformer();
 				xhtmlTransformer.setOutputProperty(OutputKeys.METHOD, "xml");
-				xhtmlTransformer.setOutputProperty(OutputKeys.DOCTYPE_PUBLIC, "-//W3C//DTD XHTML 1.0 Transitional//EN");
-				xhtmlTransformer.setOutputProperty(OutputKeys.DOCTYPE_SYSTEM, "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd");
 				xhtmlTransformer.setOutputProperty(OutputKeys.INDENT, "yes");
 				xhtmlTransformer.setOutputProperty(OutputKeys.ENCODING, "UTF-8");
 			} catch (TransformerConfigurationException e) {

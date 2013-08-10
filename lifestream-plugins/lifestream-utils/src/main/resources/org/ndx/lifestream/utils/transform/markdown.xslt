@@ -17,7 +17,7 @@
    </xsl:variable>
    
    <xsl:template match="/">
-      <xsl:apply-templates select="h:html/h:body/node()">
+      <xsl:apply-templates select="html/body/node()">
          <xsl:with-param name="context" select="markdown"/>
       </xsl:apply-templates>
    </xsl:template>
@@ -37,7 +37,7 @@
       </xsl:if>  
    </xsl:template>
    
-   <xsl:template match="text()[parent::h:code[parent::h:pre]]">
+   <xsl:template match="text()[parent::code[parent::pre]]">
       <xsl:call-template name="replace-substring">
          <xsl:with-param name="original">
             <xsl:value-of select="."/>
@@ -54,23 +54,23 @@
    
    <xsl:template name="newblock">
       <xsl:param name="context"/>
-      <xsl:if test="not(not(preceding-sibling::*) and (parent::h:body or parent::h:li))">
+      <xsl:if test="not(not(preceding-sibling::*) and (parent::body or parent::li))">
          <xsl:value-of select="$newline"/>
-         <xsl:if test="not(self::h:li) or (self::h:li and h:p)">
+         <xsl:if test="not(self::li) or (self::li and p)">
              <xsl:value-of select="$newline"/>
          </xsl:if>
-         <xsl:if test="parent::h:blockquote[parent::h:li and preceding-sibling::*] or (parent::h:li and preceding-sibling::*)">
+         <xsl:if test="parent::blockquote[parent::li and preceding-sibling::*] or (parent::li and preceding-sibling::*)">
             <xsl:text>    </xsl:text>
          </xsl:if>
-         <xsl:if test="not($context = 'html') and parent::h:blockquote">
+         <xsl:if test="not($context = 'html') and parent::blockquote">
             <xsl:text>&gt; </xsl:text>
          </xsl:if>
       </xsl:if>
    </xsl:template>
    
    <!-- if an element isn't templated elsewhere, we move into html context and stay there for any descendent nodes -->
-   <xsl:template match="h:*">
-      <xsl:if test="self::h:h1 or self::h:h2 or self::h:h3 or self::h:h4 or self::h:h5 or self::h:h6 or self::h:p or self::h:pre or self::h:table or self::h:form or self::h:ul or self::h:ol or self::h:address or self::h:blockquote or self::h:dl or self::h:fieldset or self::h:hr or self::h:noscript">
+   <xsl:template match="*">
+      <xsl:if test="self::h1 or self::h2 or self::h3 or self::h4 or self::h5 or self::h6 or self::p or self::pre or self::table or self::form or self::ul or self::ol or self::address or self::blockquote or self::dl or self::fieldset or self::hr or self::noscript">
          <xsl:call-template name="newblock">
             <xsl:with-param name="context" select="'html'"/>
          </xsl:call-template>
@@ -91,11 +91,11 @@
       <xsl:text>&gt;</xsl:text>
    </xsl:template>
    
-   <xsl:template match="h:div">
+   <xsl:template match="div">
       <xsl:apply-templates select="node()"/>
    </xsl:template>
    
-   <xsl:template match="h:p">
+   <xsl:template match="p">
       <xsl:param name="context"/>
       <xsl:choose>
          <xsl:when test="$context = 'html'">
@@ -108,7 +108,7 @@
       </xsl:choose>
    </xsl:template>
    
-   <xsl:template match="h:h1">
+   <xsl:template match="h1">
       <xsl:param name="context"/>
       <xsl:choose>
          <xsl:when test="$context = 'html'">
@@ -122,7 +122,7 @@
       </xsl:choose>
    </xsl:template>
    
-   <xsl:template match="h:h2">
+   <xsl:template match="h2">
       <xsl:param name="context"/>
       <xsl:choose>
          <xsl:when test="$context = 'html'">
@@ -136,7 +136,7 @@
       </xsl:choose>
    </xsl:template>
    
-   <xsl:template match="h:h3">
+   <xsl:template match="h3">
       <xsl:param name="context"/>
       <xsl:choose>
          <xsl:when test="$context = 'html'">
@@ -150,7 +150,7 @@
       </xsl:choose>
    </xsl:template>
    
-   <xsl:template match="h:h4">
+   <xsl:template match="h4">
       <xsl:param name="context"/>
       <xsl:choose>
          <xsl:when test="$context = 'html'">
@@ -164,7 +164,7 @@
       </xsl:choose>
    </xsl:template>
    
-   <xsl:template match="h:h5">
+   <xsl:template match="h5">
       <xsl:param name="context"/>
       <xsl:choose>
          <xsl:when test="$context = 'html'">
@@ -178,7 +178,7 @@
       </xsl:choose>
    </xsl:template>
    
-   <xsl:template match="h:h6">
+   <xsl:template match="h6">
       <xsl:param name="context"/>
       <xsl:choose>
          <xsl:when test="$context = 'html'">
@@ -192,7 +192,7 @@
       </xsl:choose>
    </xsl:template>
    
-   <xsl:template match="h:br">
+   <xsl:template match="br">
       <xsl:param name="context"/>
       <xsl:choose>
          <xsl:when test="$context = 'html'">
@@ -205,7 +205,7 @@
       </xsl:choose>
    </xsl:template>
    
-   <xsl:template match="h:blockquote">
+   <xsl:template match="blockquote">
       <xsl:param name="context"/>
       <xsl:choose>
          <xsl:when test="$context = 'html'">
@@ -223,7 +223,7 @@
    
    <!-- this transformation won't backslash the period of a genuine textual newline-number-period combo -->
    
-   <xsl:template match="h:ul | h:ol">
+   <xsl:template match="ul | ol">
       <xsl:param name="context"/>
       <xsl:choose>
          <xsl:when test="$context = 'html'">
@@ -235,18 +235,18 @@
       </xsl:choose>
    </xsl:template>
    
-   <xsl:template match="h:li">
+   <xsl:template match="li">
       <xsl:param name="context"/>
       <xsl:choose>
          <xsl:when test="$context = 'html'">
             <xsl:call-template name="element"/>
          </xsl:when>
-         <xsl:when test="parent::h:ul">
+         <xsl:when test="parent::ul">
             <xsl:call-template name="newblock"/>
             <xsl:text>* </xsl:text>
             <xsl:apply-templates select="node()"/>
          </xsl:when>
-         <xsl:when test="parent::h:ol">
+         <xsl:when test="parent::ol">
             <xsl:call-template name="newblock"/>
 	    	<xsl:value-of select="position()"/>
             <xsl:text>. </xsl:text>
@@ -255,7 +255,7 @@
       </xsl:choose>
    </xsl:template>
    
-   <xsl:template match="h:pre[h:code]">
+   <xsl:template match="pre[code]">
       <xsl:param name="context"/>
       <xsl:choose>
          <xsl:when test="$context = 'html'">
@@ -264,12 +264,12 @@
          <xsl:otherwise>
             <xsl:call-template name="newblock"/>
             <xsl:value-of select="$tab"/>
-            <xsl:apply-templates select="h:code/node()"/>
+            <xsl:apply-templates select="code/node()"/>
          </xsl:otherwise>
       </xsl:choose>
    </xsl:template>
    
-   <xsl:template match="h:hr">
+   <xsl:template match="hr">
       <xsl:param name="context"/>
       <xsl:choose>
          <xsl:when test="$context = 'html'">
@@ -282,7 +282,7 @@
       </xsl:choose>
    </xsl:template>
    
-   <xsl:template match="h:a[@href]">
+   <xsl:template match="a[@href]">
       <xsl:param name="context"/>
       <xsl:choose>
          <xsl:when test="$context = 'html'">
@@ -305,7 +305,7 @@
    
    <!-- this transformation won't backslash literal asterisks or underscores in text -->
    
-   <xsl:template match="h:em">
+   <xsl:template match="em">
       <xsl:param name="context"/>
       <xsl:choose>
          <xsl:when test="$context = 'html'">
@@ -319,7 +319,11 @@
       </xsl:choose>
    </xsl:template>
    
-   <xsl:template match="h:strong">
+   <xsl:template match="b">
+   	<xsl:call-template name="strong"></xsl:call-template>
+   </xsl:template>
+   
+   <xsl:template match="strong" name="strong">
       <xsl:param name="context"/>
       <xsl:choose>
          <xsl:when test="$context = 'html'">
@@ -335,7 +339,7 @@
    
    <!-- this transformation won't backslash literal backticks in text -->
    
-   <xsl:template match="h:code">
+   <xsl:template match="code">
       <xsl:param name="context"/>
       <xsl:choose>
          <xsl:when test="$context = 'html'">
@@ -349,7 +353,7 @@
       </xsl:choose>
    </xsl:template>
    
-   <xsl:template match="h:img[not(@width | @height)]">
+   <xsl:template match="img[not(@width | @height)]">
       <xsl:param name="context"/>
       <xsl:choose>
          <xsl:when test="$context = 'html'">

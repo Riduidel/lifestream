@@ -47,13 +47,12 @@ public class HtmlToMarkdown {
 			CleanerProperties properties = cleaner.getProperties();
 			properties.setAdvancedXmlEscape(true);
 			properties.setCharset("UTF-8");
-			properties.setOmitDoctypeDeclaration(false);
+			properties.setOmitDoctypeDeclaration(true);
 			properties.setOmitHtmlEnvelope(false);
-			properties.setOmitXmlDeclaration(false);
+			properties.setOmitXmlDeclaration(true);
 
 			TagNode node = cleaner.clean(html);
 			Document output = new DomSerializer(properties).createDOM(node);
-
 
 			// create string from xml tree
 			StringWriter sw = new StringWriter();
@@ -79,10 +78,9 @@ public class HtmlToMarkdown {
 	 */
 	public static String transformValidXhtml(String sourceXhtml) {
 		try {
-			SAXSource ss = NonDownloadingSaxSource.getNonDownloadingSaxSource(sourceXhtml);
-
+			Source xmlSource = new StreamSource(new StringReader(sourceXhtml));
 	        StringWriter result = new StringWriter();
-	        getMarkdownTransformer().transform(ss, new StreamResult(result));
+	        getMarkdownTransformer().transform(xmlSource, new StreamResult(result));
 
 	        return result.toString();
 		} catch (Exception e) {

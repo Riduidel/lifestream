@@ -2,6 +2,7 @@ package org.ndx.lifestream.utils.transform;
 
 import java.io.InputStream;
 
+import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Source;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerConfigurationException;
@@ -20,6 +21,9 @@ public class MarkdownTransformerLazyLoader {
 			Source xsltSource = new StreamSource(markdown);
 			try {
 				markdownTransformer = getFactory().newTransformer(xsltSource);
+				markdownTransformer.setOutputProperty(OutputKeys.METHOD, "text");
+				markdownTransformer.setOutputProperty(OutputKeys.ENCODING, "UTF-8");
+
 			} catch (TransformerConfigurationException e) {
 				throw new UnableToTransformToMarkdownException(e);
 			}

@@ -21,7 +21,6 @@ public class HtmlToMarkdownTest {
 		String text = HtmlToMarkdown.transformToValidXhtml("a simple text");
 		assertThat(text, Is.is(
 						"<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>\r\n"
-						+ "<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Transitional//EN\" \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd\">\r\n"
 						+ "<html>\r\n<head/>\r\n<body>a simple text</body>\r\n</html>\r\n"));
 	}
 
@@ -35,12 +34,24 @@ public class HtmlToMarkdownTest {
 	@Test
 	public void transformTextWithBoldToMarkdown() {
 		String markdown = HtmlToMarkdown.transformHtml("a simple <b>text</b>");
-		assertThat(markdown, Is.is("a simple <b>text</b>"));
+		assertThat(markdown, Is.is("a simple **text**"));
+	}
+
+	@Test
+	public void transformTextWithStrongToMarkdown() {
+		String markdown = HtmlToMarkdown.transformHtml("a simple <strong>text</strong>");
+		assertThat(markdown, Is.is("a simple **text**"));
 	}
 
 	@Test
 	public void transformTextWithLineReturnToMarkdown() {
 		String markdown = HtmlToMarkdown.transformHtml("a simple <br/>text");
-		assertThat(markdown, Is.is("a simple <b>text</b>"));
+		assertThat(markdown, Is.is("a simple   \r\ntext"));
+	}
+
+	@Test
+	public void transformTextWithH1ReturnToMarkdown() {
+		String markdown = HtmlToMarkdown.transformHtml("<h1>a simple</h1>\n text");
+		assertThat(markdown, Is.is("#a simple\r\n text"));
 	}
 }
