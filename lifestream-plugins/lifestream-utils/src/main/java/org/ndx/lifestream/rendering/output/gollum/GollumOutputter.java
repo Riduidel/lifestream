@@ -8,6 +8,7 @@ import org.apache.commons.io.IOUtils;
 import org.apache.commons.vfs2.FileObject;
 import org.ndx.lifestream.rendering.OutputWriter;
 import org.ndx.lifestream.rendering.model.Input;
+import org.ndx.lifestream.utils.transform.HtmlToMarkdown;
 import org.stringtemplate.v4.ST;
 
 /**
@@ -32,7 +33,7 @@ public class GollumOutputter implements OutputWriter {
 		try {
 			resultFile = output.resolveFile(input.getBasename()+".md");
 			try (OutputStream outputStream = resultFile.getContent().getOutputStream()) {
-				IOUtils.write(resultText, outputStream);
+				IOUtils.write(HtmlToMarkdown.transformHtml(resultText), outputStream);
 			}
 		} catch (Exception e) {
 			throw new GollumException("unable to output render for input "+input.getBasename(), e);
