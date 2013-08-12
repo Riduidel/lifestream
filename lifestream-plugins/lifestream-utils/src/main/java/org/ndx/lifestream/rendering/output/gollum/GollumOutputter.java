@@ -38,7 +38,6 @@ public class GollumOutputter implements OutputWriter {
 		} catch (Exception e) {
 			throw new GollumException("unable to output render for input "+input.getBasename(), e);
 		}
-
 	}
 
 }

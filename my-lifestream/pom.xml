@@ -12,6 +12,7 @@
 	<properties>
 		<site.dir>${project.basedir}/src/site</site.dir>
 		<goodreads.dir>${site.dir}/goodreads</goodreads.dir>
+		<output.mode>jekyll</output.mode>
 	</properties>
 	<build>
 		<plugins>
@@ -40,6 +41,7 @@
 							<goal>goodreads</goal>
 						</goals>
 						<configuration>
+							<mode>${output.mode}</mode>
 							<output>${goodreads.dir}</output>
 							<username>${goodreads.mail}</username>
 							<password>${goodreads.password}</password>

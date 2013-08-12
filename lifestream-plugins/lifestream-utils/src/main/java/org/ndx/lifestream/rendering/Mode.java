@@ -2,6 +2,7 @@ package org.ndx.lifestream.rendering;
 
 import org.ndx.lifestream.rendering.output.gollum.GollumOutputter;
 import org.ndx.lifestream.rendering.output.gumdrop.GumdropOutputter;
+import org.ndx.lifestream.rendering.output.jekyll.JekyllOutputter;
 
 /**
  * Defines the various usable rendering modes. Each mode define how obejcts are
@@ -20,7 +21,11 @@ public enum Mode {
 	/**
 	 * Infos here http://gumdropapp.com/ (look specifically into http://gumdropapp.com/documentation.htm / "Page configuration")
 	 */
-	gumdrop;
+	gumdrop,
+	/**
+	 * http://jekyllrb.com/docs/posts/
+	 */
+	jekyll;
 
 	/**
 	 * Get writer for the given output file
@@ -34,6 +39,8 @@ public enum Mode {
 			return new GollumOutputter();
 		case gumdrop:
 			return new GumdropOutputter();
+		case jekyll:
+			return new JekyllOutputter();
 		default:
 			throw new UnsupportedOperationException("output using \""+name()+"\" has not been implemented");
 		}

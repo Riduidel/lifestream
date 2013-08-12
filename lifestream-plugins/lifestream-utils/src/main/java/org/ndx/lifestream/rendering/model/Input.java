@@ -1,5 +1,8 @@
 package org.ndx.lifestream.rendering.model;
 
+import java.util.Collection;
+import java.util.Date;
+
 /**
  * Model interface for input objects.
  * @author ndx
@@ -17,5 +20,11 @@ public interface Input {
 	 * @return
 	 */
 	String getBasename();
+
+	Collection<String> getTags();
+
+	Date getWriteDate();
+
+	String getTitle();
 
 }

@@ -3,6 +3,7 @@ package org.ndx.lifestream.goodreads;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.SortedSet;
@@ -57,6 +58,18 @@ public class Book implements Input {
 	@Override
 	public String toString() {
 		return "title : "+title+" - basename : "+getBasename();
+	}
+	@Override
+	public Collection<String> getTags() {
+		return tags;
+	}
+	@Override
+	public Date getWriteDate() {
+		return new Date();
+	}
+	@Override
+	public String getTitle() {
+		return title;
 	}
 
 }
