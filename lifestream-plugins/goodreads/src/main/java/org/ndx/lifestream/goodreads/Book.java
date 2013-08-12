@@ -8,10 +8,12 @@ import java.util.List;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
+import org.ndx.lifestream.rendering.model.Input;
+
 /**
  * A class extracting content from the infamous Expando to a more "object" notion
  */
-public class Book {
+public class Book implements Input {
 	public String title;
 	public String author;
 	public String additionnalAuthors;
@@ -38,6 +40,23 @@ public class Book {
 			returned.add(additional.trim());
 		}
 		return returned;
+	}
+	@Override
+	public String getText() {
+		return review;
+	}
+	@Override
+	public String getBasename() {
+		if(isbn13!=null)
+			return isbn13;
+		else if(isbn10!=null)
+			return isbn10;
+		else
+			return title.replace(' ', '_');
+	}
+	@Override
+	public String toString() {
+		return "title : "+title+" - basename : "+getBasename();
 	}
 
 }

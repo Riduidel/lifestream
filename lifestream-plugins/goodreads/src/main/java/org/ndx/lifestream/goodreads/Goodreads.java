@@ -1,6 +1,8 @@
 package org.ndx.lifestream.goodreads;
 
 import java.io.CharArrayReader;
+import java.io.File;
+import java.io.IOException;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -14,7 +16,9 @@ import java.util.TreeMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import org.apache.http.protocol.HTTP;
+import org.apache.commons.vfs2.FileObject;
+import org.ndx.lifestream.rendering.Mode;
+import org.ndx.lifestream.rendering.OutputWriter;
 
 import au.com.bytecode.opencsv.CSVReader;
 
@@ -23,7 +27,7 @@ import com.gargoylesoftware.htmlunit.WebClient;
 import com.gargoylesoftware.htmlunit.html.HtmlForm;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
 
-class Goodreads {
+public class Goodreads {
 	private static final Logger logger = Logger.getLogger(Goodreads.class.getName());
 
 	private static final String REQUIRED_AUTHENTICATION = "page requires Goodreads compatible authentication";
@@ -37,10 +41,10 @@ class Goodreads {
 	private static final DateFormat MONTH_FORMATTER = new SimpleDateFormat(MONTH_DATE_FORMAT);
 
 
-	String username;
-	String password;
-	String outputFolder;
-	String xsl = null;
+	public String username;
+	public String password;
+	public String outputFolder;
+	public String xsl = null;
 
 	/**
 	 * Run full export by using the infamous csv stuff
@@ -76,10 +80,8 @@ class Goodreads {
 		book.title = line[columns.get("Title")];
 		book.author = line[columns.get("Author")];
 		book.additionnalAuthors = line[columns.get("Additional Authors")];
-		book.isbn10 = line[columns.get("ISBN")];
-		book.isbn10 = book.isbn10.substring(2,book.isbn10.length()-1);
-		book.isbn13 = line[columns.get("ISBN13")];
-		book.isbn13 = book.isbn13.substring(2,book.isbn13.length()-1);
+		book.isbn10 = filterIsbn(line[columns.get("ISBN")]);
+		book.isbn13 = filterIsbn(line[columns.get("ISBN13")]);
 		book.rating = new Integer(line[columns.get("My Rating")]);
 		book.average = new Float(line[columns.get("Average Rating")]);
 		book.pages = 0;
@@ -121,6 +123,12 @@ class Goodreads {
 		return book;
 	}
 
+	private String filterIsbn(String string) {
+		if(string!=null && string.length()>2)
+			return string.substring(2,string.length()-1);
+		return null;
+	}
+
 	String parseDate(String text) {
 		Date d;
 		try {
@@ -160,38 +168,36 @@ class Goodreads {
 			Page csv = client.getPage("http://www.goodreads.com/review_porter/goodreads_export.csv");
 			// May cause memory error, but later ...
 			String csvContent = csv.getWebResponse().getContentAsString();
-			CSVReader reader = new CSVReader(new CharArrayReader(csvContent.toCharArray()));
-			try {
-				return reader.readAll();
-			} finally {
-				reader.close();
-			}
+			return splitIntoRows(csvContent);
 		} else {
 			throw new AuthenticationFailedException(authenticationFailedMessage);
 		}
 	}
 
-	public static void main(String[] args) throws Exception {
-		logger.info("This is goodreads export script 0.1");
-		logger.info("You like that script ? You already have a flattr account ? Then please go to http://flattr.com/thing/54246/Goodreads-backup-script !");
-/*		def cli = new CliBuilder(usage:'groovy goodreads.groovy -u email@goodreads -p password -o outputFolder')
-		cli.h(longOpt: 'help', 'provides full help and usage information')
-		cli.u(longOpt: 'username', 'Sets goodreads mail address here', args:1, required:true)
-		cli.p(longOpt: 'password', 'Unfortunatly one have to give its password to this little script', args:1, required:true)
-		cli.o(longOpt: 'output', 'An eventually existing output folder, where all data will be output. Beware, if some data exists in that folder, it may be overwritten.', args:1, required:true)
-		cli.x(longOpt: 'xsl', 'Gives an XSL stylmesheet URL that will be put in all generated files', args:1, required:false)
-		def opt = cli.parse(args);
-		if(!opt) {
-			cli.usage
-		} else {
-			Goodreads app = new Goodreads();
-			if(opt.h)
-			cli.usage();
-			app.username = opt.u;
-			app.password = opt.p;
-			app.outputFolder = opt.o
-			app.xsl = opt.x
-			app.run();
+	public List<String[]> splitIntoRows(String csvContent) throws IOException {
+		CSVReader reader = new CSVReader(new CharArrayReader(csvContent.toCharArray()));
+		try {
+			return reader.readAll();
+		} finally {
+			reader.close();
 		}
-*/	}
+	}
+
+	/**
+	 * Output given book list in the given folder using the given output mode
+	 * @param mode output mode, may generate any kind of file
+	 * @param books list of books to output
+	 * @param output output folder
+	 */
+	public void output(Mode mode, Collection<Book> books, FileObject output) {
+		OutputWriter writer = mode.getWriter();
+		int index = 1;
+		int size = books.size();
+		for (Book book : books) {
+			if (logger.isLoggable(Level.INFO)) {
+				logger.log(Level.INFO, "writing book "+(index++)+"/"+size+" : "+book);
+			}
+			writer.write(book, output);
+		}
+	}
 }
