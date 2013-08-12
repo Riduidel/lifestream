@@ -93,7 +93,7 @@ class Goodreads {
 			book.read = null;
 		else
 			book.read = parseDate(dateRead);
-		book.tags.addAll(Arrays.asList(line[columns.get("Bookshelves")].split(" ")));
+		book.tags.addAll(Arrays.asList(line[columns.get("Bookshelves")].split(",")));
 		book.review = line[columns.get("My Review")];
 		book.notes = line[columns.get("Private Notes")];
 		book.owns = new Integer(line[columns.get("Owned Copies")]);

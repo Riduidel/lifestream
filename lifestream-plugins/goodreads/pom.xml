@@ -58,7 +58,7 @@
 				<configuration>
 					<systemPropertyVariables>
 						<goodreads.mail>${goodreads.mail}</goodreads.mail>
-						<goodreads.password>${goodreads.mail}</goodreads.password>
+						<goodreads.password>${goodreads.password}</goodreads.password>
 					</systemPropertyVariables>
 				</configuration>
 			</plugin>
