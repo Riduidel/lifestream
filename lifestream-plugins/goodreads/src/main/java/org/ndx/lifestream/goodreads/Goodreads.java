@@ -26,6 +26,8 @@ import com.gargoylesoftware.htmlunit.Page;
 import com.gargoylesoftware.htmlunit.WebClient;
 import com.gargoylesoftware.htmlunit.html.HtmlForm;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
+import com.google.common.base.Predicate;
+import com.google.common.collect.Collections2;
 
 public class Goodreads {
 	private static final Logger logger = Logger.getLogger(Goodreads.class.getName());
@@ -96,6 +98,7 @@ public class Goodreads {
 		else
 			book.read = parseDate(dateRead);
 		book.tags.addAll(Arrays.asList(line[columns.get("Bookshelves")].split(",")));
+		book.tags.addAll(Arrays.asList(line[columns.get("Exclusive Shelf")].split(",")));
 		book.review = line[columns.get("My Review")];
 		book.notes = line[columns.get("Private Notes")];
 		book.owns = new Integer(line[columns.get("Owned Copies")]);
@@ -190,10 +193,17 @@ public class Goodreads {
 	 * @param output output folder
 	 */
 	public void output(Mode mode, Collection<Book> books, FileObject output) {
+		Collection<Book> filtered = Collections2.filter(books, new Predicate<Book>() {
+
+			@Override
+			public boolean apply(Book input) {
+				return input.getTags().contains("read");
+			}
+		});
 		OutputWriter writer = mode.getWriter();
 		int index = 1;
-		int size = books.size();
-		for (Book book : books) {
+		int size = filtered.size();
+		for (Book book : filtered) {
 			if (logger.isLoggable(Level.INFO)) {
 				logger.log(Level.INFO, "writing book "+(index++)+"/"+size+" : "+book);
 			}

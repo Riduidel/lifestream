@@ -71,6 +71,7 @@ public class BookTest {
 		Map<String, Integer> headersMap = tested.getColumnsNamesToColumnsIndices(headersArray);
 		assertThat(readBook.length, Is.is(headersArray.length));
 		Book read = tested.createBook(headersMap, readBook);
+		assertThat(read.tags.contains("read"), Is.is(true));
 	}
 
 }
