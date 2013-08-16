@@ -5,3 +5,4 @@ target/
 /release.properties
 *.iml
 .idea/
+my-lifestream/src/site/**/*
