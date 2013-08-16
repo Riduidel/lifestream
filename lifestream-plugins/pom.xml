@@ -11,5 +11,7 @@
   <modules>
   	<module>goodreads</module>
   	<module>lifestream-utils</module>
+  	<module>wordpress</module>
+  	<module>lifestream-plugin-base</module>
   </modules>
 </project>

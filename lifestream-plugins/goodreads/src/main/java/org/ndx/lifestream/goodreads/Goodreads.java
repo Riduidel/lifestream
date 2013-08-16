@@ -16,9 +16,11 @@ import java.util.TreeMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import org.apache.commons.logging.Log;
 import org.apache.commons.vfs2.FileObject;
 import org.ndx.lifestream.rendering.Mode;
 import org.ndx.lifestream.rendering.OutputWriter;
+import org.ndx.lifestream.rendering.model.InputLoader;
 
 import au.com.bytecode.opencsv.CSVReader;
 
@@ -29,10 +31,9 @@ import com.gargoylesoftware.htmlunit.html.HtmlPage;
 import com.google.common.base.Predicate;
 import com.google.common.collect.Collections2;
 
-public class Goodreads {
+public class Goodreads implements InputLoader<Book> {
 	private static final Logger logger = Logger.getLogger(Goodreads.class.getName());
 
-	private static final String REQUIRED_AUTHENTICATION = "page requires Goodreads compatible authentication";
 	private static final String INPUT_DATE_FORMAT = "yyyy/MM/dd";
 	private static final DateFormat INPUT_FORMATTER = new SimpleDateFormat(INPUT_DATE_FORMAT);
 	private static final String OUTPUT_DATE_FORMAT = "yyyy-MM-dd'T'HH:mm:ss.SSSZ";
@@ -47,25 +48,6 @@ public class Goodreads {
 	public String password;
 	public String outputFolder;
 	public String xsl = null;
-
-	/**
-	 * Run full export by using the infamous csv stuff
-	 */
-	public void run() throws Exception {
-		List<String[]> csv = getCSV();
-		Collection<Book> books = buildBooksCollection(csv);
-		int index = 0;
-		int size = books.size();
-		for(Book book : books) {
-			index++;
-			if (logger.isLoggable(Level.INFO)) {
-				logger.log(Level.INFO, "saving book $index/"+books.size()+" "+book.title);
-			}
-			if (logger.isLoggable(Level.SEVERE)) {
-				logger.log(Level.SEVERE, "not yet implemented book.save()");
-			}
-		}
-	}
 
 	Collection<Book> buildBooksCollection(List<String[]> csv) {
 		Map<String, Integer> columns = getColumnsNamesToColumnsIndices(csv.get(0));
@@ -153,7 +135,7 @@ public class Goodreads {
 		return returned;
 	}
 
-	public List<String[]> getCSV() throws Exception {
+	public List<String[]> loadCSV() throws Exception {
 		WebClient client = new WebClient(com.gargoylesoftware.htmlunit.BrowserVersion.FIREFOX_3);
 		client.setUseInsecureSSL(true);
 		client.setJavaScriptEnabled(false);
@@ -208,6 +190,18 @@ public class Goodreads {
 				logger.log(Level.INFO, "writing book "+(index++)+"/"+size+" : "+book);
 			}
 			writer.write(book, output);
+		}
+	}
+
+	@Override
+	public Collection<Book> load() {
+		try {
+			logger.info("loading CSV data");
+			List<String[]> rawData = loadCSV();
+			logger.info("transforming that data into books");
+			return buildBooksCollection(rawData);
+		} catch(Exception e) {
+			throw new UnableToBuildBookCollection(e);
 		}
 	}
 }

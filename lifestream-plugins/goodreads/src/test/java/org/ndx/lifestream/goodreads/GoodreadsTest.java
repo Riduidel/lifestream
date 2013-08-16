@@ -1,5 +1,7 @@
 package org.ndx.lifestream.goodreads;
 
+import java.io.InputStream;
+import java.net.URL;
 import java.util.Collection;
 import java.util.List;
 
@@ -33,12 +35,12 @@ public class GoodreadsTest {
 	@Test(expected=AuthenticationFailedException.class) @Ignore
 	public void cantReadBooksWithInvalidCredentials() throws Exception {
 		tested.username = "an invalid login for test purpose, coming from https://github.com/Riduidel/lifestream";
-		tested.getCSV();
+		tested.loadCSV();
 	}
 
 	@Test @Ignore
 	public void canReadBooksAsListOfStringsFromServer() throws Exception {
-		List<String[]> rows = tested.getCSV();
+		List<String[]> rows = tested.loadCSV();
 		assertThat(rows.size(), IsNot.not(0));
 		// check all rows have the same number of columns, which is not 1
 		assertColumnCountIsOK(rows);
@@ -59,7 +61,9 @@ public class GoodreadsTest {
 	 */
 	@Test
 	public void noRowIsLostDuringCSVParsing() throws Exception {
-		List<String[]> rows = tested.splitIntoRows(IOUtils.toString(getClass().getResource("/goodreads_export_Riduidel_20310812.csv")));
+		InputStream testCsvFile = getClass().getResourceAsStream("/goodreads_export_Riduidel_20310812.csv");
+		String testedString = IOUtils.toString(testCsvFile);
+		List<String[]> rows = tested.splitIntoRows(testedString);
 		assertThat(rows.size(), IsNot.not(0));
 		// check all rows have the same number of columns, which is not 1
 		assertColumnCountIsOK(rows);
