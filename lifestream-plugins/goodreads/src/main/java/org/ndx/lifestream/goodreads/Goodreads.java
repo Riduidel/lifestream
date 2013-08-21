@@ -135,27 +135,33 @@ public class Goodreads implements InputLoader<Book> {
 		return returned;
 	}
 
-	public List<String[]> loadCSV() throws Exception {
-		WebClient client = new WebClient(com.gargoylesoftware.htmlunit.BrowserVersion.FIREFOX_3);
-		client.setUseInsecureSSL(true);
-		client.setJavaScriptEnabled(false);
-		HtmlPage signIn = client.getPage("http://www.goodreads.com/user/sign_in");
-		HtmlForm signInForm = signIn.getFormByName("sign_in");
-		logger.log(Level.INFO, "logging in goodreads as "+username);
-		signInForm.getInputByName("user[email]").setValueAttribute(username);
-		signInForm.getInputByName("user[password]").setValueAttribute(password);
-		HtmlPage signedIn = signInForm.getInputByName("next").click();
-		String authenticationFailedMessage = "unable to sign in Goodreads using mail "+username+" and password "+password+". can you check it by opening a browser at http://www.goodreads.com/user/sign_in ?";
-		if(200==signedIn.getWebResponse().getStatusCode()) {
-			if(signedIn.getUrl().equals(signIn.getUrl()))
+	public List<String[]> loadCSV() {
+		try {
+			WebClient client = new WebClient(com.gargoylesoftware.htmlunit.BrowserVersion.FIREFOX_3);
+			client.setUseInsecureSSL(true);
+			client.setJavaScriptEnabled(false);
+			HtmlPage signIn = client.getPage("http://www.goodreads.com/user/sign_in");
+			HtmlForm signInForm = signIn.getFormByName("sign_in");
+			logger.log(Level.INFO, "logging in goodreads as "+username);
+			signInForm.getInputByName("user[email]").setValueAttribute(username);
+			signInForm.getInputByName("user[password]").setValueAttribute(password);
+			HtmlPage signedIn = signInForm.getInputByName("next").click();
+			String authenticationFailedMessage = "unable to sign in Goodreads using mail "+username+" and password "+password+". can you check it by opening a browser at http://www.goodreads.com/user/sign_in ?";
+			if(200==signedIn.getWebResponse().getStatusCode()) {
+				if(signedIn.getUrl().equals(signIn.getUrl()))
+					throw new AuthenticationFailedException(authenticationFailedMessage);
+				logger.log(Level.INFO, "logged in ... downloading csv now ...");
+				Page csv = client.getPage("http://www.goodreads.com/review_porter/goodreads_export.csv");
+				// May cause memory error, but later ...
+				String csvContent = csv.getWebResponse().getContentAsString();
+				return splitIntoRows(csvContent);
+			} else {
 				throw new AuthenticationFailedException(authenticationFailedMessage);
-			logger.log(Level.INFO, "logged in ... downloading csv now ...");
-			Page csv = client.getPage("http://www.goodreads.com/review_porter/goodreads_export.csv");
-			// May cause memory error, but later ...
-			String csvContent = csv.getWebResponse().getContentAsString();
-			return splitIntoRows(csvContent);
-		} else {
-			throw new AuthenticationFailedException(authenticationFailedMessage);
+			}
+		} catch(AuthenticationFailedException e) {
+			throw e;
+		} catch(Exception e) {
+			throw new UnableToDownloadExportException(e);
 		}
 	}
 

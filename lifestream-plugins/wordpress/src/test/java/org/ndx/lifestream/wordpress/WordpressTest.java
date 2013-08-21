@@ -18,7 +18,7 @@ public class WordpressTest {
 		assertThat(login, IsNull.notNullValue());
 		password = System.getProperty("wordpress.password");
 		assertThat(password, IsNull.notNullValue());
-		site = System.getProperty("wordpress.password");
+		site = System.getProperty("wordpress.address");
 		assertThat(site, IsNull.notNullValue());
 
 		tested = new Wordpress();
