@@ -11,6 +11,7 @@ import org.ndx.lifestream.rendering.Mode;
 import org.ndx.lifestream.rendering.model.Input;
 import org.ndx.lifestream.rendering.model.InputLoader;
 import org.ndx.lifestream.rendering.output.VFSHelper;
+import org.ndx.lifestream.utils.web.WebClientFactory;
 
 public abstract class AbstractLifestreamPlugin<Type extends Input> extends AbstractMojo {
 	/**
@@ -52,7 +53,7 @@ public abstract class AbstractLifestreamPlugin<Type extends Input> extends Abstr
 		try {
 			Mode mode = Mode.valueOf(modeName);
 			getLog().info("Rendering will be made for \""+mode+"\"");
-			Collection<Type> inputs = loader.load();
+			Collection<Type> inputs = loader.load(WebClientFactory.getWebClient());
 			FileObject outputRoot = VFSHelper.getManager().resolveFile(output.toURI().toURL().toString());
 			outputRoot.createFolder();
 			// Now output all using given mode

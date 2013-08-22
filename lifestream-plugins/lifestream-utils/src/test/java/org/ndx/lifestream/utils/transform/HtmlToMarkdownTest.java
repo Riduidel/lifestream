@@ -20,7 +20,7 @@ public class HtmlToMarkdownTest {
 	public void cleanupWork() {
 		String text = HtmlToMarkdown.transformToValidXhtml("a simple text");
 		assertThat(text, Is.is(
-						"<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>\r\n"
+						"<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
 						+ "<html>\r\n<head/>\r\n<body>a simple text</body>\r\n</html>\r\n"));
 	}
 

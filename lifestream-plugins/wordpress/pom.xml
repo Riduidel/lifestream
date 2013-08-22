@@ -1,15 +1,20 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-  <modelVersion>4.0.0</modelVersion>
-  <parent>
-    <groupId>org.ndx.lifestream</groupId>
-    <artifactId>lifestream-plugins</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
-  </parent>
-  <artifactId>wordpress</artifactId>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<parent>
+		<groupId>org.ndx.lifestream</groupId>
+		<artifactId>lifestream-plugins</artifactId>
+		<version>0.0.1-SNAPSHOT</version>
+	</parent>
+	<artifactId>wordpress</artifactId>
 	<packaging>maven-plugin</packaging>
 	<description>plugin for grabbing content from goodreads</description>
 
 	<dependencies>
+		<dependency>
+			<groupId>rome</groupId>
+			<artifactId>rome</artifactId>
+		</dependency>
 		<dependency>
 			<groupId>${project.groupId}</groupId>
 			<artifactId>lifestream-plugin-base</artifactId>
@@ -42,15 +47,21 @@
 							<rules>
 								<requireProperty>
 									<property>wordpress.address</property>
-									<message>You must set a Wordpress blog for tests</message>
+									<message>You must set a Wordpress blog
+										(&lt;wordpress.address&gt;mywordpressblog&lt;/wordpress.address&gt;)
+										for tests</message>
 								</requireProperty>
 								<requireProperty>
 									<property>wordpress.login</property>
-									<message>You must set a Wordpress user login for tests</message>
+									<message>You must set a Wordpress user login
+										(&lt;wordpress.login&gt;riduidel&lt;/wordpress.login&gt;) for
+										tests</message>
 								</requireProperty>
 								<requireProperty>
 									<property>wordpress.password</property>
-									<message>You must set a Wordpress user password for tests</message>
+									<message>You must set a Wordpress user password
+										(&lt;wordpress.password&gt;guesst what
+										?&lt;/wordpress.password&gt;)for tests</message>
 								</requireProperty>
 							</rules>
 						</configuration>

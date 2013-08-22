@@ -24,6 +24,7 @@ import org.ndx.lifestream.rendering.model.InputLoader;
 
 import au.com.bytecode.opencsv.CSVReader;
 
+import com.gargoylesoftware.htmlunit.BrowserVersion;
 import com.gargoylesoftware.htmlunit.Page;
 import com.gargoylesoftware.htmlunit.WebClient;
 import com.gargoylesoftware.htmlunit.html.HtmlForm;
@@ -135,11 +136,8 @@ public class Goodreads implements InputLoader<Book> {
 		return returned;
 	}
 
-	public List<String[]> loadCSV() {
+	public List<String[]> loadCSV(WebClient client) {
 		try {
-			WebClient client = new WebClient(com.gargoylesoftware.htmlunit.BrowserVersion.FIREFOX_3);
-			client.setUseInsecureSSL(true);
-			client.setJavaScriptEnabled(false);
 			HtmlPage signIn = client.getPage("http://www.goodreads.com/user/sign_in");
 			HtmlForm signInForm = signIn.getFormByName("sign_in");
 			logger.log(Level.INFO, "logging in goodreads as "+username);
@@ -158,10 +156,8 @@ public class Goodreads implements InputLoader<Book> {
 			} else {
 				throw new AuthenticationFailedException(authenticationFailedMessage);
 			}
-		} catch(AuthenticationFailedException e) {
-			throw e;
 		} catch(Exception e) {
-			throw new UnableToDownloadExportException(e);
+			throw new UnableToDownloadCSVException(e);
 		}
 	}
 
@@ -200,10 +196,10 @@ public class Goodreads implements InputLoader<Book> {
 	}
 
 	@Override
-	public Collection<Book> load() {
+	public Collection<Book> load(WebClient client) {
 		try {
 			logger.info("loading CSV data");
-			List<String[]> rawData = loadCSV();
+			List<String[]> rawData = loadCSV(client);
 			logger.info("transforming that data into books");
 			return buildBooksCollection(rawData);
 		} catch(Exception e) {

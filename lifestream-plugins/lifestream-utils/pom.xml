@@ -18,6 +18,10 @@
 			<version>2.6</version>
 		</dependency>
 		<dependency>
+			<groupId>net.sourceforge.htmlunit</groupId>
+			<artifactId>htmlunit</artifactId>
+		</dependency>
+		<dependency>
 			<groupId>org.antlr</groupId>
 			<artifactId>ST4</artifactId>
 			<version>4.0.7</version>

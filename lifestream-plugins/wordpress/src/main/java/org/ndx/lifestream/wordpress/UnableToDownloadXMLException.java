@@ -19,7 +19,8 @@ public class UnableToDownloadXMLException extends LifestreamException {
 		super(message, cause);
 	}
 
-	public UnableToDownloadXMLException(String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
+	public UnableToDownloadXMLException(String message, Throwable cause,
+			boolean enableSuppression, boolean writableStackTrace) {
 		super(message, cause, enableSuppression, writableStackTrace);
 	}
 
