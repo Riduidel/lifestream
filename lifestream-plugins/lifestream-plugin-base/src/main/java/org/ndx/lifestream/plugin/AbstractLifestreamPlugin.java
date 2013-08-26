@@ -14,35 +14,9 @@ import org.ndx.lifestream.rendering.output.VFSHelper;
 import org.ndx.lifestream.utils.web.WebClientFactory;
 
 public abstract class AbstractLifestreamPlugin<Type extends Input> extends AbstractMojo {
-	/**
-	 * username on goodreads site
-	 *
-	 * @parameter alias="username"
-	 * @required
-	 */
-	protected String username;
+	public abstract File getOutput();
 
-	/**
-	 * password on goodreads site
-	 *
-	 * @parameter alias="password"
-	 * @required
-	 */
-	protected String password;
-
-	/**
-	 * Output file where those classes will be written
-	 *
-	 * @parameter
-	 *            default-value="${project.basedir}/src/main/site/markdown/goodreads"
-	 */
-	protected File output;
-
-	/**
-	 * Currently used rendering mode
-	 * @parameter alias="mode" default-value="gollum"
-	 */
-	protected String modeName;
+	public abstract String getModeName();
 
 	protected abstract InputLoader<Type> loadInputLoader();
 
@@ -51,10 +25,10 @@ public abstract class AbstractLifestreamPlugin<Type extends Input> extends Abstr
 		InputLoader<Type> loader = loadInputLoader();
 		getLog().info("grabbing content");
 		try {
-			Mode mode = Mode.valueOf(modeName);
+			Mode mode = Mode.valueOf(getModeName());
 			getLog().info("Rendering will be made for \""+mode+"\"");
 			Collection<Type> inputs = loader.load(WebClientFactory.getWebClient());
-			FileObject outputRoot = VFSHelper.getManager().resolveFile(output.toURI().toURL().toString());
+			FileObject outputRoot = VFSHelper.getManager().resolveFile(getOutput().toURI().toURL().toString());
 			outputRoot.createFolder();
 			// Now output all using given mode
 			loader.output(mode, inputs, outputRoot);

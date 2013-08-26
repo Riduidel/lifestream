@@ -7,29 +7,37 @@ import org.ndx.lifestream.rendering.model.Input;
 
 public class Post implements Input {
 
+	String title;
+	String uri;
+	Collection<String> tags;
+	String text;
+	Date writeDate;
+	
+	String basename;
+	
 	@Override
 	public String getText() {
-		return null;
+		return text;
 	}
 
 	@Override
 	public String getBasename() {
-		return null;
+		return basename;
 	}
 
 	@Override
 	public Collection<String> getTags() {
-		return null;
+		return tags;
 	}
 
 	@Override
 	public Date getWriteDate() {
-		return null;
+		return writeDate;
 	}
 
 	@Override
 	public String getTitle() {
-		return null;
+		return title;
 	}
 
 }

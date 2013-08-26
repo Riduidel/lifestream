@@ -1,8 +1,11 @@
 package org.ndx.lifestream.wordpress;
 
 import java.io.InputStream;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.Collection;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -15,6 +18,9 @@ import com.gargoylesoftware.htmlunit.WebClient;
 import com.gargoylesoftware.htmlunit.html.HtmlForm;
 import com.gargoylesoftware.htmlunit.html.HtmlInput;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
+import com.sun.syndication.feed.synd.SyndCategory;
+import com.sun.syndication.feed.synd.SyndContent;
+import com.sun.syndication.feed.synd.SyndEntry;
 import com.sun.syndication.feed.synd.SyndFeed;
 import com.sun.syndication.io.SyndFeedInput;
 import com.sun.syndication.io.XmlReader;
@@ -80,17 +86,51 @@ public class Wordpress implements InputLoader<Post> {
 	Collection<Post> buildPostCollection(InputStream xmlSource) {
 		try {
 			SyndFeedInput input = new SyndFeedInput();
-			SyndFeed feed = input.build(new XmlReader(xmlSource));
-			for (Object entry : feed.getEntries()) {
-				createPostFromEntry(entry);
+			SyndFeed feed = input.build(new XmlReader(xmlSource, true, "utf-8"));
+			List<Post> returned = new LinkedList<>();
+			for (SyndEntry entry : (Collection<SyndEntry>) feed.getEntries()) {
+				returned.add(createPostFromEntry(entry));
 			}
-			return new LinkedList<>();
+			return returned;
 		} catch (Exception e) {
 			throw new UnableToTransformStreamInPostCollectionException(e);
 		}
 	}
 
-	private void createPostFromEntry(Object entry) {
-		Post post = new Post(); 
+	private Post createPostFromEntry(SyndEntry entry) {
+		Post post = new Post();
+		post.writeDate = entry.getPublishedDate()==null ? entry.getUpdatedDate() : entry.getPublishedDate();
+		post.title = entry.getTitle();
+		post.tags = getEntryTags(entry);
+		post.text = getEntryText(entry);
+		post.uri = entry.getUri();
+		try {
+			post.basename = new URL(entry.getLink()).getPath();
+			if(post.basename.endsWith("/")) {
+				post.basename = post.basename.substring(0, post.basename.lastIndexOf('/'));
+			}
+		} catch (MalformedURLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return post;
+	}
+
+	private String getEntryText(SyndEntry entry) {
+		StringBuilder sOut = new StringBuilder();
+		for(SyndContent content : (Collection<SyndContent>) entry.getContents()) {
+			sOut.append(content.getValue());
+		}
+		return sOut.toString();
+	}
+
+	private Collection<String> getEntryTags(SyndEntry entry) {
+		Collection<String> tags = new LinkedList<String>();
+		// tags are in SyndCategory ... OK
+		for(SyndCategory category : (Collection<SyndCategory>) entry.getCategories()) {
+			tags.add(category.getName());
+		}
+		tags.remove("Uncategorized");
+		return tags;
 	}
 }
