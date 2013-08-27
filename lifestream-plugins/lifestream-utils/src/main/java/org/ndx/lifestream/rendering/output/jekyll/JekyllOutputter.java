@@ -1,15 +1,13 @@
 package org.ndx.lifestream.rendering.output.jekyll;
 
-import java.io.OutputStream;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-import org.apache.commons.io.IOUtils;
 import org.apache.commons.vfs2.FileObject;
 import org.ndx.lifestream.rendering.OutputWriter;
 import org.ndx.lifestream.rendering.model.Input;
-import org.ndx.lifestream.utils.transform.HtmlToMarkdown;
+import org.ndx.lifestream.rendering.output.AbstractOutputter;
 import org.stringtemplate.v4.ST;
 import org.stringtemplate.v4.STGroup;
 import org.stringtemplate.v4.STGroupDir;
@@ -20,7 +18,7 @@ import org.stringtemplate.v4.STRawGroupDir;
  * @author ndx
  *
  */
-public class JekyllOutputter implements OutputWriter {
+public class JekyllOutputter extends AbstractOutputter implements OutputWriter {
 	private static final String DATE_FORMAT = "yyyy-MM-dd";
 	private static final DateFormat FORMATTER = new SimpleDateFormat(DATE_FORMAT);
 	private STGroupDir jekyllGroup;
@@ -34,18 +32,21 @@ public class JekyllOutputter implements OutputWriter {
 	@Override
 	public void write(Input input, FileObject output) {
 		Date writeDate = input.getWriteDate();
-		jekyll.add("input", input);
-		String resultText  = jekyll.render();
-		jekyll.remove("input");
 		FileObject resultFile;
 		try {
-			resultFile = output.resolveFile(FORMATTER.format(writeDate)+"-"+input.getBasename()+".md");
-			try (OutputStream outputStream = resultFile.getContent().getOutputStream()) {
-				IOUtils.write(HtmlToMarkdown.transformHtml(resultText), outputStream);
-			}
+			String filename = FORMATTER.format(writeDate)+"-"+input.getBasename().replace('/', '_')+".md";
+			resultFile = output.resolveFile(filename);
+			writeFile(resultFile, render(input));
 		} catch (Exception e) {
 			throw new JekykllException("unable to output render for input "+input.getBasename(), e);
 		}
+	}
+
+	private String render(Input input) {
+		jekyll.add("input", input);
+		String resultText  = jekyll.render();
+		jekyll.remove("input");
+		return resultText;
 	}
 
 }

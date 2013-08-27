@@ -1,6 +1,8 @@
 package org.ndx.lifestream.wordpress;
 
+import java.io.ByteArrayInputStream;
 import java.io.InputStream;
+import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Collection;
@@ -10,7 +12,9 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import org.apache.commons.vfs2.FileObject;
+import org.jdom.Element;
 import org.ndx.lifestream.rendering.Mode;
+import org.ndx.lifestream.rendering.OutputWriter;
 import org.ndx.lifestream.rendering.model.InputLoader;
 
 import com.gargoylesoftware.htmlunit.Page;
@@ -18,6 +22,8 @@ import com.gargoylesoftware.htmlunit.WebClient;
 import com.gargoylesoftware.htmlunit.html.HtmlForm;
 import com.gargoylesoftware.htmlunit.html.HtmlInput;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
+import com.google.common.base.Predicate;
+import com.google.common.collect.Collections2;
 import com.sun.syndication.feed.synd.SyndCategory;
 import com.sun.syndication.feed.synd.SyndContent;
 import com.sun.syndication.feed.synd.SyndEntry;
@@ -34,14 +40,34 @@ public class Wordpress implements InputLoader<Post> {
 
 	@Override
 	public Collection<Post> load(WebClient client) {
-		loadXML(client);
-		throw new UnsupportedOperationException("not yet done");
+		String text = loadXML(client);
+		ByteArrayInputStream stream;
+		try {
+			stream = new ByteArrayInputStream(text.getBytes("UTF-8"));
+			return buildPostCollection(stream);
+		} catch (UnsupportedEncodingException e) {
+			throw new UnableToReadStreamAsUTF8Exception(e);
+		}
 	}
 
 	@Override
 	public void output(Mode mode, Collection<Post> inputs, FileObject outputRoot) {
-		// TODO Auto-generated method stub
+		Collection<Post> filtered = Collections2.filter(inputs, new Predicate<Post>() {
 
+			@Override
+			public boolean apply(Post input) {
+				return Post.Type.post.equals(input.type);
+			}
+		});
+		OutputWriter writer = mode.getWriter();
+		int index = 1;
+		int size = filtered.size();
+		for (Post book : filtered) {
+			if (logger.isLoggable(Level.INFO)) {
+				logger.log(Level.INFO, "writing post "+(index++)+"/"+size+" : "+book);
+			}
+			writer.write(book, outputRoot);
+		}
 	}
 
 	public String loadXML(WebClient client) {
@@ -66,13 +92,13 @@ public class Wordpress implements InputLoader<Post> {
 				if (signedIn.getUrl().equals(signIn.getUrl()))
 					throw new AuthenticationFailedException(
 							authenticationFailedMessage);
-				logger.log(Level.INFO, "logged in ... downloading csv now ...");
+				logger.log(Level.INFO, "logged in ... downloading xml now ...");
 				HtmlPage xmlExportPage = client.getPage(site
 						+ "wp-admin/export.php?type=export");
 				Page xml = ((HtmlInput) xmlExportPage.getElementById("submit"))
 						.click();
 				// May cause memory error, but later ...
-				String xmlContent = xml.getWebResponse().getContentAsString();
+				String xmlContent = xml.getWebResponse().getContentAsString("UTF-8");
 				return xmlContent;
 			} else {
 				throw new AuthenticationFailedException(
@@ -104,6 +130,7 @@ public class Wordpress implements InputLoader<Post> {
 		post.tags = getEntryTags(entry);
 		post.text = getEntryText(entry);
 		post.uri = entry.getUri();
+		post.type = Post.Type.valueOf(getEntryType(entry));
 		try {
 			post.basename = new URL(entry.getLink()).getPath();
 			if(post.basename.endsWith("/")) {
@@ -116,6 +143,16 @@ public class Wordpress implements InputLoader<Post> {
 		return post;
 	}
 
+	private String getEntryType(SyndEntry entry) {
+		List<Element> elements = (List<Element>) entry.getForeignMarkup();
+		for(Element e : elements) {
+			if(e.getName().equals("post_type")) {
+				return e.getText();
+			}
+		}
+		return null;
+	}
+
 	private String getEntryText(SyndEntry entry) {
 		StringBuilder sOut = new StringBuilder();
 		for(SyndContent content : (Collection<SyndContent>) entry.getContents()) {
@@ -125,12 +162,23 @@ public class Wordpress implements InputLoader<Post> {
 	}
 
 	private Collection<String> getEntryTags(SyndEntry entry) {
+		return getEntryCategories(entry, "post_tag");
+	}
+
+	/**
+	 * Get all categories using the given taxonomy
+	 * @param entry
+	 * @param categoryUri the used category
+	 * @return collection of tags
+	 */
+	private Collection<String> getEntryCategories(SyndEntry entry, String categoryUri) {
 		Collection<String> tags = new LinkedList<String>();
 		// tags are in SyndCategory ... OK
 		for(SyndCategory category : (Collection<SyndCategory>) entry.getCategories()) {
-			tags.add(category.getName());
+			if(category==null || categoryUri.equals(category.getTaxonomyUri())) {
+				tags.add(category.getName());
+			}
 		}
-		tags.remove("Uncategorized");
 		return tags;
 	}
 }

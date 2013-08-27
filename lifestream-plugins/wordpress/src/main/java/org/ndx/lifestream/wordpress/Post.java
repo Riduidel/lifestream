@@ -6,6 +6,9 @@ import java.util.Date;
 import org.ndx.lifestream.rendering.model.Input;
 
 public class Post implements Input {
+	public static enum Type {
+		post, attachment
+	}
 
 	String title;
 	String uri;
@@ -14,6 +17,7 @@ public class Post implements Input {
 	Date writeDate;
 	
 	String basename;
+	Type type;
 	
 	@Override
 	public String getText() {
@@ -40,4 +44,10 @@ public class Post implements Input {
 		return title;
 	}
 
+	@Override
+	public String toString() {
+		return basename;
+	}
+
+	
 }

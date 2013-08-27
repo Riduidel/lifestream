@@ -2,6 +2,9 @@ package org.ndx.lifestream.plugin;
 
 import java.io.File;
 import java.util.Collection;
+import java.util.logging.Level;
+import java.util.logging.LogManager;
+import java.util.logging.Logger;
 
 import org.apache.commons.vfs2.FileObject;
 import org.apache.maven.plugin.AbstractMojo;
@@ -12,8 +15,15 @@ import org.ndx.lifestream.rendering.model.Input;
 import org.ndx.lifestream.rendering.model.InputLoader;
 import org.ndx.lifestream.rendering.output.VFSHelper;
 import org.ndx.lifestream.utils.web.WebClientFactory;
+import org.slf4j.bridge.SLF4JBridgeHandler;
 
 public abstract class AbstractLifestreamPlugin<Type extends Input> extends AbstractMojo {
+	static {
+		LogManager.getLogManager().reset();
+		SLF4JBridgeHandler.install();
+		Logger.getLogger("global").setLevel(Level.FINEST);
+	}
+	
 	public abstract File getOutput();
 
 	public abstract String getModeName();
@@ -26,7 +36,7 @@ public abstract class AbstractLifestreamPlugin<Type extends Input> extends Abstr
 		getLog().info("grabbing content");
 		try {
 			Mode mode = Mode.valueOf(getModeName());
-			getLog().info("Rendering will be made for \""+mode+"\"");
+			getLog().info("Rendering will be made with \""+mode+"\"");
 			Collection<Type> inputs = loader.load(WebClientFactory.getWebClient());
 			FileObject outputRoot = VFSHelper.getManager().resolveFile(getOutput().toURI().toURL().toString());
 			outputRoot.createFolder();

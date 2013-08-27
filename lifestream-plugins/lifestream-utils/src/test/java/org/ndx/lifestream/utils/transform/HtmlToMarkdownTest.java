@@ -54,4 +54,16 @@ public class HtmlToMarkdownTest {
 		String markdown = HtmlToMarkdown.transformHtml("<h1>a simple</h1>\n text");
 		assertThat(markdown, Is.is("#a simple\r\n text"));
 	}
+
+	@Test
+	public void transformTextWithEACUTE() {
+		String markdown = HtmlToMarkdown.transformHtml("&eacute;");
+		assertThat(markdown, Is.is("é"));
+	}
+
+	@Test
+	public void transformTextWithEGRAVE() {
+		String markdown = HtmlToMarkdown.transformHtml("&egrave;");
+		assertThat(markdown, Is.is("è"));
+	}
 }

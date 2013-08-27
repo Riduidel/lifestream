@@ -13,6 +13,7 @@ import javax.xml.transform.sax.SAXSource;
 import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
 
+import org.apache.commons.lang3.StringEscapeUtils;
 import org.htmlcleaner.CleanerProperties;
 import org.htmlcleaner.DomSerializer;
 import org.htmlcleaner.HtmlCleaner;
@@ -38,7 +39,8 @@ public class HtmlToMarkdown {
 	 */
 	public static String transformHtml(String html) {
 		String validXhtml = transformToValidXhtml(html);
-		return transformValidXhtml(validXhtml);
+		String markdown =  transformValidXhtml(validXhtml);
+		return StringEscapeUtils.unescapeHtml4(markdown);
 	}
 
 	public static String transformToValidXhtml(String html) {
