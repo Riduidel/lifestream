@@ -3,16 +3,22 @@ package org.ndx.lifestream.goodreads;
 import java.io.CharArrayReader;
 import java.io.File;
 import java.io.IOException;
+import java.net.MalformedURLException;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -50,14 +56,37 @@ public class Goodreads implements InputLoader<Book> {
 	public String outputFolder;
 	public String xsl = null;
 
-	Collection<Book> buildBooksCollection(List<String[]> csv) {
+	/**
+	 * Collection loading is partially synchronous (reading the CSV), 
+	 * partially asynchronous (fetching metadatas from Goodreads API and inserting
+	 * a text header containing those datas)
+	 * @param client, used to improve books. May be null (in which case there is obviously no improvement done)
+	 * @param csv source csv file
+	 * @return a collection of valid and usable books
+	 */
+	Collection<Book> buildBooksCollection(WebClient client, List<String[]> csv) {
+		ExecutorService executor = Executors.newFixedThreadPool(2);
 		Map<String, Integer> columns = getColumnsNamesToColumnsIndices(csv.get(0));
 		List<String[]> usableLines = csv.subList(1, csv.size());
-		Collection<Book> books = new ArrayList<>();
+		final Collection<Book> books = Collections.synchronizedCollection(new ArrayList<Book>());
 		for(String[] line : usableLines) {
-			books.add(createBook(columns, line));
+			Book rawBook = createBook(columns, line);
+			if(client==null) {
+				books.add(rawBook);
+			} else {
+				executor.submit(createBookImproverCallable(client, rawBook, books));
+			}
+		}
+		try {
+			executor.awaitTermination(1, TimeUnit.DAYS);
+		} catch (InterruptedException e) {
+			throw new UnableToEndBookInfoDownloadException(e);
 		}
 		return books;
+	}
+
+	private Callable<ImprovedBook> createBookImproverCallable(WebClient client, Book rawBook, Collection<Book> books) {
+		return new BookImprover(client, rawBook, books);
 	}
 
 	Book createBook(Map<String, Integer> columns, String[] line) {
@@ -138,26 +167,31 @@ public class Goodreads implements InputLoader<Book> {
 
 	public List<String[]> loadCSV(WebClient client) {
 		try {
-			HtmlPage signIn = client.getPage("http://www.goodreads.com/user/sign_in");
-			HtmlForm signInForm = signIn.getFormByName("sign_in");
-			logger.log(Level.INFO, "logging in goodreads as "+username);
-			signInForm.getInputByName("user[email]").setValueAttribute(username);
-			signInForm.getInputByName("user[password]").setValueAttribute(password);
-			HtmlPage signedIn = signInForm.getInputByName("next").click();
-			String authenticationFailedMessage = "unable to sign in Goodreads using mail "+username+" and password "+password+". can you check it by opening a browser at http://www.goodreads.com/user/sign_in ?";
-			if(200==signedIn.getWebResponse().getStatusCode()) {
-				if(signedIn.getUrl().equals(signIn.getUrl()))
-					throw new AuthenticationFailedException(authenticationFailedMessage);
-				logger.log(Level.INFO, "logged in ... downloading csv now ...");
-				Page csv = client.getPage("http://www.goodreads.com/review_porter/goodreads_export.csv");
-				// May cause memory error, but later ...
-				String csvContent = csv.getWebResponse().getContentAsString();
-				return splitIntoRows(csvContent);
-			} else {
-				throw new AuthenticationFailedException(authenticationFailedMessage);
-			}
+			authenticateInGoodreads(client, username, password);
+			logger.log(Level.INFO, "logged in ... downloading csv now ...");
+			Page csv = client.getPage("http://www.goodreads.com/review_porter/goodreads_export.csv");
+			// May cause memory error, but later ...
+			String csvContent = csv.getWebResponse().getContentAsString();
+			return splitIntoRows(csvContent);
 		} catch(Exception e) {
 			throw new UnableToDownloadCSVException(e);
+		}
+	}
+
+	public static void authenticateInGoodreads(WebClient client, String username, String password)
+			throws IOException, MalformedURLException {
+		HtmlPage signIn = client.getPage("http://www.goodreads.com/user/sign_in");
+		HtmlForm signInForm = signIn.getFormByName("sign_in");
+		logger.log(Level.INFO, "logging in goodreads as "+username);
+		signInForm.getInputByName("user[email]").setValueAttribute(username);
+		signInForm.getInputByName("user[password]").setValueAttribute(password);
+		HtmlPage signedIn = signInForm.getInputByName("next").click();
+		String authenticationFailedMessage = "unable to sign in Goodreads using mail "+username+" and password "+password+". can you check it by opening a browser at http://www.goodreads.com/user/sign_in ?";
+		if(200==signedIn.getWebResponse().getStatusCode()) {
+			if(signedIn.getUrl().equals(signIn.getUrl()))
+				throw new AuthenticationFailedException(authenticationFailedMessage);
+		} else {
+			throw new AuthenticationFailedException(authenticationFailedMessage);
 		}
 	}
 
@@ -201,7 +235,7 @@ public class Goodreads implements InputLoader<Book> {
 			logger.info("loading CSV data");
 			List<String[]> rawData = loadCSV(client);
 			logger.info("transforming that data into books");
-			return buildBooksCollection(rawData);
+			return buildBooksCollection(client, rawData);
 		} catch(Exception e) {
 			throw new UnableToBuildBookCollection(e);
 		}
