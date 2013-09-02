@@ -16,6 +16,7 @@ import org.jdom.Element;
 import org.ndx.lifestream.rendering.Mode;
 import org.ndx.lifestream.rendering.OutputWriter;
 import org.ndx.lifestream.rendering.model.InputLoader;
+import org.ndx.lifestream.utils.Constants;
 
 import com.gargoylesoftware.htmlunit.Page;
 import com.gargoylesoftware.htmlunit.WebClient;
@@ -43,7 +44,7 @@ public class Wordpress implements InputLoader<Post> {
 		String text = loadXML(client);
 		ByteArrayInputStream stream;
 		try {
-			stream = new ByteArrayInputStream(text.getBytes("UTF-8"));
+			stream = new ByteArrayInputStream(text.getBytes(Constants.UTF_8));
 			return buildPostCollection(stream);
 		} catch (UnsupportedEncodingException e) {
 			throw new UnableToReadStreamAsUTF8Exception(e);
@@ -98,7 +99,7 @@ public class Wordpress implements InputLoader<Post> {
 				Page xml = ((HtmlInput) xmlExportPage.getElementById("submit"))
 						.click();
 				// May cause memory error, but later ...
-				String xmlContent = xml.getWebResponse().getContentAsString("UTF-8");
+				String xmlContent = xml.getWebResponse().getContentAsString(Constants.UTF_8);
 				return xmlContent;
 			} else {
 				throw new AuthenticationFailedException(

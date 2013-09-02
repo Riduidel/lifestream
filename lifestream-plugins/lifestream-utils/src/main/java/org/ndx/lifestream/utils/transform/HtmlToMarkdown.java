@@ -1,15 +1,13 @@
 package org.ndx.lifestream.utils.transform;
 
+import static org.ndx.lifestream.utils.transform.MarkdownTransformerLazyLoader.getMarkdownTransformer;
+import static org.ndx.lifestream.utils.transform.XHTMLTransformerLazyLoader.getXHTMLTransformer;
+
 import java.io.StringReader;
 import java.io.StringWriter;
 
-import javax.sql.rowset.spi.XmlReader;
-import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.parsers.SAXParser;
-import javax.xml.parsers.SAXParserFactory;
 import javax.xml.transform.Source;
 import javax.xml.transform.dom.DOMSource;
-import javax.xml.transform.sax.SAXSource;
 import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
 
@@ -18,14 +16,8 @@ import org.htmlcleaner.CleanerProperties;
 import org.htmlcleaner.DomSerializer;
 import org.htmlcleaner.HtmlCleaner;
 import org.htmlcleaner.TagNode;
+import org.ndx.lifestream.utils.Constants;
 import org.w3c.dom.Document;
-import org.xml.sax.EntityResolver;
-import org.xml.sax.InputSource;
-import org.xml.sax.SAXException;
-import org.xml.sax.XMLReader;
-
-import static org.ndx.lifestream.utils.transform.MarkdownTransformerLazyLoader.getMarkdownTransformer;
-import static org.ndx.lifestream.utils.transform.XHTMLTransformerLazyLoader.getXHTMLTransformer;
 
 public class HtmlToMarkdown {
 
@@ -48,7 +40,7 @@ public class HtmlToMarkdown {
 			HtmlCleaner cleaner = new HtmlCleaner();
 			CleanerProperties properties = cleaner.getProperties();
 			properties.setAdvancedXmlEscape(true);
-			properties.setCharset("UTF-8");
+			properties.setCharset(Constants.UTF_8);
 			properties.setOmitDoctypeDeclaration(true);
 			properties.setOmitHtmlEnvelope(false);
 			properties.setOmitXmlDeclaration(true);

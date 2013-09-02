@@ -6,6 +6,7 @@ import java.io.OutputStream;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.vfs2.FileObject;
 import org.apache.commons.vfs2.FileSystemException;
+import org.ndx.lifestream.utils.Constants;
 import org.ndx.lifestream.utils.transform.HtmlToMarkdown;
 
 public class AbstractOutputter {
@@ -15,7 +16,7 @@ public class AbstractOutputter {
 		try (OutputStream outputStream = resultFile.getContent()
 				.getOutputStream()) {
 			IOUtils.write(HtmlToMarkdown.transformHtml(resultText),
-					outputStream, "UTF-8");
+					outputStream, Constants.UTF_8);
 		}
 	}
 }
