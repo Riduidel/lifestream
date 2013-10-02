@@ -2,8 +2,10 @@ package org.ndx.lifestream.goodreads;
 
 import java.io.File;
 
+import org.apache.commons.vfs2.FileSystemException;
 import org.ndx.lifestream.plugin.AbstractLifestreamPlugin;
 import org.ndx.lifestream.rendering.model.InputLoader;
+import org.ndx.lifestream.rendering.output.VFSHelper;
 
 /**
  *
@@ -12,7 +14,7 @@ import org.ndx.lifestream.rendering.model.InputLoader;
  * @phase process-resources
  * @requiresDependencyResolution runtime
  */
-public class GoodreadsPlugin extends AbstractLifestreamPlugin<Book>  {
+public class GoodreadsPlugin extends AbstractLifestreamPlugin<BookInfos, GoodreadsConfiguration>  {
 	/**
 	 * username on goodreads site
 	 *
@@ -44,8 +46,9 @@ public class GoodreadsPlugin extends AbstractLifestreamPlugin<Book>  {
 	 */
 	protected String modeName;
 
+
 	@Override
-	protected InputLoader<Book> loadInputLoader() {
+	protected InputLoader<BookInfos, GoodreadsConfiguration> loadInputLoader() {
 		Goodreads goodreadsEngine = new Goodreads();
 		goodreadsEngine.username = username;
 		goodreadsEngine.password = password;
@@ -60,5 +63,10 @@ public class GoodreadsPlugin extends AbstractLifestreamPlugin<Book>  {
 	@Override
 	public String getModeName() {
 		return modeName;
+	}
+
+	@Override
+	protected GoodreadsConfiguration createConfiguration() {
+		return new GoodreadsConfiguration(VFSHelper.getRunningDir());
 	}
 }

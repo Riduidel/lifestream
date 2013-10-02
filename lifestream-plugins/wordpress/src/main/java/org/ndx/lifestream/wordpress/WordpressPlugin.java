@@ -15,7 +15,7 @@ import org.ndx.lifestream.rendering.model.InputLoader;
  * @phase process-resources
  * @requiresDependencyResolution runtime
  */
-public class WordpressPlugin extends AbstractLifestreamPlugin<Post> {
+public class WordpressPlugin extends AbstractLifestreamPlugin<Post, WordpressConfiguration> {
 	/**
 	 * username on goodreads site
 	 *
@@ -56,7 +56,7 @@ public class WordpressPlugin extends AbstractLifestreamPlugin<Post> {
 	protected String site;
 
 	@Override
-	protected InputLoader<Post> loadInputLoader() {
+	protected InputLoader<Post, WordpressConfiguration> loadInputLoader() {
 		Wordpress loader = new Wordpress();
 		loader.login = username;
 		loader.password = password;
@@ -72,6 +72,11 @@ public class WordpressPlugin extends AbstractLifestreamPlugin<Post> {
 	@Override
 	public String getModeName() {
 		return modeName;
+	}
+
+	@Override
+	protected WordpressConfiguration createConfiguration() {
+		return new WordpressConfiguration();
 	}
 
 }

@@ -2,14 +2,15 @@ package org.ndx.lifestream.rendering.output.jekyll;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.Collection;
 import java.util.Date;
+import java.util.Iterator;
 
 import org.apache.commons.vfs2.FileObject;
 import org.ndx.lifestream.rendering.OutputWriter;
 import org.ndx.lifestream.rendering.model.Input;
 import org.ndx.lifestream.rendering.output.AbstractOutputter;
 import org.stringtemplate.v4.ST;
-import org.stringtemplate.v4.STGroup;
 import org.stringtemplate.v4.STGroupDir;
 import org.stringtemplate.v4.STRawGroupDir;
 
@@ -32,13 +33,23 @@ public class JekyllOutputter extends AbstractOutputter implements OutputWriter {
 	@Override
 	public void write(Input input, FileObject output) {
 		Date writeDate = input.getWriteDate();
-		FileObject resultFile;
+		FileObject resultFile = output;
+		Collection<String> basepath = input.getExpectedPath();
+		Iterator<String> iterator = basepath.iterator();
 		try {
-			String filename = FORMATTER.format(writeDate)+"-"+input.getBasename().replace('/', '_')+".md";
-			resultFile = output.resolveFile(filename);
-			writeFile(resultFile, render(input));
+			while(iterator.hasNext()) {
+				String filename = iterator.next();
+				if(iterator.hasNext()) {
+					resultFile = resultFile.resolveFile(filename);
+				} else {
+					filename = (writeDate==null ? "2001-01-01" : FORMATTER.format(writeDate))+"-"+filename.replace('/', '_')+".md";
+					resultFile = resultFile.resolveFile(filename);
+					input.accept(this);
+					writeFile(resultFile, render(input));
+				}
+			}
 		} catch (Exception e) {
-			throw new JekykllException("unable to output render for input "+input.getBasename(), e);
+			throw new JekykllException("unable to output render for input "+basepath, e);
 		}
 	}
 

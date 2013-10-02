@@ -12,6 +12,8 @@ import org.ndx.lifestream.rendering.output.AbstractOutputter;
 import org.ndx.lifestream.utils.transform.HtmlToMarkdown;
 import org.stringtemplate.v4.ST;
 
+import com.google.common.base.Joiner;
+
 /**
  * Simple output of raw content to file
  *
@@ -20,6 +22,9 @@ import org.stringtemplate.v4.ST;
  */
 public class GollumOutputter extends AbstractOutputter implements OutputWriter {
 	private static final Logger logger = Logger.getLogger(GollumOutputter.class.getName());
+	
+	private static final Joiner PATH_JOINER = Joiner.on('/').skipNulls();
+
 	/**
 	 * Gollum template is simple, non ?
 	 */
@@ -29,10 +34,11 @@ public class GollumOutputter extends AbstractOutputter implements OutputWriter {
 	public void write(Input input, FileObject output) {
 		FileObject resultFile;
 		try {
-			resultFile = output.resolveFile(input.getBasename()+".md");
+			resultFile = output.resolveFile(PATH_JOINER.join(input.getExpectedPath())+".md");
+			input.accept(this);
 			writeFile(resultFile, render(input));
 		} catch (Exception e) {
-			throw new GollumException("unable to output render for input "+input.getBasename(), e);
+			throw new GollumException("unable to output render for input "+input.getExpectedPath(), e);
 		}
 	}
 

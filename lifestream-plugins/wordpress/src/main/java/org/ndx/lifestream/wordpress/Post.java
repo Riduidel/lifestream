@@ -1,8 +1,10 @@
 package org.ndx.lifestream.wordpress;
 
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Date;
 
+import org.ndx.lifestream.rendering.OutputWriter;
 import org.ndx.lifestream.rendering.model.Input;
 
 public class Post implements Input {
@@ -25,8 +27,8 @@ public class Post implements Input {
 	}
 
 	@Override
-	public String getBasename() {
-		return basename;
+	public Collection<String> getExpectedPath() {
+		return Arrays.asList(basename);
 	}
 
 	@Override
@@ -47,6 +49,15 @@ public class Post implements Input {
 	@Override
 	public String toString() {
 		return basename;
+	}
+
+	/** 
+	 * prepare links
+	 */
+	@Override
+	public void accept(OutputWriter writer) {
+		// TODO Auto-generated method stub
+		
 	}
 
 	

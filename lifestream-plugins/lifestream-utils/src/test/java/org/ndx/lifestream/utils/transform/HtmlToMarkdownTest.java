@@ -58,12 +58,12 @@ public class HtmlToMarkdownTest {
 	@Test
 	public void transformTextWithEACUTE() {
 		String markdown = HtmlToMarkdown.transformHtml("&eacute;");
-		assertThat(markdown, Is.is("é"));
+		assertThat(markdown, Is.is("Ã©"));
 	}
 
 	@Test
 	public void transformTextWithEGRAVE() {
 		String markdown = HtmlToMarkdown.transformHtml("&egrave;");
-		assertThat(markdown, Is.is("è"));
+		assertThat(markdown, Is.is("Ã¨"));
 	}
 }

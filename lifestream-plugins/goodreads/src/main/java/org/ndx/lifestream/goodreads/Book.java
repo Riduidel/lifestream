@@ -1,30 +1,41 @@
 package org.ndx.lifestream.goodreads;
 
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
+import java.util.UUID;
 
+import org.ndx.lifestream.rendering.OutputWriter;
 import org.ndx.lifestream.rendering.model.Input;
+import org.stringtemplate.v4.ST;
 
 /**
  * A class extracting content from the infamous Expando to a more "object" notion
  */
-public class Book implements Input {
+public class Book extends BookInfos implements Input {
+	private static DateFormat READ_FORMATTER = new SimpleDateFormat("yyyy/MM/dd");
+	private static ST book;
+
+	static {
+		book = goodreadsGroup.getInstanceOf("book");
+	}
 	public String title;
 	public String author;
 	public String additionnalAuthors;
-	public String isbn10;
-	public String isbn13;
+	private String isbn10;
+	private String isbn13;
 	public Number rating;
 	public Number average;
 	public Integer pages = 0;
 	public String initialPublication;
-	public String dateRead;
 	public SortedSet<String> tags = new TreeSet<String>();
 	public String review;
 	/** private notes, as opposed to public #review */
@@ -34,6 +45,16 @@ public class Book implements Input {
 	 * Date book is read
 	 */
 	public String read;
+	private Set<Serie> series = new TreeSet<>();
+	/**
+	 * written text that will be filled using {@link #accept(OutputWriter)}
+	 */
+	protected String text;
+
+	public Book() {
+		setId(UUID.randomUUID().toString());
+	}
+
 	public Collection<String> getAuthors() {
 		List<String> returned = new ArrayList<>();
 		returned.add(author);
@@ -44,20 +65,23 @@ public class Book implements Input {
 	}
 	@Override
 	public String getText() {
-		return review;
+		return text;
 	}
 	@Override
-	public String getBasename() {
+	public Collection<String> getExpectedPath() {
+		Collection<String> returned = new LinkedList<>();
+		returned.add("books");
 		if(isbn13!=null)
-			return isbn13;
+			returned.add(isbn13);
 		else if(isbn10!=null)
-			return isbn10;
+			returned.add(isbn10);
 		else
-			return title.replace(' ', '_');
+			returned.add(title.replace(' ', '_'));
+		return returned;
 	}
 	@Override
 	public String toString() {
-		return "title : "+title+" - basename : "+getBasename();
+		return "title : "+title+" - basename : "+getExpectedPath();
 	}
 	@Override
 	public Collection<String> getTags() {
@@ -65,11 +89,88 @@ public class Book implements Input {
 	}
 	@Override
 	public Date getWriteDate() {
-		return new Date();
+		try {
+			if(read==null)
+				return new Date();
+			return Goodreads.OUTPUT_FORMATTER.parse(read);
+		} catch (ParseException e) {
+			return new Date();
+		}
 	}
 	@Override
 	public String getTitle() {
 		return title;
+	}
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((isbn13 == null) ? 0 : isbn13.hashCode());
+		result = prime * result + ((title == null) ? 0 : title.hashCode());
+		return result;
+	}
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		Book other = (Book) obj;
+		if (isbn13 == null) {
+			if (other.isbn13 != null)
+				return false;
+		} else if (!isbn13.equals(other.isbn13))
+			return false;
+		if (title == null) {
+			if (other.title != null)
+				return false;
+		} else if (!title.equals(other.title))
+			return false;
+		return true;
+	}
+	@Override
+	public String getId() {
+		return isbn13;
+	}
+	public void addSerie(Serie serie) {
+		series .add(serie);
+	}
+
+	public String getIsbn10() {
+		return isbn10;
+	}
+
+	public void setIsbn10(String isbn10) {
+		this.isbn10 = isbn10;
+		if(getId()==null) {
+			setId(isbn10);
+		}
+	}
+
+	public String getIsbn13() {
+		return isbn13;
+	}
+
+	public void setIsbn13(String isbn13) {
+		this.isbn13 = isbn13;
+		setId(isbn13);
+	}
+
+	public Set<Serie> getSeries() {
+		return series;
+	}
+
+	/**
+	 * Will prepare rendered text by adding text from goodreads,
+	 * and infos about container series
+	 */
+	@Override
+	public void accept(OutputWriter writer) {
+		book.add("book", this);
+		text  = book.render();
+		book.remove("book");
 	}
 
 }

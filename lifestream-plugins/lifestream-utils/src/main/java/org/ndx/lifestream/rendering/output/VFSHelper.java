@@ -2,6 +2,7 @@ package org.ndx.lifestream.rendering.output;
 
 import java.util.logging.Logger;
 
+import org.apache.commons.vfs2.FileObject;
 import org.apache.commons.vfs2.FileSystemException;
 import org.apache.commons.vfs2.FileSystemManager;
 import org.apache.commons.vfs2.VFS;
@@ -46,6 +47,14 @@ public class VFSHelper {
 
 	public static FileSystemManager getManager() {
 		return fsManager;
+	}
+
+	public static FileObject getRunningDir() {
+		try {
+			return getManager().resolveFile(System.getProperty("user.dir"));
+		} catch (FileSystemException e) {
+			throw new UnableToLocateUserDirException(e);
+		}
 	}
 
 }

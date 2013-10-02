@@ -6,6 +6,7 @@ import java.util.Collection;
 import java.util.List;
 
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.vfs2.FileSystemException;
 import org.hamcrest.core.Is;
 import org.hamcrest.core.IsNot;
 import org.hamcrest.core.IsNull;
@@ -13,20 +14,29 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Ignore;
 import org.junit.Test;
+import org.ndx.lifestream.plugin.GaedoEnvironmentProvider;
+import org.ndx.lifestream.rendering.output.VFSHelper;
 import org.ndx.lifestream.utils.web.WebClientFactory;
+
+import com.dooapp.gaedo.finders.FinderCrudService;
+import com.dooapp.gaedo.utils.CollectionUtils;
 
 import static org.junit.Assert.assertThat;
 
 public class GoodreadsTest {
 	private static String mail;
 	private static String password;
+	private static GoodreadsConfiguration configuration;
+	private static GaedoEnvironmentProvider goodreadsEnvironment;
 
 	@BeforeClass
-	public static void loadUserInfos() {
+	public static void loadUserInfos() throws FileSystemException {
 		mail = System.getProperty("goodreads.mail");
 		assertThat(mail, IsNull.notNullValue());
 		password = System.getProperty("goodreads.password");
 		assertThat(password, IsNull.notNullValue());
+		configuration = new GoodreadsConfiguration(VFSHelper.getRunningDir());
+		goodreadsEnvironment = new GaedoEnvironmentProvider();
 	}
 
 	private Goodreads tested;
@@ -74,7 +84,8 @@ public class GoodreadsTest {
 		assertThat(rows.size(), IsNot.not(0));
 		// check all rows have the same number of columns, which is not 1
 		assertColumnCountIsOK(rows);
-		Collection<Book> books = tested.buildBooksCollection(null /* no web client is given for faster test */, rows);
-		assertThat(books.size(), Is.is(rows.size()-1));
+		FinderCrudService<BookInfos, BookInfosInformer> books = tested.buildBooksCollection(null /* no web client is given for faster test */, rows, configuration);
+		Collection<BookInfos> all = CollectionUtils.asList(books.findAll());
+		assertThat(all.size(), Is.is(rows.size()-1));
 	}
 }

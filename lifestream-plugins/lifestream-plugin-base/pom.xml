@@ -11,6 +11,7 @@
 	<properties>
 		<maven.version>3.0</maven.version>
 		<slf4j.version>1.7.5</slf4j.version>
+		<gaedo.version>0.6.0</gaedo.version>
 	</properties>
 	<dependencies>
 		<dependency>
@@ -32,6 +33,13 @@
 			<groupId>org.slf4j</groupId>
 			<artifactId>slf4j-simple</artifactId>
 			<version>${slf4j.version}</version>
+		</dependency>
+		<dependency>
+			<!-- component of a framework I work recently that allow me to easily 
+				search in collections. -->
+			<groupId>com.dooapp</groupId>
+			<artifactId>gaedo-collections</artifactId>
+			<version>${gaedo.version}</version>
 		</dependency>
 	</dependencies>
 </project>

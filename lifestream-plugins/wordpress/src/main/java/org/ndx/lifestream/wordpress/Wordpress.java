@@ -32,7 +32,7 @@ import com.sun.syndication.feed.synd.SyndFeed;
 import com.sun.syndication.io.SyndFeedInput;
 import com.sun.syndication.io.XmlReader;
 
-public class Wordpress implements InputLoader<Post> {
+public class Wordpress implements InputLoader<Post, WordpressConfiguration> {
 	private static Logger logger = Logger.getLogger(Wordpress.class.getName());
 
 	public String login;
@@ -40,7 +40,7 @@ public class Wordpress implements InputLoader<Post> {
 	public String site;
 
 	@Override
-	public Collection<Post> load(WebClient client) {
+	public Collection<Post> load(WebClient client, WordpressConfiguration configuration) {
 		String text = loadXML(client);
 		ByteArrayInputStream stream;
 		try {
@@ -52,7 +52,7 @@ public class Wordpress implements InputLoader<Post> {
 	}
 
 	@Override
-	public void output(Mode mode, Collection<Post> inputs, FileObject outputRoot) {
+	public void output(Mode mode, Collection<Post> inputs, FileObject outputRoot, WordpressConfiguration configuration) {
 		Collection<Post> filtered = Collections2.filter(inputs, new Predicate<Post>() {
 
 			@Override

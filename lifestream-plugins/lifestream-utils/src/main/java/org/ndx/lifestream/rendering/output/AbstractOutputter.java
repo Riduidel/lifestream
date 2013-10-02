@@ -13,6 +13,8 @@ public class AbstractOutputter {
 
 	protected void writeFile(FileObject resultFile, String resultText)
 			throws IOException, FileSystemException {
+		if(!resultFile.exists())
+			resultFile.createFile();
 		try (OutputStream outputStream = resultFile.getContent()
 				.getOutputStream()) {
 			IOUtils.write(HtmlToMarkdown.transformHtml(resultText),

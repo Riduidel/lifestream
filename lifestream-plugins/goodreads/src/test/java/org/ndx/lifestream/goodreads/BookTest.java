@@ -1,14 +1,14 @@
 package org.ndx.lifestream.goodreads;
 
+import static org.junit.Assert.assertThat;
+
+import java.util.Date;
 import java.util.Map;
 
 import org.hamcrest.core.Is;
 import org.hamcrest.core.IsCollectionContaining;
-import org.hamcrest.core.IsNull;
 import org.junit.Before;
 import org.junit.Test;
-
-import static org.junit.Assert.*;
 
 public class BookTest {
 	private Goodreads tested;
@@ -73,5 +73,4 @@ public class BookTest {
 		Book read = tested.createBook(headersMap, readBook);
 		assertThat(read.tags.contains("read"), Is.is(true));
 	}
-
 }
