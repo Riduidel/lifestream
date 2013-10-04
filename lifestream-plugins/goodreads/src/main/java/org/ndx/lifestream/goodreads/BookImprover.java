@@ -40,7 +40,7 @@ public class BookImprover implements Callable<Void> {
 	 * @author Nicolas
 	 *
 	 */
-	private static class FindWork {
+	public static class FindWork {
 		private static final String QUERY = Goodreads.GOODREADS_BASE+"search.xml?key="+DEVELOPPER_KEY+"&q=";
 
 		public static XPathExpression<Element> xpathForImageUrl = XPathFactory.instance().compile("//image_url", Filters.element());
@@ -58,7 +58,7 @@ public class BookImprover implements Callable<Void> {
 		 * @throws JDOMException
 		 * @throws UnsupportedEncodingException
 		 */
-		public String improveBook(WebClient client, String query, ImprovedBook returned, GoodreadsConfiguration configuration) throws UnsupportedEncodingException, JDOMException, IOException {
+		public String improveBook(WebClient client, String query, ImprovedBook returned, GoodreadsConfiguration configuration) {
 			Document bookXmlData = queryToJDOM(client, QUERY+query, configuration, "books", query);
 			Element imageUrlText = xpathForImageUrl.evaluateFirst(bookXmlData);
 			if(imageUrlText!=null)
@@ -70,7 +70,7 @@ public class BookImprover implements Callable<Void> {
 		}
 	}
 
-	private static class FindSerie {
+	public static class FindSerie {
 
 		private static final String QUERY = Goodreads.GOODREADS_BASE+"series/work.xml?key="+DEVELOPPER_KEY+"&id=";
 		public static XPathExpression<Element> xpathForSerie = XPathFactory.instance().compile("//series_work", Filters.element());
@@ -96,29 +96,33 @@ public class BookImprover implements Callable<Void> {
 		public Collection<Serie> improveBook(WebClient client,
 				FinderCrudService<BookInfos, BookInfosInformer> destination,
 				String workId,
-				ImprovedBook source, GoodreadsConfiguration configuration) throws MalformedURLException, UnsupportedEncodingException, IOException, JDOMException {
+				ImprovedBook source, GoodreadsConfiguration configuration) {
 			Document bookXmlData = queryToJDOM(client, QUERY+workId, configuration, "series", workId);
 			Collection<Serie> returned = new ArrayList<>();
 
 			List<Element> series = xpathForSerie.evaluate(bookXmlData);
 			for(Element element : series) {
-				String serieId = xpathForSerieId.evaluateFirst(element).getText();
-				String serieDesc = xpathForSerieDescription.evaluateFirst(element).getText();
-				String positionInSerie = xpathForPositionInSerie.evaluateFirst(element).getText();
-
-				try {
-					serieDesc = HtmlToMarkdown.transformHtml(serieDesc);
-				} catch(RuntimeException e) {
-					logger.log(Level.WARNING, "something went wrong while parsing one serie of work "+workId, e);
-				}
-
-				Serie used = findOrCreate(destination, serieId);
-				used.setId(serieId);
-				used.title = xpathForSerieTitle.evaluateFirst(element).getText().trim();
-				used.description = serieDesc;
-				used.setBook(positionInSerie, source);
+				addBookToSerie(destination, workId, source, element);
 			}
 			return returned;
+		}
+
+		private void addBookToSerie(FinderCrudService<BookInfos, BookInfosInformer> destination, String workId, ImprovedBook source, Element element) {
+			String serieId = xpathForSerieId.evaluateFirst(element).getText();
+			String serieDesc = xpathForSerieDescription.evaluateFirst(element).getText();
+			String positionInSerie = xpathForPositionInSerie.evaluateFirst(element).getText();
+
+			try {
+				serieDesc = HtmlToMarkdown.transformHtml(serieDesc);
+			} catch(RuntimeException e) {
+				logger.log(Level.WARNING, "something went wrong while parsing one serie of work "+workId, e);
+			}
+
+			Serie used = findOrCreate(destination, serieId);
+			used.setId(serieId);
+			used.title = xpathForSerieTitle.evaluateFirst(element).getText().trim();
+			used.description = serieDesc;
+			used.setBook(positionInSerie, source);
 		}
 
 		private Serie findOrCreate(
@@ -135,35 +139,37 @@ public class BookImprover implements Callable<Void> {
 			} catch(Exception e) {
 				Serie returned = new Serie();
 				returned.setId(serieId);
-				return (Serie) destination.create(returned);
+				synchronized(destination) {
+					return (Serie) destination.create(returned);
+				}
 			}
 		}
 
 	}
 
-	private static Document queryToJDOM(WebClient client, String query, GoodreadsConfiguration configuration, String cacheFolder, String cacheKey)
-			throws IOException, MalformedURLException, JDOMException,
-			UnsupportedEncodingException {
-		FileObject cacheFile = configuration.getCacheFolder().resolveFile(cacheFolder+"/"+cacheKey+".xml");
-		String content = null;
-		if(cacheFile.exists()) {
-			try(InputStream input = cacheFile.getContent().getInputStream()) {
-				content = IOUtils.toString(input, Constants.UTF_8);
-			}
-		} else {
-			logger.info("download goodreads infos for "+cacheFolder+"/"+cacheKey);
-			Page bookXml = client.getPage(query);
-			content = bookXml.getWebResponse().getContentAsString(Constants.UTF_8);
-			try(OutputStream output = cacheFile.getContent().getOutputStream()) {
-				IOUtils.write(content, output, Constants.UTF_8);
-			}
-		}
+	private static Document queryToJDOM(WebClient client, String query, GoodreadsConfiguration configuration, String cacheFolder, String cacheKey) {
+		String path = cacheFolder+"/"+cacheKey+".xml";
 		try {
+			FileObject cacheFile = configuration.getCacheFolder().resolveFile(path);
+			String content = null;
+			if(cacheFile.exists()) {
+				try(InputStream input = cacheFile.getContent().getInputStream()) {
+					content = IOUtils.toString(input, Constants.UTF_8);
+				}
+			} else {
+				logger.info("download goodreads infos for "+cacheFolder+"/"+cacheKey);
+				Page bookXml = client.getPage(query);
+				content = bookXml.getWebResponse().getContentAsString(Constants.UTF_8);
+				try(OutputStream output = cacheFile.getContent().getOutputStream()) {
+					IOUtils.write(content, output, Constants.UTF_8);
+				}
+			}
+			SAXBuilder builder = new SAXBuilder();
 			Document bookXmlData = builder.build(new ByteArrayInputStream(content.getBytes(Constants.UTF_8)));
 			return bookXmlData;
-		} catch(RuntimeException e) {
-			logger.log(Level.WARNING, "something failed while parsing "+cacheFile.getName().getPath());
-			throw e;
+		} catch(RuntimeException | JDOMException | IOException e) {
+			logger.log(Level.WARNING, "something failed while parsing "+path);
+			throw new UnableToParseXMLException(e);
 		}
 	}
 
@@ -175,7 +181,6 @@ public class BookImprover implements Callable<Void> {
 	 */
 	private static final String DEVELOPPER_KEY = "vzlZHr69We4utsOyP508tg";
 
-	private static SAXBuilder builder = new SAXBuilder();
 
 	private Book rawBook;
 	private WebClient client;
@@ -200,8 +205,7 @@ public class BookImprover implements Callable<Void> {
 		return null;
 	}
 
-	private void improveBook() throws IOException,
-			MalformedURLException, JDOMException {
+	private void improveBook() {
 		ImprovedBook returned = new ImprovedBook(rawBook);
 		String query = null;
 		try {
@@ -214,9 +218,13 @@ public class BookImprover implements Callable<Void> {
 			}
 			if(query!=null) {
 				logger.info("Improvving book "+returned);
-				returned = (ImprovedBook) destination.create(returned);
+				synchronized(destination) {
+					returned = (ImprovedBook) destination.create(returned);
+				}
 				String workId = workFinder.improveBook(client, query, returned, configuration);
-				returned = (ImprovedBook) destination.update(returned);
+				synchronized(destination) {
+					returned = (ImprovedBook) destination.update(returned);
+				}
 				serieFinder.improveBook(client, destination, workId, returned, configuration);
 			}
 		} catch(Throwable t) {

@@ -10,6 +10,7 @@ import org.apache.commons.vfs2.FileObject;
 import org.ndx.lifestream.rendering.OutputWriter;
 import org.ndx.lifestream.rendering.model.Input;
 import org.ndx.lifestream.rendering.output.AbstractOutputter;
+import org.ndx.lifestream.rendering.output.FileNameUtils;
 import org.stringtemplate.v4.ST;
 import org.stringtemplate.v4.STGroupDir;
 import org.stringtemplate.v4.STRawGroupDir;
@@ -38,7 +39,7 @@ public class JekyllOutputter extends AbstractOutputter implements OutputWriter {
 		Iterator<String> iterator = basepath.iterator();
 		try {
 			while(iterator.hasNext()) {
-				String filename = iterator.next();
+				String filename = FileNameUtils.simplify(iterator.next());
 				if(iterator.hasNext()) {
 					resultFile = resultFile.resolveFile(filename);
 				} else {

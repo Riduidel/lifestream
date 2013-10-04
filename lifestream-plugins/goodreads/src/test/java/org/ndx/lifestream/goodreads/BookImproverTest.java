@@ -22,22 +22,22 @@ public class BookImproverTest {
 	private static WebClient webClient;
 	private static GoodreadsConfiguration configuration;
 	private GaedoEnvironmentProvider goodreadsEnvironment;
-	
+
 	@BeforeClass public static void loadWebClient() throws FileSystemException {
 		webClient = WebClientFactory.getWebClient();
 		configuration = new GoodreadsConfiguration(VFSHelper.getRunningDir());
 	}
-	
+
 	@Before public void loadGaedo() throws FileSystemException {
 		goodreadsEnvironment = new GaedoEnvironmentProvider();
 	}
-	
+
 	@Test public void canImproveHunterAndHisPrey() throws Exception {
 		Book toImprove = new Book();
 		toImprove.setIsbn13("9782070448524");
 
 		FinderCrudService<BookInfos, BookInfosInformer> service = goodreadsEnvironment.getServiceFor(BookInfos.class, BookInfosInformer.class);
-		BookImprover tested = new BookImprover(webClient, toImprove, 
+		BookImprover tested = new BookImprover(webClient, toImprove,
 				service, configuration);
 		tested.call();
 		Collection<BookInfos> returned = CollectionUtils.asList(service.findAll());
@@ -54,7 +54,7 @@ public class BookImproverTest {
 		toImprove.setIsbn13("9782841722518");
 
 		FinderCrudService<BookInfos, BookInfosInformer> service = goodreadsEnvironment.getServiceFor(BookInfos.class, BookInfosInformer.class);
-		BookImprover tested = new BookImprover(webClient, toImprove, 
+		BookImprover tested = new BookImprover(webClient, toImprove,
 				service, configuration);
 		tested.call();
 		Collection<BookInfos> returned = CollectionUtils.asList(service.findAll());
@@ -66,4 +66,37 @@ public class BookImproverTest {
 		assertThat(improved.getSeries().size(), Is.is(2));
 	}
 
+	@Test public void canParserSerieDescriptionForBattleAngelAlita() throws Exception {
+		Book toImprove = new Book();
+		toImprove.setIsbn13("9781591162810");
+
+		FinderCrudService<BookInfos, BookInfosInformer> service = goodreadsEnvironment.getServiceFor(BookInfos.class, BookInfosInformer.class);
+		BookImprover tested = new BookImprover(webClient, toImprove,
+				service, configuration);
+		tested.call();
+		Collection<BookInfos> returned = CollectionUtils.asList(service.findAll());
+		assertThat(returned.size(), Is.is(2));
+		BookInfos book = returned.iterator().next();
+		assertThat(book, IsInstanceOf.instanceOf(ImprovedBook.class));
+		ImprovedBook improved = (ImprovedBook) book;
+		assertThat(improved.title, Is.is("Battle Angel - Alita Last Order: Angel of Protest (Vol. 4)"));
+		assertThat(improved.getSeries().size(), Is.is(1));
+	}
+
+	@Test public void canImproveoneOfVorkosiganSaga() throws Exception {
+		Book toImprove = new Book();
+		toImprove.setIsbn13("9782277239253");
+
+		FinderCrudService<BookInfos, BookInfosInformer> service = goodreadsEnvironment.getServiceFor(BookInfos.class, BookInfosInformer.class);
+		BookImprover tested = new BookImprover(webClient, toImprove,
+				service, configuration);
+		tested.call();
+		Collection<BookInfos> returned = CollectionUtils.asList(service.findAll());
+		assertThat(returned.size(), Is.is(3));
+		BookInfos book = returned.iterator().next();
+		assertThat(book, IsInstanceOf.instanceOf(ImprovedBook.class));
+		ImprovedBook improved = (ImprovedBook) book;
+		assertThat(improved.title, Is.is("Un clone encombrant"));
+		assertThat(improved.getSeries().size(), Is.is(2));
+	}
 }

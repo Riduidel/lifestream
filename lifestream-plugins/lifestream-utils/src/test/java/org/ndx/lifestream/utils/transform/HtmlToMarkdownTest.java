@@ -21,7 +21,14 @@ public class HtmlToMarkdownTest {
 		String text = HtmlToMarkdown.transformToValidXhtml("a simple text");
 		assertThat(text, Is.is(
 						"<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
-						+ "<html>\r\n<head/>\r\n<body>a simple text</body>\r\n</html>\r\n"));
+						+ "<html>\r\n<head/>\r\n<body>a simple text</body>\r\n</html>"));
+	}
+
+	@Test
+	public void transformEmptyTextToMarkdown() {
+		String sourceText = "";
+		String markdown = HtmlToMarkdown.transformHtml(sourceText);
+		assertThat(markdown, Is.is(sourceText));
 	}
 
 	@Test

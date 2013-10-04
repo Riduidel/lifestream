@@ -37,6 +37,10 @@ public class HtmlToMarkdown {
 
 	public static String transformToValidXhtml(String html) {
 		try {
+			if(html==null)
+				return html;
+			if(html.trim().length()==0)
+				return html;
 			HtmlCleaner cleaner = new HtmlCleaner();
 			CleanerProperties properties = cleaner.getProperties();
 			properties.setAdvancedXmlEscape(true);
@@ -54,7 +58,7 @@ public class HtmlToMarkdown {
 			DOMSource source = new DOMSource(output);
 			getXHTMLTransformer().transform(source, result);
 			String xmlString = sw.toString();
-			return xmlString;
+			return xmlString.trim();
 		} catch(Exception e) {
 			throw new UnableToTransformToValidXHTML(e);
 		}
