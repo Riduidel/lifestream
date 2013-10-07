@@ -40,7 +40,7 @@ public class HtmlToMarkdown {
 			if(html==null)
 				return html;
 			if(html.trim().length()==0)
-				return html;
+				return html.trim();
 			HtmlCleaner cleaner = new HtmlCleaner();
 			CleanerProperties properties = cleaner.getProperties();
 			properties.setAdvancedXmlEscape(true);

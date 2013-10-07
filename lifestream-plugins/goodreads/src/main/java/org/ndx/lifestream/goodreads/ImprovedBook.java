@@ -12,8 +12,7 @@ public class ImprovedBook extends Book {
 	String imageUrl;
 
 	public ImprovedBook(Book raw) {
-		this.additionnalAuthors = raw.additionnalAuthors;
-		this.author = raw.author;
+		this.authors.addAll(raw.authors);
 		this.average = raw.average;
 		this.initialPublication = raw.initialPublication;
 		this.setIsbn10(raw.getIsbn10());

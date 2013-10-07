@@ -10,6 +10,7 @@ import org.hamcrest.core.IsInstanceOf;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.ndx.lifestream.configuration.AbstractConfiguration;
 import org.ndx.lifestream.plugin.GaedoEnvironmentProvider;
 import org.ndx.lifestream.rendering.output.VFSHelper;
 import org.ndx.lifestream.utils.web.WebClientFactory;
@@ -20,7 +21,7 @@ import com.gargoylesoftware.htmlunit.WebClient;
 
 public class BookImproverTest {
 	private static WebClient webClient;
-	private static GoodreadsConfiguration configuration;
+	private static AbstractConfiguration configuration;
 	private GaedoEnvironmentProvider goodreadsEnvironment;
 
 	@BeforeClass public static void loadWebClient() throws FileSystemException {

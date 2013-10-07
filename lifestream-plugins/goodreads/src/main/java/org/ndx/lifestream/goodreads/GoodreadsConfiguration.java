@@ -7,22 +7,11 @@ import org.ndx.lifestream.configuration.AbstractConfiguration;
 import org.ndx.lifestream.configuration.Configuration;
 
 public class GoodreadsConfiguration extends AbstractConfiguration implements Configuration {
-	private FileObject baseFolder;
-	private FileObject cacheFolder;
-	
 	public GoodreadsConfiguration(FileObject baseFolder) {
-		this.baseFolder = baseFolder;
+		super(baseFolder, CACHE_BASE_PATH + "goodreads");
 	}
 
-	public FileObject getCacheFolder() {
-		if(cacheFolder==null) {
-			try {
-				cacheFolder = baseFolder.resolveFile("target/cache");
-			} catch (FileSystemException e) {
-				throw new UnableToConfigureGoodreadsException(e);
-			}
-		}
-		return cacheFolder;
+	public FileObject getCachedExport() throws FileSystemException {
+		return getCacheFolder().resolveFile("export.csv");
 	}
-
 }

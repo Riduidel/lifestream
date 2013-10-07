@@ -42,11 +42,11 @@
 							<rules>
 								<requireProperty>
 									<property>goodreads.mail</property>
-									<message>You must set a Goodreads user mail address for tests</message>
+									<message><![CDATA[You must set a Goodreads user mail address (&lt;goodreads.mail&gt;nicolas.delsaux@gmx.fr&lt;/goodreads.mail&gt;)for tests]]></message>
 								</requireProperty>
 								<requireProperty>
 									<property>goodreads.password</property>
-									<message>You must set a Goodreads user password for tests</message>
+									<message><![CDATA[You must set a Goodreads user password (&lt;goodreads.password&gt;guesst what ?&lt;/goodreads.password&gt;) for tests]]></message>
 								</requireProperty>
 							</rules>
 						</configuration>

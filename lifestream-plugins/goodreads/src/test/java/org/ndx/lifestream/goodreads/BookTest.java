@@ -34,7 +34,7 @@ public class BookTest {
 		Map<String, Integer> headersMap = tested.getColumnsNamesToColumnsIndices(headersArray);
 		assertThat(unreadBook.length, Is.is(headersArray.length));
 		Book unread = tested.createBook(headersMap, unreadBook);
-		assertThat(unread.getAuthors(), IsCollectionContaining.hasItems(moorcock, gilliam, kramer));
+		assertThat(unread.authors, IsCollectionContaining.hasItems(moorcock, gilliam, kramer));
 		assertThat(unread.tags.contains("to-read"), Is.is(true));
 	}
 

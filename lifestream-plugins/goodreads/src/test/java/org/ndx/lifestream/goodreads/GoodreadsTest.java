@@ -14,6 +14,7 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Ignore;
 import org.junit.Test;
+import org.ndx.lifestream.configuration.AbstractConfiguration;
 import org.ndx.lifestream.plugin.GaedoEnvironmentProvider;
 import org.ndx.lifestream.rendering.output.VFSHelper;
 import org.ndx.lifestream.utils.web.WebClientFactory;
@@ -52,12 +53,12 @@ public class GoodreadsTest {
 	@Test(expected=AuthenticationFailedException.class)
 	public void cantReadBooksWithInvalidCredentials() throws Exception {
 		tested.username = "an invalid login for test purpose, coming from https://github.com/Riduidel/lifestream";
-		tested.loadCSV(WebClientFactory.getWebClient());
+		tested.loadCSV(WebClientFactory.getWebClient(), configuration);
 	}
 
 	@Test @Ignore
 	public void canReadBooksAsListOfStringsFromServer() throws Exception {
-		List<String[]> rows = tested.loadCSV(WebClientFactory.getWebClient());
+		List<String[]> rows = tested.loadCSV(WebClientFactory.getWebClient(), configuration);
 		assertThat(rows.size(), IsNot.not(0));
 		// check all rows have the same number of columns, which is not 1
 		assertColumnCountIsOK(rows);

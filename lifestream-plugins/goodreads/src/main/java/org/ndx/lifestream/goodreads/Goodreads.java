@@ -2,14 +2,14 @@ package org.ndx.lifestream.goodreads;
 
 import java.io.CharArrayReader;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.net.MalformedURLException;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -21,11 +21,14 @@ import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.vfs2.FileObject;
+import org.ndx.lifestream.configuration.AbstractConfiguration;
 import org.ndx.lifestream.plugin.GaedoEnvironmentProvider;
 import org.ndx.lifestream.rendering.Mode;
 import org.ndx.lifestream.rendering.OutputWriter;
 import org.ndx.lifestream.rendering.model.InputLoader;
+import org.ndx.lifestream.utils.Constants;
 import org.ndx.lifestream.utils.transform.HtmlToMarkdown;
 
 import au.com.bytecode.opencsv.CSVReader;
@@ -68,7 +71,7 @@ public class Goodreads implements InputLoader<BookInfos, GoodreadsConfiguration>
 	 * @param csv source csv file
 	 * @return a collection of valid and usable books
 	 */
-	FinderCrudService<BookInfos, BookInfosInformer> buildBooksCollection(WebClient client, List<String[]> csv, GoodreadsConfiguration configuration) {
+	FinderCrudService<BookInfos, BookInfosInformer> buildBooksCollection(WebClient client, List<String[]> csv, AbstractConfiguration configuration) {
 		FinderCrudService<BookInfos, BookInfosInformer> service = goodreadsEnvironment.getServiceFor(BookInfos.class, BookInfosInformer.class);
 		ExecutorService executor = Executors.newFixedThreadPool(2);
 		Map<String, Integer> columns = getColumnsNamesToColumnsIndices(csv.get(0));
@@ -90,15 +93,19 @@ public class Goodreads implements InputLoader<BookInfos, GoodreadsConfiguration>
 		return service;
 	}
 
-	private Callable<Void> createBookImproverCallable(WebClient client, Book rawBook, FinderCrudService<BookInfos, BookInfosInformer> books, GoodreadsConfiguration configuration) {
+	private Callable<Void> createBookImproverCallable(WebClient client, Book rawBook, FinderCrudService<BookInfos, BookInfosInformer> books, AbstractConfiguration configuration) {
 		return new BookImprover(client, rawBook, books, configuration);
 	}
 
 	Book createBook(Map<String, Integer> columns, String[] line) {
 		Book book = new Book();
 		book.title = line[columns.get("Title")];
-		book.author = line[columns.get("Author")];
-		book.additionnalAuthors = line[columns.get("Additional Authors")];
+		book.authors.add(line[columns.get("Author")]);
+		String additionalAuthors = line[columns.get("Additional Authors")];
+		List<String> authorsAsList = Arrays.asList(additionalAuthors.split(","));
+		for(String author : authorsAsList) {
+			book.authors.add(author.trim());
+		}
 		book.setIsbn10(filterIsbn(line[columns.get("ISBN")]));
 		book.setIsbn13(filterIsbn(line[columns.get("ISBN13")]));
 		book.rating = new Integer(line[columns.get("My Rating")]);
@@ -120,9 +127,9 @@ public class Goodreads implements InputLoader<BookInfos, GoodreadsConfiguration>
 		book.notes = line[columns.get("Private Notes")];
 		book.owns = new Integer(line[columns.get("Owned Copies")]);
 		// adds special author tags
-		if(book.getAuthors().size()>0) {
-			for(String author : book.getAuthors()) {
-				book.tags.add("author:"+author.replace(' ', '_'));
+		if(book.authors.size()>0) {
+			for(String author : book.authors) {
+				book.tags.add("author:"+Book.authorAsTag(author));
 			}
 		}
 		// Add a tag for book score
@@ -170,13 +177,30 @@ public class Goodreads implements InputLoader<BookInfos, GoodreadsConfiguration>
 		return returned;
 	}
 
-	public List<String[]> loadCSV(WebClient client) {
+	public List<String[]> loadCSV(WebClient client, GoodreadsConfiguration configuration) {
 		try {
-			authenticateInGoodreads(client, username, password);
-			logger.log(Level.INFO, "logged in ... downloading csv now ...");
-			Page csv = client.getPage(GOODREADS_BASE+"review_porter/goodreads_export.csv");
 			// May cause memory error, but later ...
-			String csvContent = csv.getWebResponse().getContentAsString();
+			String csvContent = null;
+			FileObject cachedCSV = configuration.getCachedExport();
+			if(cachedCSV.exists()) {
+				long lastModifiedTime = cachedCSV.getContent().getLastModifiedTime();
+				// csv can be download each day (not many peop
+				if((System.currentTimeMillis()-lastModifiedTime)<24*60*60*1000) {
+					try(InputStream fileContent = cachedCSV.getContent().getInputStream()) {
+						csvContent = IOUtils.toString(fileContent, Constants.UTF_8);
+					}
+				}
+			}
+			if(csvContent==null) {
+				authenticateInGoodreads(client, username, password);
+				logger.log(Level.INFO, "logged in ... downloading csv now ...");
+				Page csv = client.getPage(GOODREADS_BASE+"review_porter/goodreads_export.csv");
+				// May cause memory error, but later ...
+				csvContent = csv.getWebResponse().getContentAsString();
+				try(OutputStream fileContent = cachedCSV.getContent().getOutputStream()) {
+					IOUtils.write(csvContent, fileContent, Constants.UTF_8);
+				}
+			}
 			return splitIntoRows(csvContent);
 		} catch(AuthenticationFailedException e) {
 			throw e;
@@ -240,7 +264,7 @@ public class Goodreads implements InputLoader<BookInfos, GoodreadsConfiguration>
 	public Collection<BookInfos> load(WebClient client, GoodreadsConfiguration configuration) {
 		try {
 			logger.info("loading CSV data");
-			List<String[]> rawData = loadCSV(client);
+			List<String[]> rawData = loadCSV(client, configuration);
 			logger.info("transforming that data into books");
 			FinderCrudService<BookInfos, BookInfosInformer> allBookInfos = buildBooksCollection(client, rawData, configuration);
 			return CollectionUtils.asList(allBookInfos.findAll());

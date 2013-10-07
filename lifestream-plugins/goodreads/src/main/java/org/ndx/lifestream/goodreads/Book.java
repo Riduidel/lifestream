@@ -7,7 +7,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 import java.util.LinkedList;
-import java.util.List;
 import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
@@ -28,8 +27,7 @@ public class Book extends BookInfos implements Input {
 		book = goodreadsGroup.getInstanceOf("book");
 	}
 	public String title;
-	public String author;
-	public String additionnalAuthors;
+	public Collection<String> authors = new ArrayList<>();
 	private String isbn10;
 	private String isbn13;
 	public Number rating;
@@ -55,14 +53,6 @@ public class Book extends BookInfos implements Input {
 		setId(UUID.randomUUID().toString());
 	}
 
-	public Collection<String> getAuthors() {
-		List<String> returned = new ArrayList<>();
-		returned.add(author);
-		for(String additional : additionnalAuthors.split(",")) {
-			returned.add(additional.trim());
-		}
-		return returned;
-	}
 	@Override
 	public String getText() {
 		return text;
@@ -171,6 +161,10 @@ public class Book extends BookInfos implements Input {
 		book.add("book", this);
 		text  = book.render();
 		book.remove("book");
+	}
+
+	public static String authorAsTag(String author) {
+		return author.replace(' ', '_');
 	}
 
 }

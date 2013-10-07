@@ -3,6 +3,7 @@ package org.ndx.lifestream.goodreads;
 import java.io.File;
 
 import org.apache.commons.vfs2.FileSystemException;
+import org.ndx.lifestream.configuration.AbstractConfiguration;
 import org.ndx.lifestream.plugin.AbstractLifestreamPlugin;
 import org.ndx.lifestream.rendering.model.InputLoader;
 import org.ndx.lifestream.rendering.output.VFSHelper;

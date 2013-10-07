@@ -24,6 +24,7 @@ import org.jdom2.filter.Filters;
 import org.jdom2.input.SAXBuilder;
 import org.jdom2.xpath.XPathExpression;
 import org.jdom2.xpath.XPathFactory;
+import org.ndx.lifestream.configuration.AbstractConfiguration;
 import org.ndx.lifestream.utils.Constants;
 import org.ndx.lifestream.utils.transform.HtmlToMarkdown;
 
@@ -58,14 +59,17 @@ public class BookImprover implements Callable<Void> {
 		 * @throws JDOMException
 		 * @throws UnsupportedEncodingException
 		 */
-		public String improveBook(WebClient client, String query, ImprovedBook returned, GoodreadsConfiguration configuration) {
+		public String improveBook(WebClient client, String query, ImprovedBook returned, AbstractConfiguration configuration) {
 			Document bookXmlData = queryToJDOM(client, QUERY+query, configuration, "books", query);
 			Element imageUrlText = xpathForImageUrl.evaluateFirst(bookXmlData);
 			if(imageUrlText!=null)
 				returned.imageUrl = imageUrlText.getText();
-			Element titleText = xpathForTitle.evaluateFirst(bookXmlData);
-			if(titleText!=null)
-				returned.title = titleText.getText();
+			// I used to replace title, but it's in fact a bad idea, because localized title is replaced by english one
+			if(returned.title==null) {
+				Element titleText = xpathForTitle.evaluateFirst(bookXmlData);
+				if(titleText!=null)
+					returned.title = titleText.getText();
+			}
 			return xpathForWorkId.evaluateFirst(bookXmlData).getText();
 		}
 	}
@@ -96,7 +100,7 @@ public class BookImprover implements Callable<Void> {
 		public Collection<Serie> improveBook(WebClient client,
 				FinderCrudService<BookInfos, BookInfosInformer> destination,
 				String workId,
-				ImprovedBook source, GoodreadsConfiguration configuration) {
+				ImprovedBook source, AbstractConfiguration configuration) {
 			Document bookXmlData = queryToJDOM(client, QUERY+workId, configuration, "series", workId);
 			Collection<Serie> returned = new ArrayList<>();
 
@@ -147,7 +151,7 @@ public class BookImprover implements Callable<Void> {
 
 	}
 
-	private static Document queryToJDOM(WebClient client, String query, GoodreadsConfiguration configuration, String cacheFolder, String cacheKey) {
+	private static Document queryToJDOM(WebClient client, String query, AbstractConfiguration configuration, String cacheFolder, String cacheKey) {
 		String path = cacheFolder+"/"+cacheKey+".xml";
 		try {
 			FileObject cacheFile = configuration.getCacheFolder().resolveFile(path);
@@ -187,12 +191,12 @@ public class BookImprover implements Callable<Void> {
 
 	private FinderCrudService<BookInfos, BookInfosInformer> destination;
 
-	private GoodreadsConfiguration configuration;
+	private AbstractConfiguration configuration;
 
 	public BookImprover(WebClient client,
 			Book rawBook,
 			FinderCrudService<BookInfos, BookInfosInformer> books,
-			GoodreadsConfiguration configuration) {
+			AbstractConfiguration configuration) {
 		this.client = client;
 		this.rawBook = rawBook;
 		this.destination = books;
