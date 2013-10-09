@@ -56,9 +56,6 @@ public class Goodreads implements InputLoader<BookInfos, GoodreadsConfiguration>
 
 	private GaedoEnvironmentProvider goodreadsEnvironment = new GaedoEnvironmentProvider();
 
-	public String username;
-	public String password;
-	public String outputFolder;
 	public String xsl = null;
 
 	public static final String GOODREADS_BASE = "http://www.goodreads.com/";
@@ -192,7 +189,7 @@ public class Goodreads implements InputLoader<BookInfos, GoodreadsConfiguration>
 				}
 			}
 			if(csvContent==null) {
-				authenticateInGoodreads(client, username, password);
+				authenticateInGoodreads(client, configuration.getMail(), configuration.getPassword());
 				logger.log(Level.INFO, "logged in ... downloading csv now ...");
 				Page csv = client.getPage(GOODREADS_BASE+"review_porter/goodreads_export.csv");
 				// May cause memory error, but later ...

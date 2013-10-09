@@ -12,6 +12,7 @@ import org.hamcrest.core.IsNull;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
+import org.ndx.lifestream.rendering.output.VFSHelper;
 import org.ndx.lifestream.utils.web.WebClientFactory;
 
 public class WordpressTest {
@@ -19,6 +20,7 @@ public class WordpressTest {
 	private String login;
 	private String password;
 	private Wordpress tested;
+	private WordpressConfiguration configuration;
 
 	@Before
 	public void loadCredentials() {
@@ -29,15 +31,14 @@ public class WordpressTest {
 		site = System.getProperty("wordpress.address");
 		assertThat(site, IsNull.notNullValue());
 
+		configuration = new WordpressConfiguration(VFSHelper.getRunningDir()).withLogin(login).withPassword(password).withSite(site);
+
 		tested = new Wordpress();
-		tested.login = login;
-		tested.password = password;
-		tested.site = site;
 	}
 
 	@Test @Ignore
 	public void canLoadXMLData() {
-		String xml = tested.loadXML(WebClientFactory.getWebClient());
+		String xml = tested.loadXML(WebClientFactory.getWebClient(), configuration);
 		assertThat(xml, IsNull.notNullValue());
 	}
 

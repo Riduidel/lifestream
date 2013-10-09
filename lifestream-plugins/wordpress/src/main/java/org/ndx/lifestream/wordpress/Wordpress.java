@@ -35,13 +35,9 @@ import com.sun.syndication.io.XmlReader;
 public class Wordpress implements InputLoader<Post, WordpressConfiguration> {
 	private static Logger logger = Logger.getLogger(Wordpress.class.getName());
 
-	public String login;
-	public String password;
-	public String site;
-
 	@Override
 	public Collection<Post> load(WebClient client, WordpressConfiguration configuration) {
-		String text = loadXML(client);
+		String text = loadXML(client, configuration);
 		ByteArrayInputStream stream;
 		try {
 			stream = new ByteArrayInputStream(text.getBytes(Constants.UTF_8));
@@ -63,29 +59,29 @@ public class Wordpress implements InputLoader<Post, WordpressConfiguration> {
 		OutputWriter writer = mode.getWriter();
 		int index = 1;
 		int size = filtered.size();
-		for (Post book : filtered) {
+		for (Post post : filtered) {
 			if (logger.isLoggable(Level.INFO)) {
-				logger.log(Level.INFO, "writing post "+(index++)+"/"+size+" : "+book);
+				logger.log(Level.INFO, "writing post "+(index++)+"/"+size+" : "+post);
 			}
-			writer.write(book, outputRoot);
+			writer.write(post, outputRoot);
 		}
 	}
 
-	public String loadXML(WebClient client) {
+	public String loadXML(WebClient client, WordpressConfiguration configuration) {
 		try {
-			String siteLogin = site + "wp-login.php";
+			String siteLogin = configuration.getSiteLoginPage();
 			HtmlPage signIn = client.getPage(siteLogin);
 			HtmlForm signInForm = signIn.getFormByName("loginform");
-			logger.log(Level.INFO, "logging in wordpress as " + login);
+			logger.log(Level.INFO, "logging in wordpress as " + configuration.getLogin());
 			((HtmlInput) signInForm.getElementById("user_login"))
-					.setValueAttribute(login);
+					.setValueAttribute(configuration.getLogin());
 			((HtmlInput) signInForm.getElementById("user_pass"))
-					.setValueAttribute(password);
+					.setValueAttribute(configuration.getPassword());
 			HtmlPage signedIn = signInForm.getElementById("wp-submit").click();
 			String authenticationFailedMessage = "unable to sign in Wordpress using mail "
-					+ login
+					+ configuration.getLogin()
 					+ " and password "
-					+ password
+					+ configuration.getPassword()
 					+ ". can you check it by opening a browser at "
 					+ siteLogin
 					+ " ?";
@@ -94,8 +90,7 @@ public class Wordpress implements InputLoader<Post, WordpressConfiguration> {
 					throw new AuthenticationFailedException(
 							authenticationFailedMessage);
 				logger.log(Level.INFO, "logged in ... downloading xml now ...");
-				HtmlPage xmlExportPage = client.getPage(site
-						+ "wp-admin/export.php?type=export");
+				HtmlPage xmlExportPage = client.getPage(configuration.getSiteExportPage());
 				Page xml = ((HtmlInput) xmlExportPage.getElementById("submit"))
 						.click();
 				// May cause memory error, but later ...

@@ -27,8 +27,7 @@ import static org.junit.Assert.assertThat;
 public class GoodreadsTest {
 	private static String mail;
 	private static String password;
-	private static GoodreadsConfiguration configuration;
-	private static GaedoEnvironmentProvider goodreadsEnvironment;
+	private GoodreadsConfiguration configuration;
 
 	@BeforeClass
 	public static void loadUserInfos() throws FileSystemException {
@@ -36,23 +35,19 @@ public class GoodreadsTest {
 		assertThat(mail, IsNull.notNullValue());
 		password = System.getProperty("goodreads.password");
 		assertThat(password, IsNull.notNullValue());
-		configuration = new GoodreadsConfiguration(VFSHelper.getRunningDir());
-		goodreadsEnvironment = new GaedoEnvironmentProvider();
 	}
 
 	private Goodreads tested;
 
 	@Before
 	public void loadCredentials() {
-
+		configuration = new GoodreadsConfiguration(VFSHelper.getRunningDir()).withUsername(mail).withPassword(password);
 		tested = new Goodreads();
-		tested.username = mail;
-		tested.password = password;
 	}
 
 	@Test(expected=AuthenticationFailedException.class)
 	public void cantReadBooksWithInvalidCredentials() throws Exception {
-		tested.username = "an invalid login for test purpose, coming from https://github.com/Riduidel/lifestream";
+		configuration.setMail("an invalid login for test purpose, coming from https://github.com/Riduidel/lifestream");
 		tested.loadCSV(WebClientFactory.getWebClient(), configuration);
 	}
 

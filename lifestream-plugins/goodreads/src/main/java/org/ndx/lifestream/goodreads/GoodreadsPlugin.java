@@ -51,8 +51,6 @@ public class GoodreadsPlugin extends AbstractLifestreamPlugin<BookInfos, Goodrea
 	@Override
 	protected InputLoader<BookInfos, GoodreadsConfiguration> loadInputLoader() {
 		Goodreads goodreadsEngine = new Goodreads();
-		goodreadsEngine.username = username;
-		goodreadsEngine.password = password;
 		return goodreadsEngine;
 	}
 
@@ -68,6 +66,6 @@ public class GoodreadsPlugin extends AbstractLifestreamPlugin<BookInfos, Goodrea
 
 	@Override
 	protected GoodreadsConfiguration createConfiguration() {
-		return new GoodreadsConfiguration(VFSHelper.getRunningDir());
+		return new GoodreadsConfiguration(VFSHelper.getRunningDir()).withUsername(username).withPassword(password);
 	}
 }

@@ -7,6 +7,7 @@ import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.ndx.lifestream.plugin.AbstractLifestreamPlugin;
 import org.ndx.lifestream.rendering.model.InputLoader;
+import org.ndx.lifestream.rendering.output.VFSHelper;
 
 /**
  * 
@@ -58,9 +59,6 @@ public class WordpressPlugin extends AbstractLifestreamPlugin<Post, WordpressCon
 	@Override
 	protected InputLoader<Post, WordpressConfiguration> loadInputLoader() {
 		Wordpress loader = new Wordpress();
-		loader.login = username;
-		loader.password = password;
-		loader.site = site;
 		return loader;
 	}
 
@@ -76,7 +74,7 @@ public class WordpressPlugin extends AbstractLifestreamPlugin<Post, WordpressCon
 
 	@Override
 	protected WordpressConfiguration createConfiguration() {
-		return new WordpressConfiguration();
+		return new WordpressConfiguration(VFSHelper.getRunningDir()).withLogin(username).withPassword(password).withSite(site);
 	}
 
 }
