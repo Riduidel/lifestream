@@ -8,21 +8,29 @@ import javax.xml.transform.TransformerConfigurationException;
 
 import org.ndx.lifestream.utils.Constants;
 
+/**
+ * Weird how Java classes are bad at multi-threading.
+ * To avoid that, the {@link Transformer} is kept in a {@link ThreadLocal} object.
+ * @author ndx
+ *
+ */
 public class XHTMLTransformerLazyLoader {
-	private static Transformer xhtmlTransformer;
-
-	public static Transformer getXHTMLTransformer() {
-		if(xhtmlTransformer==null) {
-			// set up a transformer
+	private static ThreadLocal<Transformer> xhtmlTransformer = new ThreadLocal<Transformer>() {
+		@Override
+		protected Transformer initialValue() {
 			try {
-				xhtmlTransformer = getFactory().newTransformer();
+				Transformer xhtmlTransformer = getFactory().newTransformer();
 				xhtmlTransformer.setOutputProperty(OutputKeys.METHOD, "xml");
 				xhtmlTransformer.setOutputProperty(OutputKeys.INDENT, "yes");
 				xhtmlTransformer.setOutputProperty(OutputKeys.ENCODING, Constants.UTF_8);
-			} catch (TransformerConfigurationException e) {
-				throw new UnableToTransformToValidXHTML(e);
+				return xhtmlTransformer;
+			} catch(TransformerConfigurationException e) {
+				throw new UnableToConfigureTransformerException(e);
 			}
 		}
-		return xhtmlTransformer;
+	};
+
+	public static Transformer getXHTMLTransformer() {
+		return xhtmlTransformer.get();
 	}
 }
