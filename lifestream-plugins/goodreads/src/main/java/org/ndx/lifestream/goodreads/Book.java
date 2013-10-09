@@ -11,6 +11,8 @@ import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
 import java.util.UUID;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import org.ndx.lifestream.rendering.OutputWriter;
 import org.ndx.lifestream.rendering.model.Input;
@@ -20,11 +22,19 @@ import org.stringtemplate.v4.ST;
  * A class extracting content from the infamous Expando to a more "object" notion
  */
 public class Book extends BookInfos implements Input {
+	private static final Logger logger = Logger.getLogger(Book.class.getName());
 	private static DateFormat READ_FORMATTER = new SimpleDateFormat("yyyy/MM/dd");
 	private static ST book;
 
 	static {
-		book = goodreadsGroup.getInstanceOf("book");
+		try {
+			book = goodreadsGroup.getInstanceOf("book");
+		} catch(RuntimeException e) {
+			if (logger.isLoggable(Level.SEVERE)) {
+				logger.log(Level.SEVERE, "unable to load standard book template", e);
+			}
+			throw e;
+		}
 	}
 	public String title;
 	public Collection<String> authors = new ArrayList<>();
@@ -60,6 +70,7 @@ public class Book extends BookInfos implements Input {
 	@Override
 	public Collection<String> getExpectedPath() {
 		Collection<String> returned = new LinkedList<>();
+		returned.add("goodreads");
 		returned.add("books");
 		if(isbn13!=null)
 			returned.add(isbn13);
@@ -158,9 +169,21 @@ public class Book extends BookInfos implements Input {
 	 */
 	@Override
 	public void accept(OutputWriter writer) {
+		// prepare book by generating some "smart" (or not) links
+		if(series.size()>0)
+			book.add("series", generateSeriesLinks(writer));
 		book.add("book", this);
 		text  = book.render();
 		book.remove("book");
+	}
+
+
+	private Collection<String> generateSeriesLinks(OutputWriter writer) {
+		Collection<String> returned = new LinkedList<>();
+		for(Serie s : series) {
+			returned.add(writer.link(this, s, s.title));
+		}
+		return returned;
 	}
 
 	public static String authorAsTag(String author) {
