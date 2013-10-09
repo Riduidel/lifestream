@@ -2,9 +2,11 @@ package org.ndx.lifestream.rendering.output.jekyll;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 import java.util.Iterator;
+import java.util.List;
 
 import org.apache.commons.vfs2.FileObject;
 import org.ndx.lifestream.rendering.OutputWriter;
@@ -14,6 +16,8 @@ import org.ndx.lifestream.rendering.output.FileNameUtils;
 import org.stringtemplate.v4.ST;
 import org.stringtemplate.v4.STGroupDir;
 import org.stringtemplate.v4.STRawGroupDir;
+
+import com.google.common.base.Joiner;
 
 /**
  * Notice here file name is to be manipulated
@@ -33,25 +37,38 @@ public class JekyllOutputter extends AbstractOutputter implements OutputWriter {
 
 	@Override
 	public void write(Input input, FileObject output) {
-		Date writeDate = input.getWriteDate();
-		FileObject resultFile = output;
-		Collection<String> basepath = input.getExpectedPath();
-		Iterator<String> iterator = basepath.iterator();
+		Collection<String> realPath = toRealPath(input);
 		try {
-			while(iterator.hasNext()) {
-				String filename = FileNameUtils.simplify(iterator.next());
-				if(iterator.hasNext()) {
-					resultFile = resultFile.resolveFile(filename);
-				} else {
-					filename = (writeDate==null ? "2001-01-01" : FORMATTER.format(writeDate))+"-"+filename.replace('/', '_')+".md";
-					resultFile = resultFile.resolveFile(filename);
-					input.accept(this);
-					writeFile(resultFile, render(input));
-				}
+			FileObject resultFile = output;
+			for(String pathElement : realPath) {
+				resultFile = resultFile.resolveFile(pathElement);
 			}
+			input.accept(this);
+			writeFile(resultFile, render(input));
 		} catch (Exception e) {
-			throw new JekykllException("unable to output render for input "+basepath, e);
+			throw new JekykllException("unable to output render for input "+Joiner.on('/').join(realPath), e);
 		}
+	}
+
+	/**
+	 * Create a real path from the expected path that {@link Input} can return
+	 * @param input
+	 * @return the real path used by this rendering engine
+	 */
+	protected List<String> toRealPath(Input input) {
+		Date writeDate = input.getWriteDate();
+		List<String> returned = new ArrayList<>();
+		Iterator<String> iterator = input.getExpectedPath().iterator();
+		while(iterator.hasNext()) {
+			String filename = FileNameUtils.simplify(iterator.next());
+			if(iterator.hasNext()) {
+				returned.add(filename);
+			} else {
+				filename = (writeDate==null ? "2001-01-01" : FORMATTER.format(writeDate))+"-"+filename.replace('/', '_')+".md";
+				returned.add(filename);
+			}
+		}
+		return returned;
 	}
 
 	private String render(Input input) {
@@ -59,6 +76,11 @@ public class JekyllOutputter extends AbstractOutputter implements OutputWriter {
 		String resultText  = jekyll.render();
 		jekyll.remove("input");
 		return resultText;
+	}
+
+	@Override
+	public String link(Input from, Input to, String text) {
+		return markdownLink(from, to, text);
 	}
 
 }

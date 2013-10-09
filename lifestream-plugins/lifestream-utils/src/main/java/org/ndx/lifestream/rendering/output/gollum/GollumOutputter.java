@@ -1,7 +1,9 @@
 package org.ndx.lifestream.rendering.output.gollum;
 
 import java.io.OutputStream;
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -24,7 +26,7 @@ import com.google.common.base.Joiner;
  */
 public class GollumOutputter extends AbstractOutputter implements OutputWriter {
 	private static final Logger logger = Logger.getLogger(GollumOutputter.class.getName());
-	
+
 	private static final Joiner PATH_JOINER = Joiner.on('/').skipNulls();
 
 	/**
@@ -35,14 +37,14 @@ public class GollumOutputter extends AbstractOutputter implements OutputWriter {
 	@Override
 	public void write(Input input, FileObject output) {
 		FileObject resultFile;
-		Collection<String> expectedPath = input.getExpectedPath();
+		Collection<String> usedPath = toRealPath(input);
 		try {
 			resultFile = output.resolveFile(PATH_JOINER.join(
-					FileNameUtils.simplify(expectedPath))+".md");
+					FileNameUtils.simplify(usedPath))+".md");
 			input.accept(this);
 			writeFile(resultFile, render(input));
 		} catch (Exception e) {
-			throw new GollumException("unable to output render for input "+expectedPath, e);
+			throw new GollumException("unable to output render for input "+usedPath, e);
 		}
 	}
 
@@ -53,4 +55,8 @@ public class GollumOutputter extends AbstractOutputter implements OutputWriter {
 		return resultText;
 	}
 
+	@Override
+	public String link(Input from, Input to, String text) {
+		return markdownLink(from, to, text);
+	}
 }

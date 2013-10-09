@@ -12,4 +12,13 @@ public interface OutputWriter {
 
 	void write(Input input, FileObject output);
 
+	/**
+	 * Generate the text of a link (using the current rendering engine) from the source input to the target input
+	 * @param from source input
+	 * @param to target input
+	 * @param text link text
+	 * @return a text that can be freely added to rendered output
+	 */
+	String link(Input from, Input to, String text);
+
 }
