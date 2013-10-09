@@ -17,6 +17,7 @@ import java.util.logging.Logger;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.vfs2.FileObject;
+import org.apache.commons.vfs2.FileSystemException;
 import org.jdom2.Document;
 import org.jdom2.Element;
 import org.jdom2.JDOMException;
@@ -55,11 +56,12 @@ public class BookImprover implements Callable<Void> {
 		 * @param returned
 		 * @param configuration
 		 * @return first work id, which will be used to grab serie
+		 * @throws FileSystemException
 		 * @throws IOException
 		 * @throws JDOMException
 		 * @throws UnsupportedEncodingException
 		 */
-		public String improveBook(WebClient client, String query, ImprovedBook returned, AbstractConfiguration configuration) {
+		public String improveBook(WebClient client, String query, ImprovedBook returned, AbstractConfiguration configuration) throws FileSystemException {
 			Document bookXmlData = queryToJDOM(client, QUERY+query, configuration, "books", query);
 			Element imageUrlText = xpathForImageUrl.evaluateFirst(bookXmlData);
 			if(imageUrlText!=null)
@@ -70,7 +72,10 @@ public class BookImprover implements Callable<Void> {
 				if(titleText!=null)
 					returned.title = titleText.getText();
 			}
-			return xpathForWorkId.evaluateFirst(bookXmlData).getText();
+			Element workId = xpathForWorkId.evaluateFirst(bookXmlData);
+			if(workId==null)
+				throw new UnableToLocateWorkIdException("we were unable to find work id for query "+query+"\nA cache file should be available at "+getCachedFileForKey(configuration, "books", query));
+			return workId.getText();
 		}
 	}
 
@@ -152,9 +157,8 @@ public class BookImprover implements Callable<Void> {
 	}
 
 	private static Document queryToJDOM(WebClient client, String query, AbstractConfiguration configuration, String cacheFolder, String cacheKey) {
-		String path = cacheFolder+"/"+cacheKey+".xml";
 		try {
-			FileObject cacheFile = configuration.getCacheFolder().resolveFile(path);
+			FileObject cacheFile = getCachedFileForKey(configuration, cacheFolder, cacheKey);
 			String content = null;
 			if(cacheFile.exists()) {
 				try(InputStream input = cacheFile.getContent().getInputStream()) {
@@ -172,9 +176,17 @@ public class BookImprover implements Callable<Void> {
 			Document bookXmlData = builder.build(new ByteArrayInputStream(content.getBytes(Constants.UTF_8)));
 			return bookXmlData;
 		} catch(RuntimeException | JDOMException | IOException e) {
-			logger.log(Level.WARNING, "something failed while parsing "+path);
+			logger.log(Level.WARNING, "something failed while parsing "+getCachePath(cacheFolder, cacheKey));
 			throw new UnableToParseXMLException(e);
 		}
+	}
+
+	private static FileObject getCachedFileForKey(AbstractConfiguration configuration, String cacheFolder, String cacheKey) throws FileSystemException {
+		return configuration.getCacheFolder().resolveFile(getCachePath(cacheFolder, cacheKey));
+	}
+
+	private static String getCachePath(String cacheFolder, String cacheKey) {
+		return cacheFolder+"/"+cacheKey+".xml";
 	}
 
 	private FindWork workFinder = new FindWork();
@@ -231,6 +243,12 @@ public class BookImprover implements Callable<Void> {
 				}
 				serieFinder.improveBook(client, destination, workId, returned, configuration);
 			}
+		} catch(RuntimeException e) {
+			logger.log(Level.WARNING, "something failed while improving book "+returned, e);
+			throw e;
+		} catch(Exception e) {
+			logger.log(Level.WARNING, "something failed while improving book "+returned, e);
+			throw new GoodreadsException("something failed while improving book "+returned, e);
 		} catch(Throwable t) {
 			logger.log(Level.WARNING, "something failed while improving book "+returned, t);
 			throw t;
