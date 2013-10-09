@@ -30,6 +30,10 @@ public class HtmlToMarkdown {
 	 * @return markdown, what else !
 	 */
 	public static String transformHtml(String html) {
+		if(html==null)
+			return html;
+		if(html.trim().length()==0)
+			return html.trim();
 		String validXhtml = transformToValidXhtml(html);
 		String markdown =  transformValidXhtml(validXhtml);
 		return StringEscapeUtils.unescapeHtml4(markdown);
@@ -76,6 +80,10 @@ public class HtmlToMarkdown {
 	 */
 	public static String transformValidXhtml(String sourceXhtml) {
 		try {
+			if(sourceXhtml==null)
+				return sourceXhtml;
+			if(sourceXhtml.trim().length()==0)
+				return sourceXhtml.trim();
 			Source xmlSource = new StreamSource(new StringReader(sourceXhtml));
 	        StringWriter result = new StringWriter();
 	        getMarkdownTransformer().transform(xmlSource, new StreamResult(result));
