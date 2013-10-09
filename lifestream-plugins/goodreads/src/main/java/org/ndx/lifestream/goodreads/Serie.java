@@ -12,7 +12,7 @@ import org.stringtemplate.v4.ST;
 
 public class Serie extends BookInfos implements Input, Comparable<Serie> {
 	private static ST serie;
-	
+
 	static {
 		serie = goodreadsGroup.getInstanceOf("serie");
 	}
@@ -20,7 +20,7 @@ public class Serie extends BookInfos implements Input, Comparable<Serie> {
 	private Date firstBookDate = new Date();
 	public String title;
 	public String description;
-	
+
 	private Map<Book, String> books = new HashMap<>();
 	private String text;
 
@@ -31,7 +31,7 @@ public class Serie extends BookInfos implements Input, Comparable<Serie> {
 
 	@Override
 	public Collection<String> getExpectedPath() {
-		return Arrays.asList("series", title.replace(' ', '_'));
+		return Arrays.asList("goodreads", "series", title.replace(' ', '_'));
 	}
 
 	@Override
@@ -76,7 +76,7 @@ public class Serie extends BookInfos implements Input, Comparable<Serie> {
 
 
 	/**
-	 * Will prepare rendered text by adding text from goodreads, 
+	 * Will prepare rendered text by adding text from goodreads,
 	 * and infos about container series
 	 */
 	@Override

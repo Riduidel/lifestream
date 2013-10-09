@@ -11,8 +11,8 @@
 	<description>My very own lifestream, using all provided modules to create a valid output</description>
 	<properties>
 		<site.dir>${project.basedir}/src/site</site.dir>
-		<goodreads.dir>${site.dir}/goodreads</goodreads.dir>
-		<wordpress.dir>${site.dir}/wordpress</wordpress.dir>
+		<goodreads.dir>${site.dir}/</goodreads.dir>
+		<wordpress.dir>${site.dir}/</wordpress.dir>
 		<wordpress.site>https://riduidel.wordpress.com/</wordpress.site>
 		<output.mode>jekyll</output.mode>
 	</properties>

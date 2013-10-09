@@ -17,10 +17,10 @@ public class Post implements Input {
 	Collection<String> tags;
 	String text;
 	Date writeDate;
-	
+
 	String basename;
 	Type type;
-	
+
 	@Override
 	public String getText() {
 		return text;
@@ -28,7 +28,7 @@ public class Post implements Input {
 
 	@Override
 	public Collection<String> getExpectedPath() {
-		return Arrays.asList(basename);
+		return Arrays.asList("wordpress", basename);
 	}
 
 	@Override
@@ -51,14 +51,14 @@ public class Post implements Input {
 		return basename;
 	}
 
-	/** 
+	/**
 	 * prepare links
 	 */
 	@Override
 	public void accept(OutputWriter writer) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
-	
+
 }

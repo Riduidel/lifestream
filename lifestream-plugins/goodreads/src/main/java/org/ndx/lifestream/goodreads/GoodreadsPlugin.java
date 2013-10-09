@@ -34,10 +34,11 @@ public class GoodreadsPlugin extends AbstractLifestreamPlugin<BookInfos, Goodrea
 	protected String password;
 
 	/**
-	 * Output file where those classes will be written
+	 * Output file where those markdown generated files will be written.
+	 * Notice the goodreads subfolder is automatically added to each file, so no need to add it by hand !
 	 *
 	 * @parameter
-	 *            default-value="${project.basedir}/src/main/site/markdown/goodreads"
+	 *            default-value="${project.basedir}/src/main/site/markdown/"
 	 */
 	protected File output;
 
