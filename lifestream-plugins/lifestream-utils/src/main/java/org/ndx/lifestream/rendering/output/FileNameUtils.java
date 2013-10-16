@@ -20,7 +20,7 @@ public class FileNameUtils {
 		name = name
 				.replaceAll("[\\n\\x0B\\f\\r]", "")
 				.replace('\t', ' ')
-				.replaceAll("[*\"']", "_");
+				.replaceAll("[*\"':]", "_");
 		// Thanks @glaforge : http://glaforge.appspot.com/article/how-to-remove-accents-from-a-string
 		return name;
 	}
