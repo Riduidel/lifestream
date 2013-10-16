@@ -3,6 +3,7 @@ package org.ndx.lifestream.wordpress;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Date;
+import java.util.LinkedList;
 
 import org.ndx.lifestream.rendering.OutputWriter;
 import org.ndx.lifestream.rendering.model.Input;
@@ -28,7 +29,10 @@ public class Post implements Input {
 
 	@Override
 	public Collection<String> getExpectedPath() {
-		return Arrays.asList("wordpress", basename);
+		Collection<String> returned = new LinkedList<>();
+		returned.add("wordpress");
+		returned.addAll(Arrays.asList(basename.split("/")));
+		return returned;
 	}
 
 	@Override
