@@ -2,6 +2,7 @@ package org.ndx.lifestream.rendering;
 
 import org.ndx.lifestream.rendering.output.gollum.GollumOutputter;
 import org.ndx.lifestream.rendering.output.gumdrop.GumdropOutputter;
+import org.ndx.lifestream.rendering.output.jbake.JBakeOutputter;
 import org.ndx.lifestream.rendering.output.jekyll.JekyllOutputter;
 
 /**
@@ -25,7 +26,15 @@ public enum Mode {
 	/**
 	 * http://jekyllrb.com/docs/posts/
 	 */
-	jekyll;
+	jekyll,
+	/**
+	 * http://jbake.org/
+	 */
+	jbake, 
+	/**
+	 * http://www.opoopress.com/en/
+	 */
+	opoopress;
 
 	/**
 	 * Get writer for the given output file
@@ -41,6 +50,10 @@ public enum Mode {
 			return new GumdropOutputter();
 		case jekyll:
 			return new JekyllOutputter();
+		case jbake:
+			return new JBakeOutputter();
+		case opoopress:
+			return new OpooPressOutputter();
 		default:
 			throw new UnsupportedOperationException("output using \""+name()+"\" has not been implemented");
 		}
