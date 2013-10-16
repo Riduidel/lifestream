@@ -56,7 +56,7 @@
 				<artifactId>wordpress</artifactId>
 				<executions>
 					<execution>
-						<id>download goodreads</id>
+						<id>download wordpress</id>
 						<goals>
 							<goal>wordpress</goal>
 						</goals>
