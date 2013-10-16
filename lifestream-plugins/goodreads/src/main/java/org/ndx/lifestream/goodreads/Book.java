@@ -6,7 +6,9 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.LinkedList;
+import java.util.Map;
 import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
@@ -16,7 +18,10 @@ import java.util.logging.Logger;
 
 import org.ndx.lifestream.rendering.OutputWriter;
 import org.ndx.lifestream.rendering.model.Input;
+import org.ndx.lifestream.rendering.output.StringTemplateUtils;
 import org.stringtemplate.v4.ST;
+
+import com.google.common.collect.Maps;
 
 /**
  * A class extracting content from the infamous Expando to a more "object" notion
@@ -58,6 +63,9 @@ public class Book extends BookInfos implements Input {
 	 * written text that will be filled using {@link #accept(OutputWriter)}
 	 */
 	protected String text;
+
+	public String imageUrl;
+
 
 	public Book() {
 		setId(UUID.randomUUID().toString());
@@ -136,7 +144,7 @@ public class Book extends BookInfos implements Input {
 		return isbn13;
 	}
 	public void addSerie(Serie serie) {
-		series .add(serie);
+		series.add(serie);
 	}
 
 	public String getIsbn10() {
@@ -169,14 +177,11 @@ public class Book extends BookInfos implements Input {
 	 */
 	@Override
 	public void accept(OutputWriter writer) {
-		// prepare book by generating some "smart" (or not) links
-		if(series.size()>0)
-			book.add("series", generateSeriesLinks(writer));
-		book.add("book", this);
-		text  = book.render();
-		book.remove("book");
+		Map<String, Object> parameters = new HashMap<>();
+		parameters.put("series", generateSeriesLinks(writer));
+		parameters.put("book", this);
+		text = StringTemplateUtils.applyParametersToTemplate(book, parameters);
 	}
-
 
 	private Collection<String> generateSeriesLinks(OutputWriter writer) {
 		Collection<String> returned = new LinkedList<>();

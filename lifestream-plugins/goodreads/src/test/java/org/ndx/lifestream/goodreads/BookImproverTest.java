@@ -44,8 +44,8 @@ public class BookImproverTest {
 		Collection<BookInfos> returned = CollectionUtils.asList(service.findAll());
 		assertThat(returned.size(), Is.is(1));
 		BookInfos book = returned.iterator().next();
-		assertThat(book, IsInstanceOf.instanceOf(ImprovedBook.class));
-		ImprovedBook improved = (ImprovedBook) book;
+		assertThat(book, IsInstanceOf.instanceOf(Book.class));
+		Book improved = (Book) book;
 		assertThat(improved.imageUrl, Is.is("http://d202m5krfqbpi5.cloudfront.net/books/1369382445m/17973574.jpg"));
 		assertThat(improved.title, Is.is("Le chasseur et son ombre"));
 	}
@@ -61,8 +61,8 @@ public class BookImproverTest {
 		Collection<BookInfos> returned = CollectionUtils.asList(service.findAll());
 		assertThat(returned.size(), Is.is(3));
 		BookInfos book = returned.iterator().next();
-		assertThat(book, IsInstanceOf.instanceOf(ImprovedBook.class));
-		ImprovedBook improved = (ImprovedBook) book;
+		assertThat(book, IsInstanceOf.instanceOf(Book.class));
+		Book improved = (Book) book;
 		assertThat(improved.title, Is.is("Le Dernier héros (Les Annales du Disque-monde, #27)"));
 		assertThat(improved.getSeries().size(), Is.is(2));
 	}
@@ -78,8 +78,8 @@ public class BookImproverTest {
 		Collection<BookInfos> returned = CollectionUtils.asList(service.findAll());
 		assertThat(returned.size(), Is.is(2));
 		BookInfos book = returned.iterator().next();
-		assertThat(book, IsInstanceOf.instanceOf(ImprovedBook.class));
-		ImprovedBook improved = (ImprovedBook) book;
+		assertThat(book, IsInstanceOf.instanceOf(Book.class));
+		Book improved = (Book) book;
 		assertThat(improved.title, Is.is("Battle Angel - Alita Last Order: Angel of Protest (Vol. 4)"));
 		assertThat(improved.getSeries().size(), Is.is(1));
 	}
@@ -95,8 +95,8 @@ public class BookImproverTest {
 		Collection<BookInfos> returned = CollectionUtils.asList(service.findAll());
 		assertThat(returned.size(), Is.is(3));
 		BookInfos book = returned.iterator().next();
-		assertThat(book, IsInstanceOf.instanceOf(ImprovedBook.class));
-		ImprovedBook improved = (ImprovedBook) book;
+		assertThat(book, IsInstanceOf.instanceOf(Book.class));
+		Book improved = (Book) book;
 		assertThat(improved.title, Is.is("Un clone encombrant"));
 		assertThat(improved.getSeries().size(), Is.is(2));
 	}

@@ -68,9 +68,9 @@ public class Goodreads implements InputLoader<BookInfos, GoodreadsConfiguration>
 	 * @param csv source csv file
 	 * @return a collection of valid and usable books
 	 */
-	FinderCrudService<BookInfos, BookInfosInformer> buildBooksCollection(WebClient client, List<String[]> csv, AbstractConfiguration configuration) {
+	FinderCrudService<BookInfos, BookInfosInformer> buildBooksCollection(WebClient client, List<String[]> csv, GoodreadsConfiguration configuration) {
 		FinderCrudService<BookInfos, BookInfosInformer> service = goodreadsEnvironment.getServiceFor(BookInfos.class, BookInfosInformer.class);
-		ExecutorService executor = Executors.newFixedThreadPool(2);
+		ExecutorService executor = Executors.newFixedThreadPool(configuration.getThreadCount());
 		Map<String, Integer> columns = getColumnsNamesToColumnsIndices(csv.get(0));
 		List<String[]> usableLines = csv.subList(1, csv.size());
 		for(String[] line : usableLines) {
@@ -78,7 +78,7 @@ public class Goodreads implements InputLoader<BookInfos, GoodreadsConfiguration>
 			if(client==null) {
 				service.create(rawBook);
 			} else {
-				executor.submit(createBookImproverCallable(client, rawBook, service, configuration));
+				executor.submit(new BookImprover(client, rawBook, service, configuration));
 			}
 		}
 		try {
@@ -88,10 +88,6 @@ public class Goodreads implements InputLoader<BookInfos, GoodreadsConfiguration>
 			throw new UnableToEndBookInfoDownloadException(e);
 		}
 		return service;
-	}
-
-	private Callable<Void> createBookImproverCallable(WebClient client, Book rawBook, FinderCrudService<BookInfos, BookInfosInformer> books, AbstractConfiguration configuration) {
-		return new BookImprover(client, rawBook, books, configuration);
 	}
 
 	Book createBook(Map<String, Integer> columns, String[] line) {

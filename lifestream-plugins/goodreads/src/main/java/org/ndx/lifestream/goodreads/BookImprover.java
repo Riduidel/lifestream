@@ -45,9 +45,9 @@ public class BookImprover implements Callable<Void> {
 	public static class FindWork {
 		private static final String QUERY = Goodreads.GOODREADS_BASE+"search.xml?key="+DEVELOPPER_KEY+"&q=";
 
-		public static XPathExpression<Element> xpathForImageUrl = XPathFactory.instance().compile("//image_url", Filters.element());
-		public static XPathExpression<Element> xpathForTitle = XPathFactory.instance().compile("//title", Filters.element());
-		public static XPathExpression<Element> xpathForWorkId = XPathFactory.instance().compile("//work/id", Filters.element());
+		private XPathExpression<Element> xpathForImageUrl = XPathFactory.instance().compile("//image_url", Filters.element());
+		private XPathExpression<Element> xpathForTitle = XPathFactory.instance().compile("//title", Filters.element());
+		private XPathExpression<Element> xpathForWorkId = XPathFactory.instance().compile("//work/id", Filters.element());
 
 		/**
 		 * Improve book by setting image and title, and also return work id for serie identification
@@ -61,7 +61,7 @@ public class BookImprover implements Callable<Void> {
 		 * @throws JDOMException
 		 * @throws UnsupportedEncodingException
 		 */
-		public String improveBook(WebClient client, String query, ImprovedBook returned, AbstractConfiguration configuration) throws FileSystemException {
+		public String improveBook(WebClient client, String query, Book returned, AbstractConfiguration configuration) throws FileSystemException {
 			Document bookXmlData = queryToJDOM(client, QUERY+query, configuration, "books", query);
 			Element imageUrlText = xpathForImageUrl.evaluateFirst(bookXmlData);
 			if(imageUrlText!=null)
@@ -82,11 +82,11 @@ public class BookImprover implements Callable<Void> {
 	public static class FindSerie {
 
 		private static final String QUERY = Goodreads.GOODREADS_BASE+"series/work.xml?key="+DEVELOPPER_KEY+"&id=";
-		public static XPathExpression<Element> xpathForSerie = XPathFactory.instance().compile("//series_work", Filters.element());
-		public static XPathExpression<Element> xpathForSerieId = XPathFactory.instance().compile("series/id", Filters.element());
-		public static XPathExpression<Element> xpathForSerieTitle = XPathFactory.instance().compile("series/title", Filters.element());
-		public static XPathExpression<Element> xpathForSerieDescription = XPathFactory.instance().compile("series/description", Filters.element());
-		public static XPathExpression<Element> xpathForPositionInSerie = XPathFactory.instance().compile("user_position", Filters.element());
+		private XPathExpression<Element> xpathForSerie = XPathFactory.instance().compile("//series_work", Filters.element());
+		private XPathExpression<Element> xpathForSerieId = XPathFactory.instance().compile("series/id", Filters.element());
+		private XPathExpression<Element> xpathForSerieTitle = XPathFactory.instance().compile("series/title", Filters.element());
+		private XPathExpression<Element> xpathForSerieDescription = XPathFactory.instance().compile("series/description", Filters.element());
+		private XPathExpression<Element> xpathForPositionInSerie = XPathFactory.instance().compile("user_position", Filters.element());
 
 		/**
 		 * Get containing serie.
@@ -105,7 +105,7 @@ public class BookImprover implements Callable<Void> {
 		public Collection<Serie> improveBook(WebClient client,
 				FinderCrudService<BookInfos, BookInfosInformer> destination,
 				String workId,
-				ImprovedBook source, AbstractConfiguration configuration) {
+				Book source, AbstractConfiguration configuration) {
 			Document bookXmlData = queryToJDOM(client, QUERY+workId, configuration, "series", workId);
 			Collection<Serie> returned = new ArrayList<>();
 
@@ -116,7 +116,7 @@ public class BookImprover implements Callable<Void> {
 			return returned;
 		}
 
-		private void addBookToSerie(FinderCrudService<BookInfos, BookInfosInformer> destination, String workId, ImprovedBook source, Element element) {
+		private void addBookToSerie(FinderCrudService<BookInfos, BookInfosInformer> destination, String workId, Book source, Element element) {
 			String serieId = xpathForSerieId.evaluateFirst(element).getText();
 			String serieDesc = xpathForSerieDescription.evaluateFirst(element).getText();
 			String positionInSerie = xpathForPositionInSerie.evaluateFirst(element).getText();
@@ -128,7 +128,6 @@ public class BookImprover implements Callable<Void> {
 			}
 
 			Serie used = findOrCreate(destination, serieId);
-			used.setId(serieId);
 			used.title = xpathForSerieTitle.evaluateFirst(element).getText().trim();
 			used.description = serieDesc;
 			used.setBook(positionInSerie, source);
@@ -156,7 +155,7 @@ public class BookImprover implements Callable<Void> {
 
 	}
 
-	private static Document queryToJDOM(WebClient client, String query, AbstractConfiguration configuration, String cacheFolder, String cacheKey) {
+	private static synchronized Document queryToJDOM(WebClient client, String query, AbstractConfiguration configuration, String cacheFolder, String cacheKey) {
 		try {
 			FileObject cacheFile = getCachedFileForKey(configuration, cacheFolder, cacheKey);
 			String content = null;
@@ -198,7 +197,7 @@ public class BookImprover implements Callable<Void> {
 	private static final String DEVELOPPER_KEY = "vzlZHr69We4utsOyP508tg";
 
 
-	private Book rawBook;
+	private Book book;
 	private WebClient client;
 
 	private FinderCrudService<BookInfos, BookInfosInformer> destination;
@@ -210,7 +209,7 @@ public class BookImprover implements Callable<Void> {
 			FinderCrudService<BookInfos, BookInfosInformer> books,
 			AbstractConfiguration configuration) {
 		this.client = client;
-		this.rawBook = rawBook;
+		this.book = rawBook;
 		this.destination = books;
 		this.configuration = configuration;
 	}
@@ -222,35 +221,34 @@ public class BookImprover implements Callable<Void> {
 	}
 
 	private void improveBook() {
-		ImprovedBook returned = new ImprovedBook(rawBook);
 		String query = null;
 		try {
-			if(returned.getIsbn13()==null) {
-				if(returned.title==null) {
-					query = returned.title;
+			if(book.getIsbn13()==null) {
+				if(book.title==null) {
+					query = book.title;
 				}
 			} else {
-				query = returned.getIsbn13();
+				query = book.getIsbn13();
 			}
 			if(query!=null) {
-				logger.info("Improvving book "+returned);
+				logger.info("Improvving book "+book);
 				synchronized(destination) {
-					returned = (ImprovedBook) destination.create(returned);
+					book = (Book) destination.create(book);
 				}
-				String workId = workFinder.improveBook(client, query, returned, configuration);
+				String workId = workFinder.improveBook(client, query, book, configuration);
 				synchronized(destination) {
-					returned = (ImprovedBook) destination.update(returned);
+					book = (Book) destination.update(book);
 				}
-				serieFinder.improveBook(client, destination, workId, returned, configuration);
+				serieFinder.improveBook(client, destination, workId, book, configuration);
 			}
 		} catch(RuntimeException e) {
-			logger.log(Level.WARNING, "something failed while improving book "+returned, e);
+			logger.log(Level.WARNING, "something failed while improving book "+book, e);
 			throw e;
 		} catch(Exception e) {
-			logger.log(Level.WARNING, "something failed while improving book "+returned, e);
-			throw new GoodreadsException("something failed while improving book "+returned, e);
+			logger.log(Level.WARNING, "something failed while improving book "+book, e);
+			throw new GoodreadsException("something failed while improving book "+book, e);
 		} catch(Throwable t) {
-			logger.log(Level.WARNING, "something failed while improving book "+returned, t);
+			logger.log(Level.WARNING, "something failed while improving book "+book, t);
 			throw t;
 		}
 	}

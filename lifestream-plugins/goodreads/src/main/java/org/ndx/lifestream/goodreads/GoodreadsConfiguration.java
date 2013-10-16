@@ -9,6 +9,7 @@ import org.ndx.lifestream.configuration.Configuration;
 public class GoodreadsConfiguration extends AbstractConfiguration implements Configuration {
 	private String mail;
 	private String password;
+	private int threadCount = 2;
 
 	public GoodreadsConfiguration(FileObject baseFolder) {
 		super(baseFolder, CACHE_BASE_PATH + "goodreads");
@@ -42,5 +43,9 @@ public class GoodreadsConfiguration extends AbstractConfiguration implements Con
 
 	public void setPassword(String password) {
 		this.password = password;
+	}
+
+	public int getThreadCount() {
+		return threadCount ;
 	}
 }

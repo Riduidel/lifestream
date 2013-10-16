@@ -1,13 +1,17 @@
 package org.ndx.lifestream.goodreads;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.TreeMap;
 
 import org.ndx.lifestream.rendering.OutputWriter;
 import org.ndx.lifestream.rendering.model.Input;
+import org.ndx.lifestream.rendering.output.StringTemplateUtils;
 import org.stringtemplate.v4.ST;
 
 public class Serie extends BookInfos implements Input, Comparable<Serie> {
@@ -81,9 +85,38 @@ public class Serie extends BookInfos implements Input, Comparable<Serie> {
 	 */
 	@Override
 	public void accept(OutputWriter writer) {
-		serie.add("serie", this);
-		text  = serie.render();
-		serie.remove("serie");
+		Map<String, Object> parameters = new HashMap<>();
+		parameters.put("serie", this);
+		parameters.put("books", createBooksList(writer));
+		text = StringTemplateUtils.applyParametersToTemplate(serie, parameters);
+	}
+
+	/**
+	 * As a covnention, numbered books will be put in a first list and unnumbered ones in another.
+	 * Then those lists will be merged
+	 * @param writer
+	 * @return
+	 */
+	private List<String> createBooksList(OutputWriter writer) {
+		List<String> returned = new ArrayList<>();
+		Map<Integer, Book> numbered = new TreeMap<>();
+		List<Book> unnumbered = new ArrayList<>();
+		for(Map.Entry<Book, String> entry : books.entrySet()) {
+			try {
+				int number = Integer.parseInt(entry.getValue());
+				numbered.put(number, entry.getKey());
+			} catch(NumberFormatException e) {
+				unnumbered.add(entry.getKey());
+			}
+		}
+		// now they've been filtered, create strings and add them
+		for(Book b : numbered.values()) {
+			returned.add(writer.link(this, b, b.title));
+		}
+		for(Book b : unnumbered) {
+			returned.add(writer.link(this, b, b.title));
+		}
+		return returned;
 	}
 
 	@Override
