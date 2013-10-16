@@ -3,7 +3,9 @@ package org.ndx.lifestream.rendering.output.gollum;
 import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -13,6 +15,7 @@ import org.ndx.lifestream.rendering.OutputWriter;
 import org.ndx.lifestream.rendering.model.Input;
 import org.ndx.lifestream.rendering.output.AbstractOutputter;
 import org.ndx.lifestream.rendering.output.FileNameUtils;
+import org.ndx.lifestream.rendering.output.StringTemplateUtils;
 import org.ndx.lifestream.utils.transform.HtmlToMarkdown;
 import org.stringtemplate.v4.ST;
 
@@ -35,12 +38,17 @@ public class GollumOutputter extends AbstractOutputter implements OutputWriter {
 	private ST gollum= new ST("<text>");
 
 	@Override
+	protected List<String> toRealPath(Input input) {
+		return super.toRealPath(input, ".md");
+	}
+
+	@Override
 	public void write(Input input, FileObject output) {
 		FileObject resultFile;
 		Collection<String> usedPath = toRealPath(input);
 		try {
 			resultFile = output.resolveFile(PATH_JOINER.join(
-					FileNameUtils.simplify(usedPath))+".md");
+					FileNameUtils.simplify(usedPath)));
 			input.accept(this);
 			writeFile(resultFile, render(input));
 		} catch (Exception e) {
@@ -48,11 +56,10 @@ public class GollumOutputter extends AbstractOutputter implements OutputWriter {
 		}
 	}
 
-	private String render(Input input) {
-		gollum.add("text", input.getText());
-		String resultText  = gollum.render();
-		gollum.remove("text");
-		return resultText;
+	protected String render(Input input) {
+		Map<String, Object> parameters = new HashMap<>();
+		parameters.put("text", input);
+		return StringTemplateUtils.applyParametersToTemplate(gollum, parameters);
 	}
 
 	@Override

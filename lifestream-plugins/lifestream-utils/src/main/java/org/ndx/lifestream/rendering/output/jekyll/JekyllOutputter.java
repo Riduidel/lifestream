@@ -12,9 +12,8 @@ import org.apache.commons.vfs2.FileObject;
 import org.ndx.lifestream.rendering.OutputWriter;
 import org.ndx.lifestream.rendering.model.Input;
 import org.ndx.lifestream.rendering.output.AbstractOutputter;
+import org.ndx.lifestream.rendering.output.AbstractStringTemplateBackedOutputter;
 import org.ndx.lifestream.rendering.output.FileNameUtils;
-import org.stringtemplate.v4.ST;
-import org.stringtemplate.v4.STGroupDir;
 import org.stringtemplate.v4.STRawGroupDir;
 
 import com.google.common.base.Joiner;
@@ -24,30 +23,11 @@ import com.google.common.base.Joiner;
  * @author ndx
  *
  */
-public class JekyllOutputter extends AbstractOutputter implements OutputWriter {
+public class JekyllOutputter extends AbstractStringTemplateBackedOutputter implements OutputWriter {
 	private static final String DATE_FORMAT = "yyyy-MM-dd";
 	private static final DateFormat FORMATTER = new SimpleDateFormat(DATE_FORMAT);
-	private STGroupDir jekyllGroup;
-	private ST jekyll;
-
 	public JekyllOutputter() {
-		jekyllGroup = new STRawGroupDir("jekyll");
-		jekyll = jekyllGroup.getInstanceOf("page");
-	}
-
-	@Override
-	public void write(Input input, FileObject output) {
-		Collection<String> realPath = toRealPath(input);
-		try {
-			FileObject resultFile = output;
-			for(String pathElement : realPath) {
-				resultFile = resultFile.resolveFile(pathElement);
-			}
-			input.accept(this);
-			writeFile(resultFile, render(input));
-		} catch (Exception e) {
-			throw new JekykllException("unable to output render for input "+Joiner.on('/').join(realPath), e);
-		}
+		super("jekyll", "page");
 	}
 
 	/**
@@ -69,13 +49,6 @@ public class JekyllOutputter extends AbstractOutputter implements OutputWriter {
 			}
 		}
 		return returned;
-	}
-
-	private String render(Input input) {
-		jekyll.add("input", input);
-		String resultText  = jekyll.render();
-		jekyll.remove("input");
-		return resultText;
 	}
 
 	@Override
