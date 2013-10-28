@@ -1,0 +1,13 @@
+type: post
+status: published
+title: Finalement, Github, c'est vraiment bien
+tags: développement, github, java, web
+date: Sun Jul 29 19:58:02 CEST 2012
+~~~~~~
+# Finalement, Github, c'est vraiment bien
+
+Dans mes souvenirs, j'étais assez critique face à Git/GitHub ...Seulement, il s'avère que c'est faux, et que mon dernier message à ce sujet était plutôt gentil. Et heureusement, parce que GitHub avec les clients Git des IDEs modernes est assez facilement utilisable. Aussi bien dans Eclipse avec EGit que dans NetBeans (par défaut !), on peut raisonnablement puller,pusher ...Et c'est tant mieux, parce que je m'en sers de plus en plus sur deux projets plutôt pas mal :
+
+* [ gaedo](https://github.com/Riduidel/gaedo) ... eh oui, gaedo a dû quitter Origo, qui s'est éteint brutalement en mai dernier ... il a donc trouvé chez GitHub (qui me permet au moins d'avoir toujours le repository complet sur ma machine).
+* [agorava-stackoverflow](https://github.com/Riduidel/agorava-stackoverflow) que j'ai créé aprés avoir écouté [Antoine Sabot-Durand se faire interviewer chez les castcodeurs](http://lescastcodeurs.com/2012/06/29/les-cast-codeurs-podcast-episode-61-so-scholl-ou-social-avec-antoine-sabot-durand/), et qui me permet de relancer, sous une forme différente mais que j'espére bien meilleure, ce fameux projet d'aspirateur de site. (et qui en bonus me permet de faire à la fois du GitHub, mais aussi du Weld /CDI ).
+D'ailleurs, j'ai découvert grâce à GitHub deux ou trois choses bien sympatoches. Par exemple, je fais maintenant mes sites maven en Markdown, pour pouvoir utiliser les pages dans le site généré (grâce à [doxia-module-markdown](https://code.google.com/p/doxia-module-markdown/)), dans le site sur GitHub (grâce au rendu Markdown de GitHub et grâce à GitHubpages , qui utilise pour mes projets les mêmes fichiers). Mais la grande force de GitHub, malgré son côté spartiate,c'est GitHub issues , qui intégre complétement le bug reporting au développement. Tenez, regardez comment [j'ai fermé le bug #11 de gaedo](https://github.com/Riduidel/gaedo/issues/11#commit-ref-0bbe56c) ! Un simple commentaire dans le commit, et pouf, le bug est fermé. C'est un rêve tellement c'est pratique ... Un rêve difficilement atteignableavec SVN (même en utilisant Mylyn , puisqu'il faut ajouter les webservices SOAP à mantis, ce qui n'est pas toujours possible). Et je vous parle même pas de la facilité avec laquelle on intégre les modifications des autres grâce aux pull requests. Autant le dire, je commence à étre convaincu par Git, grâce essentiellement à GitHub et aux plugins des IDE (aussi bien NetBeansqu'Eclipse) qui font de Git un DVCS aussi pratique que SVN (voir même encore plus pratique grâce à la gestion intégrée des issues).

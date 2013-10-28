@@ -1,0 +1,30 @@
+type: post
+status: published
+title: 365 gestes pour sauver la plan??te (1)
+tags: ??cologie, divers
+date: Sun Jan 08 16:30:00 CET 2006
+~~~~~~
+# 365 gestes pour sauver la plan??te (1)
+
+Avant toute chose, je tiens à dire que je ne suis pas par tradition un militant vert ou quoi que ce soit du même genre. Non, je suis plutôt écolo-réaliste, parce qu'il me semble que l'écologie *(Et je ne parle pas de la science de l'étude des groupements animaux et de leurs habitats (enfin bref, , mais de la démarche quasiment politique, ou tout au moins militante, qui vise à vivre un  peu plus en harmonie avec son environnement.)* est une démarche qui ne peut se mettre en place que par des petits gestes. Bref ... J'ai emprunté à la bibliothèque de ma ville le livre [365 gestes pour sauver la planète](http://www.amazon.fr/exec/obidos/ASIN/2732432806/403-0804153-5674801). Au-delà des superbes images qui apparaissent sur toutes les pages de droite, je me suis finallement intéressé aux textes figurant en vis-à-vis, un pour chaque jour de la planète. Voici donc mon commentaire à leur sujet. Et, plus pour m'en souvenir que parce que mon lectorat avide de sensations fortes jubilera à la lecture de mes commentaires inspirés de cette oeuvre majeure de la littérature française, je me suis dit que ça vaudrait le coup de parler des idées marquantes (pour moi) qu'il contient. On y va donc.
+* 4 janvier : choisir l'électrictié verte avec Eugène. Je vais tout de suite commencer par râler car cette idée n'est au mieux qu'une blague. En effet, l'Europe ne dispose pas des moyens de production nécessaire à l'utilisation d'une électrictité verte par tout un chacun. De plus, sa mise en place serait écologiquement un désastre (référez-vous par exemple à pas grand chose, car je n'ai pas le courage de chercher la page expliquant qu'il est actuellement impossible de générer en France assez d'énergie éolienne).
+* 6 janvier : le compostage des déchets de collectivité. Ca, ça vaut le coup, et je crois bien que j'irais demander à ma mairie ce qu'ils font des déchets organiques des cantines.
+* 7 janvier : économiser l'eau de la chasse d'eau. Ici, l'auteur explique que certains hôtels japonnais réutilisent les eaux grises évacuées des douches et de la vaisselle pour alimenter les chasses d'eau. Ca me plaît vachement, comme idée, même si ça me paraît difficile à mettre en place, ne serait-ce qu'à cause des cheveux, poils, et autres résidus graisseux. Donc, je vais sans doute chercher un peu et abandonner cette idée révolutionnaire, mais délicate à mettre en place si je ne veux pas laver ma cuvette dix fois plus souvent.
+* 12 janvier : les placements solidaires. Là, je suis sensé faire confiance à ma banque pour qu'elle choisisse d'investir dans des entreprises équitables et solidaires ... J'ai du mal à y croire. Mais enfin, ça ne coûte rien de demander.
+* 13 janvier : du bon usage du réfrigérateur. Placer son réfrigérateur loin d'une source de chaleur, c'est du bon sens, mais ça vaut le coup d'y penser.
+* 15 janvier : des peintures naturelles respectant l'environnement.
+* 16 janvier : pas de lumières inutiles. Là-dessus, il faut vraiment que je trouve de la fibre optique, et en quantité, parce que je dois pouvoir trouver des sources de lumière naturelle pas loin de chez moi pour la ramener dans mon salon et mon séjour.
+* 21 janvier : la touche éco pour imprimer. Ca, c'est pas bien compliqué, et il faut que je le fasse, y compris au bureau.
+* 30 janvier : pas de publicité. Bon, alors ça, c'est vraiment facile. D'après [l'ekopedia](http://fr.ekopedia.org/Publicit&eacute;#Les_Imprim.C3.A9s_non_adress.C3.A9s)*(Je l'ai découvert aujourd'hui, et je crois bien que je vais y retourner.)*, il suffit de demander à la mairie. Donc je vais le faire.
+* 3 février : n'ouvrir le robinet que quand c'est nécessaire. Pour ça, il faudrait peut-être que les pédales à pied soient plus généralisées (et installées en doublon des pédales normales).
+* 7 février : recycler le verre. Il s'agit simplement pour moi d'aller à pied jusqu'à la benne de verre où je vais déja pour mon papier.
+* 8 février : récupérer les eaux de pluie. C'est un projet pour lequel j'ai déja presque tout l'équipement, il ne me reste plus que la gouttière et l'installation à faire. Et cette installation n'est pas mortellement complexe à mettre en place (voir [l'ékopedia](http://fr.ekopedia.org/Gestion_de_l'eau#R.C3.A9cup.C3.A9ration_des_eaux_de_pluie)).
+* 9 février : informations et communications à distance. Ainsi, le télétravail pourra sauver la planète ... Ca, je m'en doutais bien, mais bon, il faudrait en convaincre mes chefs.
+* 17 février : isoler sa maison. Je sais que certaines pièces sont **très** mal isolées chez moi, mais ça devrait changer, un jour ou l'autre ...
+* 18 février : le papier recyclé. si ça ne change ni sa couleur, ni la possibilité d'imprimer, alors il faut bien s'en servir.
+* 20 février : une voiture hybride. J'ai déja une voiture au GPL, et je passerai évidement à l'hybride quand le prix sera plus bas. Beaucoup plus bas.
+* 24 février : compost et déchets organiques. Si je jette tous mes déchets organiques sur un tas de compost plutôt que dans la poubelle, je diminue la quantité de déchets que je produits, je crée de l'engrais naturel pour mon jardin, et enfin je limite mon impact environnemental au maximum.
+* 2 mars : éviter le poisson d'élevage. J'ai entendu récement à la radio qu'il est malheureusement indispensable car, si toute la population terrestre mangeait sa ration recommandée par l'OMS de poisson, il n'y en aurait plus un seul en **un mois**. Dans ces conditions, peut-être vaut-il mieux manger du poisson d'élevage français, car élevé plus près de nous et dans de meilleures conditions sanitaires.
+* 4 mars : les huiles de vidange à la déchetterie. C'est bien ce que je compte faire, mais ce qui m'intéresse, c'est cette phrase Huit litres d'huile de vidange peuvent alimenter une habitation en électricité pendant une journée..
+
+La suite au prochain épisode...via [Nicolas Delsaux's posterous import script](http://riduidel.posterous.com/quest-ce-que-cest-que-ce-flux-qui-clignote)

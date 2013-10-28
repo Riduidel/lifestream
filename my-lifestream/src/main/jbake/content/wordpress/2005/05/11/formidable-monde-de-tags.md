@@ -1,0 +1,9 @@
+type: post
+status: published
+title: Formidable monde de tags !
+tags: informatique, leblog, pourlouvreboite, web
+date: Wed May 11 10:08:00 CEST 2005
+~~~~~~
+# Formidable monde de tags !
+
+Sans le savoir, {Stéphane Lee} a créé, sur son blog, [une plateforme de blogs verticaux absolument géniale](http://stephane.etsoncar.net/news/95.shtml) ! J'en ai d'ailleurs profité pour me créer [mon journal](http://creative-mobs.com/portal/tag/ibook) de l'actualité de l'[iBook](http://www.fnac.com/Shelf/article.asp?PRID=1609467&OrderInSession=1&Mn=3&Mu=-13&SID=dc465947-4ef9-323e-fca0-de3a6e468c6d&TTL=120520051150&Origin=FnacFR&Ra=-50&To=0&Nu=1&UID=043a730d9-f8fc-99e2-beb0-25ccb1ef7c88&Fr=0), puisque je [rêve de m'en acheter un](http://36trucs.com/texts/avoir_un_portable_mac.shtml). Mais, force m'est de le reconnaître, Stéphane, il manque à ces blogs générés une gestion éditoriale. C'est-à-dire la possibilité à partir d'une interface de publication de créer une revue de presse un peu plus intelligente, typiquement en enlevant toutes les choses inutiles qu'on peut recevoir comme par exemple [ça](http://www.flickr.com/photos/hatonimame/13268663/) (affiché sur ma page sur l'iBook), il faut le faire. Et là, tu le tiens, ton buisness model à pas cher : si il est difficile de vendre une vue non éditée de l'actualité d'un tag, construire, au-dessus, un contenu éditorial peut permettre de générer des recettes publicitaires, à la manière du [blog auto](http://www.leblogauto.com/), par exemple.via [Nicolas Delsaux's posterous import script](http://riduidel.posterous.com/quest-ce-que-cest-que-ce-flux-qui-clignote)

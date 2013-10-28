@@ -1,0 +1,9 @@
+type: post
+status: published
+title: Utilisation de Criterias Hibernate avec une Map
+tags: code, informatique, java
+date: Thu Nov 09 16:56:45 CET 2006
+~~~~~~
+# Utilisation de Criterias Hibernate avec une Map
+
+Puisque j'ai la chance d'avoir un d??veloppeur Hibernate sous la main (fa??on de parler :-) ), j'en profite pour poser une autre question qui commence ?? m'obs??der s??rieusement.Dans mon appli, j'ai un objet Indicateur d??clar?? comme ??a :[JAVA]public class Indicateur {// ...    private Map listValeurIndicateur = new HashMap();// ...}[/JAVA]Et, ?? un moment donn??, je cherche ?? ??crire le Criteria qui me retourne l'??quivalent de (??crit en pseudo-HQL)listValeurIndicateur['DOMAINE']=789, o?? 789 est l'id d'une valeur dans une liste.Le truc ??tant que cette Map est mapp??e comme ??a dans la base :[XML]        <map name="listValeurIndicateur"></map><map></map><map name="listValeurIndicateur">[/XML]J'ai essay?? des tonnes de trucs (list??s ci-dessous), mais aucun n'a march??. Le code est ?? peu pr??s bon pour la partie VAL_IDVALEUR qui de toute mani??re ne s'??crit pas comme ??a. Mais je l'ai ??crite pour ??viter les remarques perfides du genre ben ouais mais c'est normal que ??a marche pas si tu teste pas ta valeur[JAVA]// Celui-ci plante car IND_CODELISTE n'est ??videment pas pr??sent dans mes classes JavacriteriaParent.createCriteria("listValeurIndicateur")    .add(Restrictions.eq("IND_CODELISTE", "DOMAINE"))    .add(Restrictions.eq("VAL_IDVALEUR", 789));// L??, ??a plante car listValeurIndicateur['DOMAINE'] n'est pas une propri??t??criteriaParent.add(Restrictions.eq("listValeurIndicateur['DOMAINE']", 789);[/JAVA]Il y a une solution ou, encore une fois, je touche du doigt les limites d'Hibernate ?</map>via [Nicolas Delsaux's posterous import script](http://riduidel.posterous.com/quest-ce-que-cest-que-ce-flux-qui-clignote)

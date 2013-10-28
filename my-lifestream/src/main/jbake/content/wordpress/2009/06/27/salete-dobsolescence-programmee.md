@@ -1,0 +1,11 @@
+type: post
+status: published
+title: Salet?? d'obsolescence programm??e ! 
+tags: java, mac, ruby
+date: Sat Jun 27 15:21:12 CEST 2009
+~~~~~~
+# Salet?? d'obsolescence programm??e ! 
+
+Suite ?? des circonstances que je vais sans doute prochainement d??tailler, j'ai perdu l'un des ordinateurs que j'utilisais ?? la maison.J'ai d?? tenter de faire passer certains services de cet ordinateur vers mon portable "historique" : un vieux [iBook G4](http://fr.wikipedia.org/wiki/IBook) (bon, vieux, pour de l'informatique).Je dis vieux m??me si [Tiger](http://fr.wikipedia.org/wiki/Mac_OS_X_v10.4), ?? l'??poque, m'avait paru le comble de la branchitude. H??las, ce que je n'avais pas pr??vu, c'est ce que Jeff Artwood appelle [le c??t?? dongle d'un mac](http://www.codinghorror.com/blog/archives/001044.html). Enfin, avec une certaine nuance. En effet, s'il parle du mat??riel, le probl??me tient pour moi au logiciel, et surtout au syst??me : le jour o?? le monde Mac est pass?? ?? [Leopard](http://fr.wikipedia.org/wiki/Mac_OS_X_10.5), beaucoup de choses se sont mises, discr??tement d'abord, et de plus en plus vite ensuite, ?? marcher moins bien.Il y a d'abord eu??Qicksilver, puis les logiciels iLife (ce qui n'??tait pas vraiment g??nant). Maintenant, c'est Ruby et Eclipse qui ne supportent plus ma brouette. Et l??, c'est r??dhibitoire. Sans ??a, je ne peux plus faire grand chose : mon lifestream s'appuie sur webgen, qui est pass?? ?? Ruby 1.8.5 l?? o?? mon iBook n'a que le 1.8.2, et Eclipse r??clame ?? corps et ?? cris Leopard.Il ne me reste donc plus beaucoup de solutions (deux, en fait) :
+1. Me passer de tout ??a et trouver des alternatives
+2. Trouver un CD de Leopard et faire la mise ?? jourD'accord, la seconde m??thode est moins honn??te, et va faire du mal ?? ma brouette, mais je vais quand m??me la tenter. Si ??a ne marche pas, tant pis, je passerais ?? un dual boot avec un quelconque Linux me permettant d'utiliser mes jouets favoris !Mais avant, op??ration d'urgence : je dois exporter ma biblioth??que photo pour ??viter qu'elle ne soit mang??e lors du d??m??nagement??(ce??qui??me??permettra??par??ailleurs??de??la??remettre??au??carr????question??IPTC/WMP/...

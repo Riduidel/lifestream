@@ -1,0 +1,10 @@
+type: post
+status: published
+title: Ca marche bien l'UPnP !
+tags: dns323, informatique, maison, web
+date: Mon Jun 20 14:54:12 CEST 2011
+~~~~~~
+# Ca marche bien l'UPnP !
+
+Je sais pas si vous savez, mais chez moi, j'ai un [DNS-323](http://riduidel.posterous.com/tag/dns-323) configur?? pour ??tre, en plus du reste, un serveur [UPnP](http://riduidel.posterous.com/tag/upnp). C'est chouette sur la freebox, parce que je regarde mes films peinard.  
+Mais c'est aussi chouette quand quelqu'un vient avec un peud e matos supportant UPnP. En l'occurence, hier, un de mes fr??res a ramen?? un petit Archos WiFi (sans doute un [Archos 3cam Vision](http://www.archos.com/products/mp3_players/archos_3cam_vision/index.html?country=fr&lang=fr)) fonctionnant, d'apr??s ce que j'ai compris, avec Android. Et ce qui est cool avec Android, ou tout au moins avec l'OS lvir?? avec, c'est que les serveurs UPnP sont automatiquement d??tect??s et list??s dans les sources vid??o, audio, images, tout ??a.Du coup, il a suffit que je lui donne l'acc??s ?? mon r??seau WiFi pour qu'il d??couvre tous les films/musiques/images stock??s sur mon disque dur r??seau, et pour qu'il les lise. Est-ce utile de dire que ??a m'a instantan??ment donn?? envie ?En fait, ce qui m'a encore plus donn?? envie, c'est l'id??e de disposer d'une fa??on facile d'acc??der ?? tout ce contenu ... par exemple avec une esp??ce de petit navigateur UPnP, fa??on explorateur de fichier de Windows avec l'affichage des fichiers A/V divers. je me suis m??me dit qu'en Java/Swing/JavaFX, ??a ne serait pas bien sorcier ?? coder ... Tellement, m??me, qu'il semble que [??a existe d??ja](http://teleal.org/projects/cling/mediarenderer/) ! Bon, le truc con, c'est que c'est du Java 6, donc indisponible sur mon [antiquit?? PowerPC](http://riduidel.posterous.com/tag/ibook).D'un autre c??t??, il m'a subtilement ??t?? sugg??r?? d'installer [Piwigo](http://fr.piwigo.org) sur le serveur, histoire donner un acc??s facile aux photos, ce que je vais sans doute tenter ... Et puis apr??s, j'installerai ... peut-??tre, une quelconque appli web de lecture audio.

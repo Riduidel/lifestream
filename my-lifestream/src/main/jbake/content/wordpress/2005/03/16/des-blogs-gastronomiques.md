@@ -1,0 +1,12 @@
+type: post
+status: published
+title: Des blogs gastronomiques ?
+tags: informatique, web
+date: Wed Mar 16 19:07:47 CET 2005
+~~~~~~
+# Des blogs gastronomiques ?
+
+Pour des raisons tout-??-fait personnelles, et totallement distinctes du fait que je d??passe le quintal de viande, voici quelques jolis blogs gastronomiques, garnis d'??l??gantes recettes. Mes pr??f??r??s ? Evidement ceux qui garantissent des temps de cuisine inf??rieurs ?? l'heure (en fait, le plus court possible, le temps de cuisine) !
+* [C'est moi qui l'ai fait](http://scally.typepad.com/cest_moi_qui_lai_fait/), tr??s beau, avec [un index](http://scally.typepad.com/cest_moi_qui_lai_fait/2004/11/nouvel_index.html), [des oeufs au plat au four](http://scally.typepad.com/cest_moi_qui_lai_fait/2005/03/oeuf_au_plat_au.html),  [Des p????tes au pesto rouge](http://scally.typepad.com/cest_moi_qui_lai_fait/2004/03/la_cuisine_du_p_1.html), [un gratin de pommes de terre](http://scally.typepad.com/cest_moi_qui_lai_fait/2004/03/un_gratin_de_po.html), [des courgettes marin??es](http://scally.typepad.com/cest_moi_qui_lai_fait/2004/09/ustrongantipast_1.html)
+* [Les banlieusardises](http://www.banlieusardises.com/delices/), avec d??s le d??part un index bien fichu, et [des pizzas ?? la mexicaine](http://www.banlieusardises.com/delices/archives/001033.html), [des pommes de terre ?? la cr??ole](http://www.banlieusardises.com/delices/archives/000597.html), [de belles aubergines](http://www.banlieusardises.com/delices/archives/000480.html), [Carottes et panais au gingembre et au miel](http://www.banlieusardises.com/delices/archives/001092.html), [Courge spaghetti aux abricots et au cari](http://www.banlieusardises.com/delices/archives/000540.html)
+* [In my kitchen](http://www.boucledor.net/inmykitchen/), qui commence avec un [Sabayon d'ananas aux ??pices](http://www.boucledor.net/inmykitchen/2005/03/15/36-sabayon-ananas-aux-epices), miam ! Et qui continue avec une tr??s simple [tourte au munster](http://www.boucledor.net/inmykitchen/2005/01/28/17-tourte-au-munster), [des crevettes saut??es et riz ?? la badiane](http://www.boucledor.net/inmykitchen/2005/02/09/22-crevettes-sautees-et-riz), et puis un article sur [les ??missions de cuisine ?? la t??l??](http://www.boucledor.net/inmykitchen/2005/02/01/19-emissions-de-cuisine), tr??s pratiques pour la suite. Et pour finir, une liste de blogs de cuisine tr??s fournie.via [Nicolas Delsaux's posterous import script](http://riduidel.posterous.com/quest-ce-que-cest-que-ce-flux-qui-clignote)

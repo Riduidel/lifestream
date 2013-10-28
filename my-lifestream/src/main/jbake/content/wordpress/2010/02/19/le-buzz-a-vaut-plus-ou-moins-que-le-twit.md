@@ -1,0 +1,15 @@
+type: post
+status: published
+title: Le Buzz, ??a vaut plus ou moins que le twit ? 
+tags: web, zeitgest
+date: Fri Feb 19 10:19:00 CET 2010
+~~~~~~
+# Le Buzz, ??a vaut plus ou moins que le twit ? 
+
+Le truc qui fait parler en ce moment sur le web, c'est [Google buzz](http://www.presse-citron.net/google-buzz-gmail-sous-steroides-et-premieres-impressions). Le nouveau gadget de Mountain View a en effet ce qu'ilf aut pour faire parler de lui : il s'attaque à Twitter et (peut-être) Facebook (je dis peut-être parce que, n'ayant pas de compte Facebook, je ne sais pas si c'est un concurrent réel du site communautaire). Après quelques jours d'usage, voici quelques impressions d'**utilisateur** de Google buzz.
+* Ca a tendance à ramer, voire même à faire planter le Javascript de GMail, j'ai l'impression. je dis ça parce que, depuis que j'ai le droit à ce gadget, je dois régulièrement recharger ma page GMail (ce qui revient à rebooter l'application Javascript). Par pure fainéantise, je n'ai pas encore été voir les logs, mais ça sent l'explosion en vol. Tout ça parce que j'utilise [le meilleur navigateur du monde](http://www.opera.com/) ! Je sais bien que google veut que je passe dans la google-sphere avec Chrome, mais, non, décidément, rien ne vaut Opera.
+* Je suis un peu plus réfléchi quant au partage de mes liens Google reader, qui vont directement dans le buzz. Et il y a une bonne raison à ça : tant que ces liens n'étaient visibles que dans Google Reader, je savais à peu près qui les verrait. Mais là, avec buzz, c'est beaucoup plus public (parce que comme dans tout réseau social digne de ce nom, tout ce qu'on fait est public par défaut). Or étant un adulte raisonnablement sexualisé, quand je trouve une photo sympa sur [Bonjour Madame](http://www.bonjourmadame.fr/), ou un article intéressant sur [sexactu](http://www.sexactu.com/) (tout cela étant déja arrivé, et m'ayant valu une question de [fabstream](http://fabstream.posterous.com/)), j'ai envie de la partager. Mais je crains fort que, confusion privé/professionnel aidant, certains de mes contacts quasi-professionnels ne tombent là-dessus et ne se fassent une image ... comment dire .... décalée de moi. Et c'est dommage, parce que comme je dis toujours, "le sexe, c'est la vie !". Mais bon, faudra que je parle un jour de ça, tiens.
+* Il y a du coup un doublon entre buzz et twitter, comme [Cédric Beust](http://twitter.com/cbeust/status/9295530070) l'a remarqué. Alors que faire ? Abandonner l'un pour l'autre ? Abandonner les deux ?
+* Il y a d'ailleurs un autre doublon, cette fois entre buzz et Wave, comme le montre ce [dessin sympa](http://alt-tab.org/?post/1739). Moins grave, du reste, parce que Wave est nettement plus expérimental, mais quand même, il existe.
+
+Bref, je me pose pas mal de questions sur cet outil. Peut-être même que je vais quitter le buzz et n'en être plus qu'un lecteur. D'un autre côté, j'aime bien cette façon de partager sa vision du monde. Surtout maintenant que j'ai intégré [mon posterous à buzz](http://blog.posterous.com/integrating-posterous-and-google-buzz) !

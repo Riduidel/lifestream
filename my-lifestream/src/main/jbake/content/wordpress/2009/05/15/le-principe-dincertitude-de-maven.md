@@ -1,0 +1,9 @@
+type: post
+status: published
+title: le principe d'incertitude de maven 
+tags: build, java, maven, ruby
+date: Fri May 15 18:34:53 CEST 2009
+~~~~~~
+# le principe d'incertitude de maven 
+
+Depuis 3 jours, je me bats contre [maven](http://fr.wikipedia.org/wiki/Maven) et certaines de ses pires horreurs.En particulier avec le fait que, contre toute attente, alors que c'est la base du bordel, le syst??me de r??solution de d??pendances est [bugg??](http://jira.codehaus.org/browse/MNG-3092) (oui, mon fan, ??a fait mal, mais ?? un moment il faut le reconna??tre, c'est bugg??).Bon, ??videment, en bonus (mais je l'ai d??ja dit) la doc est totallement, compl??tement et d??finitivement lamentable, les plugins sont terrifiants de nullit?? (essayez donc de savoir comment maven fait pour r??soudre une d??pendance, tiens. C'est magique, opaque, et foireux).Bref, maven, ??a chie.Le pire, c'est que je ne crois pas ??tre le seul ?? y penser.En deux secondes de recherches, je suis par exemple tomb?? sur cette page : [Introducing Buildr, or how we cured our Maven blues](http://blog.labnotes.org/2007/04/18/introducing-buildr-or-how-we-cured-our-maven-blues/)Le but, ??a n'est ??videment pas de dire que [buildr](http://buildr.apache.org/) c'est bien, et que maven ??a pue. Juste de montrer que les d??fauts de maven sont connus et aga??ent r??ellement.Surtout que cet apr??s-midi, j'ai d?? faire dix minutes d'[ant](http://ant.apache.org), et c'??tait nettement, mais alors tr??s netteemnt plus facile.Reste plus qu'?? mettre la main sur un outil de gestion de d??pendances/build qui tienne r??ellement la route (parce que maven, hein).Et si buildr est un concurrent valable, j'ai dans l'id??e que m??me la wikipedia est riche d'id??es.

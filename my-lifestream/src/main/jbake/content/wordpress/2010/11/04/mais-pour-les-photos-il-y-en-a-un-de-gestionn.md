@@ -1,0 +1,10 @@
+type: post
+status: published
+title: Mais pour les photos, il y en a un de gestionnaire ?
+tags: iptc, photos
+date: Thu Nov 04 13:52:39 CET 2010
+~~~~~~
+# Mais pour les photos, il y en a un de gestionnaire ?
+
+parce qu'effectivement, pour la musique il y en a peut-??tre pas, mais apr??s tout, je ne g??re pas que de la musique, j'ai aussi des photos, pour lesquels, vous le savez, j'aime jouer avec les tags [iptc](http://riduidel.posterous.com/tag/iptc).  
+Vous ne le savez [peut-??tre pas](http://riduidel.posterous.com/gestion-de-la-phototheque), mais pendant un moment, j'utilisais [iView Media Pro](http://www.iview-multimedia.com/). Et suite ?? la r??installation de mon ordinateur, j'ai fait un grand pas en avant dans l'[abandonware](http://fr.wikipedia.org/wiki/Logiciel_abandonn??), je suis pass?? ?? [Microsoft Expression Media 2008](http://fr.wikipedia.org/wiki/Microsoft_Expression_Media). Et ce, malgr?? le m??contentement des afficionados du premier, qui consid??rent le second comme une trahison. Je reconnais toutefois ?? ce second un grand pas en avant : on peut g??otagger les photos ... enfin, ?? moiti??.En fait, on peut positionner le lieu de prise de vue sur une carte (toute droit tir??e de [Microsoft Pro Photo Tools](http://www.microsoft.com/downloads/en/details.aspx?FamilyID=184075d2-40b5-4172-88ae-878f81896d4d)), mais on ne peut pas faire le g??ocodage inverse (c'est-??-dire d??duire, quand c'est possible, une adresse postale de ces coordonn??es). C'est malheureux, parce que ??a va encore m'obliger ?? installer des gadgets ?? la pelle. Parce que moi, avoir l'adresse dans des caract??res lisibles, j'aime bien. Cela dit, peut-??tre que c'est tout simplement que je ne comprend pas encore tr??s bien toutes les subtilit??s du soft.L'avantage ??norme, c'est quand m??me que je peux me passer de Picasa, qui n'est pas mauvais en soi, mais que je trouve franchement insuffisant.

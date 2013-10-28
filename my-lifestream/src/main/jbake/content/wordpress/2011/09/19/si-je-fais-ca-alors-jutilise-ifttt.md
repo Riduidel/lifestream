@@ -1,0 +1,10 @@
+type: post
+status: published
+title: Si je fais ??a, alors j'utilise IFTTT
+tags: automatisation, programmation, web
+date: Mon Sep 19 15:29:52 CEST 2011
+~~~~~~
+# Si je fais ??a, alors j'utilise IFTTT
+
+En fait, je ne suis pas s??r d'avoir besoin de vous pr??senter le site dont je voudrais vous abreuver les yeux. Apr??s tout, un [Scott Hanselmann](http://www.hanselman.com/blog/EssentialIFTTTIfThisThenThatProgrammingWorkflowsForHumansUsingTheWebsSocialGlue.aspx) le fait bien mieux que moi.  
+Toujours est-il que IFTTT est l'un des premiers sites (avec Yahoo Pipes, mais en humainement compr??hensible, comme le dit Scott) ?? proposer de l'automatisation multi-sites. Et qui plus est avec une interface incroyable ! Essayez donc de cr??er une t??che compl??te, vous allez voir comme c'est utilisable.Bref, IFTTT, c'est g??nial.Sauf que ...Sauf qu'en fait, je n'ai pas encore vraiment trouv?? comment m'en servir. En effet, comme j'??cris toutes mes entr??es de blog avec Posterous, je n'ai pas vraiment besoin que quelqu'un fasse de l'autopost vers twitter (c'est d??ja fait), google buzz (c'est d??ja fait) ou google plus (personne ne le fait encore, m??me si l'API [semble d??sormais exister](http://glaforge.appspot.com/article/playing-with-the-google-apis)). Cela dit, il y a bien un truc pour lequel ce serait vraiment pratique ... En fait, quand je lis un livre (oui, [??a m'arrive](http://www.goodreads.com/riduidel)), je poste mon avis sur [Goodreads](http://www.goodreads.com/review/list/1156136-nicolas?shelf=read) et sur [Google Groups](http://groups.google.com/group/fr.rec.arts.sf/search?group=fr.rec.arts.sf&q=nicolas+delsaux+avis&qt_g=Rechercher+dans+ce+groupe) (enfin, sur le forum Usenet fr.rec.arts.sf via l'interface de Google Groups). Le faire en double ?? chaque fois, c'est chiant. Et typiquement, c'est le genre de choses que ifttt ferait bien. Seulement, il n'y a pas encore d'acc??s ?? ces outils depuis leur super site. Et ??a, c'est triste.

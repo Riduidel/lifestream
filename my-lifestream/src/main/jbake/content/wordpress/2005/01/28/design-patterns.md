@@ -1,0 +1,19 @@
+type: post
+status: published
+title: Design patterns
+tags: code, informatique, java
+date: Fri Jan 28 18:34:39 CET 2005
+~~~~~~
+# Design patterns
+
+Since [JavaRunner](http://javarunner.blogspot.com/2005/01/design-patterns-boondoggle-or-state-of.html) asks it, i'll reply to this question :
+
+> What do you think of design Patterns? Which of them do you use? Which of them do you know by heart and which of the,m must you look up in a pattern book or another resource?soon. But, before, a little apart??.To my mind, Design patterns are not hot topics. Like UML, they're not at all a development tool. Instead, they're only a communication tool. It's indeed by far easier to say my A class is a Singleton using a Decorator to provide the needed Factory. than to say that A creates new objects when called using their class name as parameter. Furthermore, it's really satisfying to puzzle interlocutors by such a knowledge (yes, part of communication is non-communication).So, I know a good part of them, but, like I said the day I discovered them : I've already done such a thing ! which may help me assuming I know a good number of them, either having coded them or seen them in, as an example, JDK source code.In fact, my only main requirement when I conscienciously use design pattern is declaring the pattern in one (or more) tagging interface, and implementing this tagging interface in the class. By this mean I put all the design pattern javadoc in the interface, and can focus, in class javadoc, on its physical use.As an example, when I want to create a singleton, I use the SingletonMarker interface :[java]package com.xxx.util.markers.designpatterns;/** * 
+
+Un singleton est une classe pour laquelle il n'existe, ?? un instant donn??, qu'une  * unique instance. L'int??r??t de ce pattern est d'??viter la cr??ation d'objets  * inutiles, car dupliqu??s, et ??galement de fournir, pour une classe de service * (par exemple), un point d'acc??s unique. * 
+
+L'impl??mentation typique dans Plan de veille prendra la forme suivante * 
+
+<pre>* public class UnSingleton implements SingletonMarker { *  *                 // Instance unique du singleton *                 private static UnSingleton instance = new UnSingleton();  *  *                 // M??thode de r??cup??ration de l'instance. A utiliser d??s qu'on ?? besoin d'un  *                 // objet de la classe UnSingleton *                 public static UnSingleton getInstance() { *                         return instance; *                 } *  *                 // Constructeur par d??faut de la classe. *                 // il est private car, par d??faut, on ne souhaite pas fournir de sous-classes  *                 // d'un singleton  *                 private UnSingleton() { *                 } * } *</pre> * 
+
+Cette impl??mentation est la plus simple disponible. Bien s??r, elle souffre de  * nombreuses lacunes, notamment lors d'utilisations concurrentes (c'est-??-dire  * multithread??es) de cette classe. Dans ce cas, la m??thode getInstance ainsi que le  * constructeur seront nettement plus complexes. Il existe par ailleurs au sujet de  * l'ionstanciation de singletons une abondante litt??rature, notamment sur Javaworld.   * @see [Une description assez * compl??te (en fran??ais)](http://smeric.developpez.com/java/uml/singleton/)  * @see [Une description  * plus compl??te (mais en anglais)](http://home.earthlink.net/~huston2/dp/singleton.html) * @author nd * @version 0.1 * @version 0.2 nd ajout de documentation et d'un exemple d'impl??mentation */public interface SingletonMarker extends MarkerInterface {}[/java](sorry, no time to write the french translation)via [Nicolas Delsaux's posterous import script](http://riduidel.posterous.com/quest-ce-que-cest-que-ce-flux-qui-clignote)

@@ -1,0 +1,9 @@
+type: post
+status: published
+title: Et Daniel Schneiderman vient ?? ma rescousse
+tags: divers
+date: Fri Apr 22 11:51:00 CEST 2005
+~~~~~~
+# Et Daniel Schneiderman vient ?? ma rescousse
+
+Depuis mon dernier article, je commence à virer, doucement, tout en continuant à m'interroger en profondeur sur les rôles respectifs de l'Europe et de la France. Et puis, hier, le gang Phimatex (ça sonne plus comme un médicament bizarre, mais en fait, c'est vachement savant, si si, je vous jure) m'a envoyé [l'URL du blog](http://www.bigbangblog.net/) de Daniel Schneiderman (l'animateur de la passionante émission [Arrêt sur Images](http://www.france5.fr/asi/) sur [France 5](http://www.france5.fr)) et de son complice, le non moins percutant David Abiker. Et, qu'est-ce qu'on apprend ? Que contrairement à ce que j'avais entendu dire, il n'y a pas que la France du bas qui n'a pas trop envie de cette Europie ... Daniel lui-même s'interroge. Et verse au passage dans mon escarcelle d'arguments intelligents pour le Oui un [très bel argument de civilisation](http://www.bigbangblog.net/article.php3?id_article=110). Parce que clamer que l'Europe est un îlot de laïcité dans ce monde de plus en plus soumis à la religion me paraît être vraiment un but de civilisation, quelque chose qui manque assez ouvertement à ce débat. Donc, sans vegogne aucune, je reprend cet argument pour mien en assumant que, si l'Europe dispose effectivement d'une tradition historique chrétienne, elle s'attache au respect de la laïcité et de la libre pratique religieuse (y compris l'athéisme). Reste à trouver les articles du traité qui en parlent. Bon, par contre, c'est dommage, très cher Daniel, de ne pas fournir de trackback. Le cyberpunk que je suis trouve ça dommage d'aller poster un commentaire sur votre blog.via [Nicolas Delsaux's posterous import script](http://riduidel.posterous.com/quest-ce-que-cest-que-ce-flux-qui-clignote)

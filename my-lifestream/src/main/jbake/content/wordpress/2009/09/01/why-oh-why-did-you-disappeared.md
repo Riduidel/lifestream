@@ -1,0 +1,10 @@
+type: post
+status: published
+title: _why, oh why did you disappeared ? 
+tags: mavie, ruby
+date: Tue Sep 01 08:21:47 CEST 2009
+~~~~~~
+# _why, oh why did you disappeared ? 
+
+J'en ai parl?? beaucoup trop bri??vement dans mon message pr??c??dent, donc je vais en parler un peu plus.Il y a quatre ou cinq ans, j'ai d??couvert le [Ruby](http://www.ruby-lang.org/fr/) et [Ruby on Rails](http://rubyonrails.org/). C'??tait pas mal, mais certaines choses me semblaient un peu bizarres, surtout dans Ruby on Rails.  
+ Et comme ?? l'??poque, j'en ??tais ?? la troisi??me ou quatri??me it??ration de mon site, je voulais r??cup??rer des infos bibliographiques sur mes bouquins depuis le site noosfere.Apr??s un peu de recherche, je suis tomb?? sur [hpricot](http://github.com/whymirror/hpricot/tree/master). Et de fil en aiguille, j'ai d??couvert l'oeuvre de **Why the lucky stiff** : son incroyable blog, tous ses projets d??lirants (shoes, son guide du ruby, tryruby, pour essayer ruby dans son navigateur). Et je trouvais tout ??a fascinant.Parce que bon, nous autres, dans le monde du Java, on est globalement des gens s??rieux, voire m??me s??rieusement chiants (genre quand on me parle de certains trucs m??ta-m??ta-programming). Et l??, je tombais sur un mec qui ??crivait du code Ruby **?? la main** (??videment, je n'ai pas de lien sous la main). Je n'h??siterais pas ?? dire que _Why fut mon premier h??ros informatique.Malheureusement, depuis le mois d'ao??t, _Why a disparu d'internet. Et ??a, c'est [Ruby Inside](http://www.rubyinside.com/why-the-lucky-stiff-links-2333.html) qui le dit, avec un paquet de lien nous montrant une partie de ce que _Why a r??alis??.Mais son meilleur hommage posthume nous vient de [John Resig](http://ejohn.org/blog/eulogy-to-_why/) (qui n'est pas n'importe qui, quand m??me, puisque c'est lui qui nous a donn?? [jQuery](http://jquery.com/)). La seule chose que je pourrais dire, personnellement, c'est que _Why a chang?? ma vision du d??veloppement, pour la rendre plus ??l??gante, plus simple et plus spontan??e. Merci pour tout, _Why.

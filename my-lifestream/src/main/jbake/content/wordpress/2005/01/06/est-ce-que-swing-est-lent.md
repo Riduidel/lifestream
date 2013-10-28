@@ -1,0 +1,13 @@
+type: post
+status: published
+title: Est-ce que Swing est lent ?
+tags: code, informatique, java
+date: Thu Jan 06 17:10:42 CET 2005
+~~~~~~
+# Est-ce que Swing est lent ?
+
+La question est r??currente. Sur [ce blog](http://bayuadji.idwebhost.com/index.php?p=8) l'auteur la pose. Et trouve naturellement la r??ponse ??vidente : It's a recuring question. On [this blog](http://bayuadji.idwebhost.com/index.php?p=8), the author asks it. And naturly  finds the obvious reply :
+
+> So the bottom line is swing is fast enough but then again it????s up to the developer to make it swing as fast as possible or make it as slow as a walking turtle.
+
+> So the bottom line is swing is fast enough but then again it????s up to the developer to make it swing as fast as possible or make it as slow as a walking turtle.Et comme d'habitude, en guise d'exemple, il incite les autres d??veloppeurs ?? cr??er des applications Swing performantes. J'ai eu la chance de bosser sur une superble application Swing, largement assez rapide pour l'oeil humain, et qui plus est utilis??e dans le contexte industriel, donc je ne peux que l'encourager ?? y jeter un coup d'oeil : [GlobalScreen Intra](http://www.ordinal.fr/html/gsi_french.htm). Ca ??t?? sans doute ma p??riode la plus productive en tant que d??veloppeur Java. Bref, une belle page de ma carri??re. Et ??, chaque fois qu'on me parle de Swing rapide, j'y repense. Comme je repense aux [Swing Sightings](http://java.sun.com/products/jfc/tsc/sightings/) qui r??f??rence un paquet de tr??s jolies applications Java. Bref, tout un tas de d??monstrations que Swing est vraiment loin d'??tre aussi pataud qu'on le dit, en plus d'??tre une API formidablement ??crite (?? la diff??rence de SWT).As usual, as an example, he pushes other developpers forward into creating fast Swing applications. I was lucky enough to work on a wonderful Swing application, far enough for human being, which was used in industrial context, so i can only encourages him to cast a glance at it : [GlobalScreen Intra](http://www.ordinal.fr/html/gsi_english.htm). It was undoubtly the most productive part of my career as a Java developper. And, each time I'm talked about fast Swing, I think about it. As I think about [Swing Sightings](http://java.sun.com/products/jfc/tsc/sightings/) which references a lot of very nice Swing applications. In short, a lot of demonstrations that Swing is far from the heavy image it gets, asided the fact its a very well written API (contrary to SWT).via [Nicolas Delsaux's posterous import script](http://riduidel.posterous.com/quest-ce-que-cest-que-ce-flux-qui-clignote)

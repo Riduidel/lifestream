@@ -1,0 +1,16 @@
+type: post
+status: published
+title: Infinitest ? Done
+tags: eclipse, java, tdd
+date: Thu Nov 25 14:05:20 CET 2010
+~~~~~~
+# Infinitest ? Done
+
+Vous le savez peut-??tre, au bureau, on utilise un langage qui n'est pas le Java. Qui n'est pas non plus le C#. Qui n'est pas non plus le {langage bien connu qui figure dans le [Tiobe](http://www.tiobe.com/index.php/content/paperinfo/tpci/index.html) index}. En fait, pour ??tre honn??te, il n'y aucune esp??ce de chance que vous le connaissiez si vous n'avez pas travaill?? dans l'entreprise qui m'emploie actuellement, ou en avez ??t?? un client.  
+C'est une situation assez difficile, parce que les outils qui existent pour les langages plus connus n'existent pas chez nous. Pas plus, d'ailleurs, que n'existent les frameworks de d??veloppement que vous utilisez, ou m??me les outils de build qui vous sont impos??s. Les outils dont on dispose, ce sont ceux qu'on cr??e nous-m??mes.Je suis donc assez fier de pouvoir affirmer que, nous aussi, nous pouvons ??crire des tests unitaires ?? la [JUnit](http://www.junit.org/) (??ventuellement [param??tr??s](http://www.mkyong.com/unittest/junit-4-tutorial-6-parameterized-test/)). J'en suis fier, parce que c'est moi qui ai ??crit (avec l'aide d'un expert local, ??videment), l'outil d'ex??cution des tests unitaires. D'ailleurs, dans une optique d'int??gration continue, on a depuis des mois un job [Hudson](http://hudson-ci.org/) qui les ex??cute ?? distance pour ??aggr??ger leurs r??sultats.Mais bon, tout ??a, c'est de la rigolade, ??a vaut pas mieux que le plugin [JUnit pour Eclipse](http://www.jmdoudoux.fr/java/dejae/chap011.htm).Ce qui serait vraiment canon, ce serait de disposer d'un outillage ?? la [Infinitest](http://infinitest.github.com/index.html) qui, quand on modifie un fichier source, rep??re les tests int??ressants, les ex??cute, et affiche les r??sultats. Enfin, Infinitest, c'est peut-??tre un peu ambitieux, on pourrait peut-??tre se contenter de quelque chose comme [JUnitFlux](http://code.google.com/p/junitflux/).Et bien devinez quoi ? C'est ce qu'on a fait.
+
+En fait, on a ajout?? ?? nos fichiers un commentaire
+
+**@testedBy** UneClasseDeTest
+
+Et, quand le fichier est compil??, toutes ces annotations sont lues, les tests unitaires de ces classes sont ex??cut??s, et les r??sultats sont affich??s dans la vue JUnit d'Eclipse (gr??ce ?? un bon coup de [reverse engineering](http://ant.1045680.n5.nabble.com/schema-for-junit-xml-output-td1375274.html) sur le format XML de JUnit/Ant - merci encore ?? [StackOverflow](http://stackoverflow.com/q/442556/15619)). Et franchement, c'est incroyablement pratique : ?? la sauvegarde d'un fichier, on sait tout de suite si le test unitaire fonctionne encore. On a donc, en plus de la compilation, une information suppl??mentaire sur la qualit?? du code produit. Et ??a, ??a donne envie d'aller encore plus loin, justement en essayant enfin Infinitest ... mais ??videment, c'est beaucoup plus compliqu?? d'analyser quels tests unitaires s'appliquent ?? un fichier donn?? quand on ne dispose pas des innombrables librairies d'analyse de code dont dispose Java.

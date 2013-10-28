@@ -1,0 +1,14 @@
+type: post
+status: published
+title: Ca sent la poussi??re par ici
+tags: fps, mavie, urbanterror
+date: Tue Apr 26 15:33:59 CEST 2011
+~~~~~~
+# Ca sent la poussi??re par ici
+
+Oulala, ??a fait un moement que j'avais pas point?? mes gu??tres ici, non ?  
+Ah oui, quand m??me, quinze jours ! Ca se voit, m??me sur [memolane](http://memolane.com/riduidel).Pourtant, de l'actualit??, il y en a eu. Mes travaux ont avanc?? (quoique pas aussi vite que je le voudrai), et j'ai ??t?? accus?? d'??tre un sale petit tricheur. Ce qui, d'ailleurs, est une histoire assez amusante que je m'en vais vous raconter.Depuis un moment, je suis donc [devenu tueur virtuel en s??rie sur Urban Terror](http://riduidel.posterous.com/urban-terror-is-the-new-sof-ii) (et oui, il ne faut pas oublier que, dans un [simulateur de meurtre](http://www.nofrag.com/), on tue virtuellement un paquet de monde, ce qui est virtuellement abject ... mais physiquement supportable).Evidement, la pratique engendrant la qualit??, je suis devenu raisonnablement bon.Et depuis un moment (plus court, cette fois), je me rends r??guli??rement sur le serveur de [La Boucherie](http://la-boucherie.net/). L'ambiance y est bonne, le frag "facile", et le niveau s'am??liore.Quelle n'a donc pas ??t?? ma surprise quand, un beau jour, j'ai d??couvert [ce message](http://forumlaboucherie.xooit.fr/t59-Riduel-doute.htm) (bien aid?? par un habitu?? des lieux ... l'auteur). D'ailleurs, je ne r??siste m??me pas au plaisir de me flatter en la remettant dans ce message (attention, ??loignez les enfants, je vais gicler les tripes):
+
+[youtube http://www.youtube.com/watch?v=Cy57sOj8wyU?wmode=transparent]
+
+Je dois bien, par ailleurs (et allez, encore une tartine d'auto-congratulation, l'[hubris](http://fr.wikipedia.org/wiki/Hybris) n'est pas loin), signaler que j'ai depuis encore am??lior?? mon score en constatant que ni l'arme secondaire, ni les grenades n'??taient r??ellement utiles quand on est arm?? d'un Negev.Bref, ce qui m'int??resse en l'esp??ce, ce n'est pas le fait qu'on m'ait accus?? de tricher (ce qui est faux, parce que la triche, ben c'est pas si dr??le que ??a). Ce n'est pas non plus le fait que certains pensent que les joueurs plus forts qu'eux trichent.Non, ce qui m'a int??ress?? dans ce cas, c'est la [pression sociale](http://fr.wikipedia.org/wiki/Influence_sociale). Pourquoi donc ai-je ??t?? me justifier aupr??s de cette bande d'anonymes d'internet (cela dit sans vouloir les d??valoriser, la plupart d'entre eux sont des sacr??s massacreurs de dragons) ? Parce que je veux ??tre leur copain ? J'en sais pas trop grand chose.

@@ -1,0 +1,9 @@
+type: post
+status: published
+title: Un template de setter fluent
+tags: eclipse, java
+date: Wed Oct 26 14:02:56 CEST 2011
+~~~~~~
+# Un template de setter fluent
+
+Supposons que vous souhaitiez développer une [API "fluente"](http://martinfowler.com/bliki/FluentInterface.html). Ou plutôt, pour étre un peu plus simple (parce que bon, je l'ai déja fait, enfin, j'ai [essayé](http://gaedo.origo.ethz.ch/blog/%5Buser-raw%5D/dynamic_finders_the_reference), et c'est vraiment pas de la tarte), vous souhaitez implémenter facilement le [pattern builder](http://en.wikipedia.org/wiki/Builder_pattern).Une manière simplifiée de le faire est d'ajouter des "setters fluents", comme je les appelle, c'est-à-dire des setters qui retournent this au lieu de ne rien retourner. Ca ne pourrit pas les classes (puisqqu'on retourne quelque chose là où il n'y avait rien), et ça permet d'éviter la multitude de constructeurs qu'on peut être amenés à écrire. Tenez, regardez donc cet exemple :https://gist.github.com/1316141Facile à utiliser, non ?Bon, par contre, comme il s'agit de méthodes, il faut les écrire. Et, franchement, écrire à la pelle des méthodes toutes identiques, c'est pénible. J'ai donc écrit un petit template Eclipse pour me faciliter la vie :https://gist.github.com/1316135Et une fois qu'on a fait ça, la face du monde n'est pas changée, mais le code devient plus facile à écrire.Bon, par contre, si vous ne savez pas à quoi servent les tags @category, je vous encourage à aller voir chez [Eclipse](http://thecodersbreakfast.net/index.php?post/2010/03/05/Eclipse-organiser-son-code-avec-les-Categories) ...

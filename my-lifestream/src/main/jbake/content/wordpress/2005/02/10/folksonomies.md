@@ -1,0 +1,9 @@
+type: post
+status: published
+title: Folksonomies
+tags: informatique, web
+date: Thu Feb 10 14:18:46 CET 2005
+~~~~~~
+# Folksonomies
+
+Je cherchais une bonne d??finition de [folksonomie](http://en.wikipedia.org/wiki/Folksonomy) quand je suis tomb?? sur [ce blog](http://www.micheldumais.com/archives/2005/01/15/folksonomy/), qui en parle assez bien, mais l?? n'est pas le sujet de ce message.Non, le sujet de ce message, c'est de parler d'un certain nombre de sites web qui exploitent les m??tadonn??es utilisateur d'une mani??re assez novatrice (et peut-??tre m??me que ??a servira ?? quelque chose un jour).Le premier, c'est [tagsurf](http://tagsurf.com/), une esp??ce de message board, ou en fran??ais de forum en ligne, qui n'utilise pas de sujets impos??s, mais permet de tagger son message et donc de le faire appara??tre dans des cat??gories aux choix, ?? partir desquelles on peut partir vers Technorati ou delicious.Le second, plus int??ressant encore, c'est [43 things](http://www.43things.com/home/), pour g??rer sa liste de choses ?? faire, et l??, c'est vraiment marrant de se balader parmi les envies des utilisateurs. Par exemple, ceux qui veulent [Master Java](http://www.43things.com/things/view/2558) devenir des dieux du Java (comme moi, enfin comme je veux), veulent aussi lire la Divine com??die (cool), joindre une symphonie (pas tout compris), ou voir plus de concerts (tr??s cool).N'??tant pas vraiment tourn?? vers la discussion sur le web (je hais les forums), je me suis donc cr???? [un compte 43 things](http://www.43things.com/people/view/Riduidel) pour [tester un peu le truc ...](http://www.43things.com/entries/view/17351)via [Nicolas Delsaux's posterous import script](http://riduidel.posterous.com/quest-ce-que-cest-que-ce-flux-qui-clignote)

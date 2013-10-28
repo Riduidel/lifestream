@@ -1,0 +1,9 @@
+type: post
+status: published
+title: Free se lance dans le partage de fichiers
+tags: informatique, web
+date: Thu Dec 08 14:23:30 CET 2005
+~~~~~~
+# Free se lance dans le partage de fichiers
+
+Via [Fred Cavazza](http://www.fredcavazza.net/index.php?2005/12/07/980-musique-en-ligne-rien-n-arretera-le-progres), je suis tomb?? sur [ce service de Free](http://dl.free.fr/), qui me permettra sans aucun doute d'??changer des fichiers ?? la vitesse de la lumi??re avec mon fr??re freeboxien.D'un autre c??t??, dans ce cas-l??, est-ce qu'il ne vaut pas mieux monter un serveur FTP, y d??poser le fichier, et donner l'acc??s ?? l'autre freeboxien ? Je sais bien que Fred me r??pondra que c'est loin d'??tre aussi convivial, et, surtout, qu'il faut avoir des droits d'administrateur sur la machine. Mais l?? n'est de toute fa??on pas le but de ce service. Comme pour les newsgroups binaires, comme pour la non limitation des protocoles, il doit sans doute y avoir une basse question de prix de peering avec France Telecom, comme je l'ai vu jadis dans un stup??fiant article que j'ai ??videment ??gar??. Pas si grave, puisqu'un bon aper??u de ce que peuvent provoquer ces fameux liens de peering est r??sum?? dans [cet article du journal du Net](http://solutions.journaldunet.com/0301/030124_freeft.shtml) au sujet d'une bataille que sse sont livr??s Free et France Telecom en 2003 (je me souviens encore de probl??mes de connexion ?? mon serveur de news depuis mon boulot). Cet article est ??galement instruction : [Les interconnexions du net](http://christian.caleca.free.fr/interco/interconnexions.htm).via [Nicolas Delsaux's posterous import script](http://riduidel.posterous.com/quest-ce-que-cest-que-ce-flux-qui-clignote)

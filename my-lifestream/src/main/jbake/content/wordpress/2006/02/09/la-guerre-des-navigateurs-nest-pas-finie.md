@@ -1,0 +1,9 @@
+type: post
+status: published
+title: La guerre des navigateurs n'est pas finie
+tags: informatique, web
+date: Thu Feb 09 12:02:29 CET 2006
+~~~~~~
+# La guerre des navigateurs n'est pas finie
+
+[Fred Cavazza](http://www.fredcavazza.net/index.php?2006/02/08/1055-premier-retour-d-experience-sur-ie-7-beta-2) nous parle des derni??res versions d'Opera et d'IE.Et je dois dire que certains points me chagrinent un peu.J'utilise Opera depuis qu'existe la version gratuite avec pub (c'est-??-dire environ depuis 2000).A cette ??poque-l??, Firefox n'existait pas encore, et n'incorporait (logiquement) pas d'onglets.Est-ce ?? dire qu'il n'y a pas eu d'innovation chez Opera depuis 5 ans ? Pas tout ?? fait.Il y a d'abord eu la r??volution du client mail, rempla??ant les dossiers en dur par des filtres assez rapides (qui existait certes d??ja dans Evoluition et autres softs Linuxiens). Il y a eu ensuite quelques tentatives d'int??grer un outil de chat IRC (dans la version 7, je crois). Il y a encore eu, d??ja dans les technology previews d'Opera 8 un client `.torrent`, qui a disparu dans la version finale.Ce que je trouve nouveau et vraiment bien pens??, ce sont les miniatures d'onglets. Ca, ??a va rendre service.J'aurais bien aim?? aussi pouvoiir dire aux z??lateurs de Firefox qu'ils ne devraient pas trop en vanter les avanc??es technologiques, mais je sais d'exp??rience que ce combat est vain.En revanche, un truc m'??pate. il existe en fait bien d'autres navigateurs qu'IE, Firefox et Opera. Et personne n'en parle jamais ... bizarre.via [Nicolas Delsaux's posterous import script](http://riduidel.posterous.com/quest-ce-que-cest-que-ce-flux-qui-clignote)

@@ -1,0 +1,14 @@
+type: post
+status: published
+title: Les secrets de Cupidon
+tags: biologie, science, sexe
+date: Mon Feb 28 13:46:51 CET 2011
+~~~~~~
+# Les secrets de Cupidon
+
+Comme c'est Lundi, c'est permis. Parlons donc un peu de sexe. En plus, ??a fait longtemps.  
+Il y a quelques temps (bon, en fait, au d??but de l'ann??e, ??a commence ?? dater. cela dit, l'ayant enregistr??, je ne l'ai regard?? que la semaine derni??re), France 5 a diffus?? un documentaire en trois parties (qui s'appelle donc [les secrets de cupidon](http://documentaires.france5.fr/series/les-secrets-de-cupidon)) sur tous les aspects biologiques entrant en compte dans la s??duction, la relation sexuelle, tout ??a.Le sujet ne m'est pas inconnu, surtout gr??ce ?? certains blogs (au hasard, [Sexactu](http://www.sexactu.com/), [les 400 culs](http://sexes.blogs.liberation.fr)). cela dit, il est toujours int??ressant de voir ces ph??nom??nes fascinants mis en lumi??re par des exp??riences, des analyses, tout ??a.Qu'est-ce qu'on y apprend, donc. Et bien tout simplement que l'immense majorit?? des comportements de notre parade amoureuse nous sont dict??s par les parties les plus basses de notre cerveau (??videment, je simplifie, ??videment, je sch??matise, mais apr??s tout je ne suis ni neuro-psychiatre, ni sexologue, ni historien, donc je peux me le permettre). Une r??v??lation curieuse dans bien des cas, qui m'a fait regarder ma femme d'un autre oeil.Mais, surtout, une confirmation de quelque chose que je pense de plus en plus, mais que je n'ai pas encore eu le temps de formuler plus clairement que ce "slogan" :??
+
+>  L'esprit est un jouet pour le corps.
+
+Une rapide recherche semble montrer qu'encore une fois je n'ai rien d'original. Cependant, cette phrase me semble, les ann??es passant, de plus en plus fondatrice d'uyne esp??ce d'??tat d'esprit : l'acceptation que, quoi qu'on croie imaginer, penser de mani??re d??sincarn??e, notre esprit n'est toujours qu'une masse de graisse un peu intelligente qui ne peut agir que parce que le corps ne lui rappelle aucune n??cessit?? imp??rieuse.Et, en ce qui concerne l'amour, le sexe, tout ??a, je trouve (bien aid?? par ces reportages), cette approche encore plus frappante dans sa v??rit??.Qu'est-ce qui nous attire vers une personne de l'autre sexe en particulier ? Des consid??rations biologiques de baseQu'est-ce qui va nous attacher ?? cette m??me personne ? Des sentiments ? c'est ce que vous croyez ! Il y a aussi, pour une part significative, notre odeur, le go??t de notre salive, et tout un tas d'autres choses encore plus animales.Franchement, regardez ces documentaires, vous ne verrez plus jamais les autres personnes de la m??me mani??re.

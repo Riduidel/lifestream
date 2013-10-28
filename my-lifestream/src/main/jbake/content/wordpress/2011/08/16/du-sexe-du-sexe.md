@@ -1,0 +1,10 @@
+type: post
+status: published
+title: Du sexe ! du sexe !
+tags: sexe, visualisation
+date: Tue Aug 16 14:04:41 CEST 2011
+~~~~~~
+# Du sexe ! du sexe !
+
+On n'est pas vendredi, mais je m'en fous.  
+Ce week-end, pen dant mes travaux de peinture, j'??coutais [On va se g??ner sur Europe 1](http://www.europe1.fr/MediaCenter/Emissions/On-va-s-gener/Sons/On-va-s-gener-!-Meme-en-ete-15-08-11-669473/). Evidement, au mois d'ao??t, c'??tait une rediffusion.Cela dit, dans cette rediffusuion, les chroniqueurs glosaient ?? l'envie sur un sondage paru dans Marianne au mois de juin. Un sondage, dont, d'ailleurs, certains blogs plus sp??cialis??s avaient d??ja parl?? avec (??videment) beaucoup de talent. Bon, je ne le retrouve plus, mais je suis s??r que [Zone Z??rog??ne](http://www.zonezerogene.com) ou [les 400 culs](http://sexes.blogs.liberation.fr) en ont d??ja parl?? (non, je ne crois pas que [Ma??a Mazaurette](http://www.sexactu.com) l'ait ??voqu??) (et non, je n'en profite pas pour placer ma blogoliste "adulte").Enfin bref, dans ce sondage d??bile, on a le choix entre des fantasmes particuli??rement vanille. J'ai m??me bien rigol?? en entendant la liste des lieux "dans laquelle les fran??ais r??vent d'avoir du sexe" ... et surtout en entendant les propositions de Christine Bravo comme "?? la maternit?? ...".Mais ca n'est toujours pas le sujet de ce court message.Les anglais eux aussi font des enqu??tes sans int??r??t. Mais ils savent clairement mieux les mettre en forme. Regardez donc [The sexperience](http://sexperienceuk.channel4.com/the-sexperience-1000). Et promenez votre souris dans les diff??rents diagrammes. Et jouez avec les filtres. Vous y apprendrez des choses bien plus int??ressantes que le simple ??ge du premier rapport. (et merci ?? [FlowingData](http://flowingdata.com/2011/08/16/the-sexperience-1000-shows-a-statistical-view-of-what-goes-on-in-the-bedroom/) pour le lien).

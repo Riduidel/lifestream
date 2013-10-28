@@ -1,0 +1,10 @@
+type: post
+status: published
+title: Don du Sang ?? Euratechnologies
+tags: euratechnologies, mavie
+date: Tue Jun 07 14:00:32 CEST 2011
+~~~~~~
+# Don du Sang ?? Euratechnologies
+
+Je l'ai d??ja ??crit il y a des ann??es, et donc je ne vais pas h??siter ?? me citer moi-m??me (j'imagine que ??a ne surprendra pas grand monde).  
+En fait, je l'ai d??ja ??crit il y a tellement longtemps qu'internet, malgr?? toutes mes manoeuvres, semble l'avoir oubli?? (cela dit, c'est peut-??tre juste la recherche de Posterous qui chie).Donc.Pensez ?? votre famille, vos amis, vos connaissances.Est-ce que, parmi tous ces gens, certains ont ??t?? op??r??s ?Est-ce que, parmi tous ces gens, certains ont subis des accidents ? ??Est-ce que, parmi tous ces gens, certains ont eu besoin de "sang neuf", autrement dit d'une [transfusion](http://fr.wikipedia.org/wiki/Transfusion_sanguine) ?Si c'est le cas, pour eux, pour tous ceux qui, aujourd'hui, demain, plus tard, auront besoin d'une transfusion, donnez votre sang. Ca ne vous co??tera pas grand chose (au pire, vous tomberez dans les pommes et en sortirez en moins d'une heure). Mais peut-??tre que votre sang sauvera des vies. Et, surtout, vous ne choisirez pas de qui vous sauverez la vie. Ce sera peut-??tre un trafiquant de drogue accident?? lors d'un carrambolage provoqu?? par ses soins. Ou un meurtrier multir??cidiiste (m??me si ils sont en fait [bien rares en France](http://fr.wikipedia.org/wiki/Homicide#Statistiques_en_France), contrairement ?? ce que tous les vendeurs d'ins??curit?? veulent nous faire croire). Et ??a, l'air de rien, c'est peut-??tre la meilleure chose qui puisse vous arriver : ne pas choisir ?? qui le don ira, quelles sont ses vertus morales, mais donner juste parce que c'est un ??tre humain.Alors bien s??r, ??a fait un peu mal. Mais franchement, on n'a pas tous les jours la chance de faire un geste authentiquement d??sint??ress?? (et qu'on pourrait regretter si on connaissait son b??n??ficiaire).Et bien s??r, si vous travaillez ?? Euratechnologies, donnez cet apr??s-midi, s'il vous pla??t.
