@@ -1,8 +1,8 @@
-type: post
-status: published
-title: <input.title>
-tags: <input.tags; separator=", ">
-date: <input.writeDate>
+type=post
+status=published
+title=<input.title>
+tags=<input.tags; separator=", ">
+date=<input.writeDate>
 ~~~~~~
 # <input.title>
 

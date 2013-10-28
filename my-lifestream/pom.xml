@@ -10,7 +10,8 @@
 	<packaging>pom</packaging>
 	<description>My very own lifestream, using all provided modules to create a valid output</description>
 	<properties>
-		<site.dir>${project.basedir}/src/site</site.dir>
+		<!-- site.dir is configured in profiles -->
+		<site.dir>${project.basedir}/src/site/lifestream/</site.dir>
 		<goodreads.dir>${site.dir}/</goodreads.dir>
 		<wordpress.dir>${site.dir}/</wordpress.dir>
 		<wordpress.site>https://riduidel.wordpress.com/</wordpress.site>
@@ -18,58 +19,107 @@
 	</properties>
 	<build>
 		<plugins>
-			<plugin>
-				<artifactId>maven-clean-plugin</artifactId>
-				<version>2.5</version>
-				<configuration>
-					<filesets>
-						<fileset>
-							<directory>${site.dir}</directory>
-							<includes>
-								<include>**/*</include>
-							</includes>
-							<followSymlinks>false</followSymlinks>
-						</fileset>
-					</filesets>
-				</configuration>
-			</plugin>
-			<plugin>
-				<groupId>${project.groupId}</groupId>
-				<artifactId>goodreads</artifactId>
-				<executions>
-					<execution>
-						<id>download goodreads</id>
-						<goals>
-							<goal>goodreads</goal>
-						</goals>
-						<configuration>
-							<mode>${output.mode}</mode>
-							<output>${goodreads.dir}</output>
-							<username>${goodreads.mail}</username>
-							<password>${goodreads.password}</password>
-						</configuration>
-					</execution>
-				</executions>
-			</plugin>
-			<plugin>
-				<groupId>${project.groupId}</groupId>
-				<artifactId>wordpress</artifactId>
-				<executions>
-					<execution>
-						<id>download wordpress</id>
-						<goals>
-							<goal>wordpress</goal>
-						</goals>
-						<configuration>
-							<mode>${output.mode}</mode>
-							<output>${wordpress.dir}</output>
-							<username>${wordpress.login}</username>
-							<password>${wordpress.password}</password>
-							<site>${wordpress.site}</site>
-						</configuration>
-					</execution>
-				</executions>
-			</plugin>
 		</plugins>
 	</build>
+	<profiles>
+		<profile>
+			<!-- Download content and transform it -->
+			<id>download-content</id>
+			<build>
+				<plugins>
+					<plugin>
+						<artifactId>maven-clean-plugin</artifactId>
+						<version>2.5</version>
+						<configuration>
+							<filesets>
+								<fileset>
+									<directory>${site.dir}</directory>
+									<includes>
+										<include>**/*</include>
+									</includes>
+									<followSymlinks>false</followSymlinks>
+								</fileset>
+							</filesets>
+						</configuration>
+					</plugin>
+					<plugin>
+						<groupId>${project.groupId}</groupId>
+						<artifactId>goodreads</artifactId>
+						<executions>
+							<execution>
+								<id>download goodreads</id>
+								<goals>
+									<goal>goodreads</goal>
+								</goals>
+								<configuration>
+									<mode>${output.mode}</mode>
+									<output>${goodreads.dir}</output>
+									<username>${goodreads.mail}</username>
+									<password>${goodreads.password}</password>
+								</configuration>
+							</execution>
+						</executions>
+					</plugin>
+					<plugin>
+						<groupId>${project.groupId}</groupId>
+						<artifactId>wordpress</artifactId>
+						<executions>
+							<execution>
+								<id>download wordpress</id>
+								<goals>
+									<goal>wordpress</goal>
+								</goals>
+								<configuration>
+									<mode>${output.mode}</mode>
+									<output>${wordpress.dir}</output>
+									<username>${wordpress.login}</username>
+									<password>${wordpress.password}</password>
+									<site>${wordpress.site}</site>
+								</configuration>
+							</execution>
+						</executions>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+		<profile>
+			<!-- Generate website using JBake -->
+			<id>jbake</id>
+			<properties>
+				<site.dir>${project.basedir}/src/main/jbake/content/</site.dir>
+				<output.mode>jbake</output.mode>
+			</properties>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>br.com.ingenieux</groupId>
+						<artifactId>jbake-maven-plugin</artifactId>
+						<executions>
+							<execution>
+								<id>generate_jbake</id>
+								<!-- moved into compile phase to make sure files are generated before -->
+								<phase>compile</phase>
+								<goals>
+									<goal>generate</goal>
+								</goals>
+							</execution>
+						</executions>
+					</plugin>
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-war-plugin</artifactId>
+						<version>2.4</version>
+						<configuration>
+							<!-- web.xml is not mandatory since JavaEE 5 -->
+							<failOnMissingWebXml>false</failOnMissingWebXml>
+							<!-- <filteringDeploymentDescriptors>true</filteringDeploymentDescriptors> 
+								<warSourceDirectory>WebContent</warSourceDirectory> <webResources> <resource> 
+								<directory>src/main/webapp2</directory> <filtering>true</filtering> </resource> 
+								</webResources> -->
+						</configuration>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+	</profiles>
 </project>
