@@ -1,12 +1,18 @@
 package org.ndx.lifestream.rendering.output.jbake;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.ndx.lifestream.rendering.OutputWriter;
 import org.ndx.lifestream.rendering.model.Input;
 import org.ndx.lifestream.rendering.output.AbstractStringTemplateBackedOutputter;
+import org.ndx.lifestream.rendering.output.StringTemplateUtils;
 
 public class JBakeOutputter extends AbstractStringTemplateBackedOutputter implements OutputWriter {
+	private static DateFormat jbakeFormat = new SimpleDateFormat("yyyy-MM-dd");
 
 	public JBakeOutputter() {
 		super("jbake", "page");
@@ -20,7 +26,13 @@ public class JBakeOutputter extends AbstractStringTemplateBackedOutputter implem
 
 	@Override
 	protected List<String> toRealPath(Input input) {
-		return toRealPath(input, ".md");
+		return toRealPath(input, ".html");
 	}
 
+	protected String render(Input input) {
+		Map<String, Object> parameters = new HashMap<>();
+		parameters.put("input", input);
+		parameters.put("writeDate", jbakeFormat.format(input.getWriteDate()));
+		return StringTemplateUtils.applyParametersToTemplate(page, parameters);
+	}
 }

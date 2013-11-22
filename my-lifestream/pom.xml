@@ -17,14 +17,13 @@
 		<wordpress.site>https://riduidel.wordpress.com/</wordpress.site>
 		<output.mode>jekyll</output.mode>
 	</properties>
-	<build>
-		<plugins>
-		</plugins>
-	</build>
 	<profiles>
 		<profile>
+			<activation>
+				<activeByDefault>false</activeByDefault>
+			</activation>
 			<!-- Download content and transform it -->
-			<id>download-content</id>
+			<id>download-goodreads</id>
 			<build>
 				<plugins>
 					<plugin>
@@ -60,6 +59,32 @@
 							</execution>
 						</executions>
 					</plugin>
+				</plugins>
+			</build>
+		</profile>
+		<profile>
+			<activation>
+				<activeByDefault>false</activeByDefault>
+			</activation>
+			<!-- Download content and transform it -->
+			<id>download-wordpress</id>
+			<build>
+				<plugins>
+					<plugin>
+						<artifactId>maven-clean-plugin</artifactId>
+						<version>2.5</version>
+						<configuration>
+							<filesets>
+								<fileset>
+									<directory>${site.dir}</directory>
+									<includes>
+										<include>**/*</include>
+									</includes>
+									<followSymlinks>false</followSymlinks>
+								</fileset>
+							</filesets>
+						</configuration>
+					</plugin>
 					<plugin>
 						<groupId>${project.groupId}</groupId>
 						<artifactId>wordpress</artifactId>
@@ -83,6 +108,9 @@
 			</build>
 		</profile>
 		<profile>
+			<activation>
+				<activeByDefault>false</activeByDefault>
+			</activation>
 			<!-- Generate website using JBake -->
 			<id>jbake</id>
 			<properties>
