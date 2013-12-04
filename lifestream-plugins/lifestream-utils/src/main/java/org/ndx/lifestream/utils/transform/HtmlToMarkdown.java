@@ -6,7 +6,9 @@ import static org.ndx.lifestream.utils.transform.XHTMLTransformerLazyLoader.getX
 import java.io.StringReader;
 import java.io.StringWriter;
 
+import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.Source;
+import javax.xml.transform.TransformerException;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
@@ -41,31 +43,40 @@ public class HtmlToMarkdown {
 
 	public static String transformToValidXhtml(String html) {
 		try {
-			if(html==null)
-				return html;
-			if(html.trim().length()==0)
-				return html.trim();
-			HtmlCleaner cleaner = new HtmlCleaner();
-			CleanerProperties properties = cleaner.getProperties();
-			properties.setAdvancedXmlEscape(true);
-			properties.setCharset(Constants.UTF_8);
-			properties.setOmitDoctypeDeclaration(true);
-			properties.setOmitHtmlEnvelope(false);
-			properties.setOmitXmlDeclaration(true);
-
-			TagNode node = cleaner.clean(html);
-			Document output = new DomSerializer(properties).createDOM(node);
+			Document output = transformToValidXhtmlDocument(html);
 
 			// create string from xml tree
-			StringWriter sw = new StringWriter();
-			StreamResult result = new StreamResult(sw);
-			DOMSource source = new DOMSource(output);
-			getXHTMLTransformer().transform(source, result);
-			String xmlString = sw.toString();
-			return xmlString.trim();
+			return transformXMLToString(output);
 		} catch(Exception e) {
 			throw new UnableToTransformToValidXHTML(e);
 		}
+	}
+
+	public static Document transformToValidXhtmlDocument(String html) throws ParserConfigurationException {
+		if(html==null)
+			return null;
+		if(html.trim().length()==0)
+			return null;
+		HtmlCleaner cleaner = new HtmlCleaner();
+		CleanerProperties properties = cleaner.getProperties();
+		properties.setAdvancedXmlEscape(true);
+		properties.setCharset(Constants.UTF_8);
+		properties.setOmitDoctypeDeclaration(true);
+		properties.setOmitHtmlEnvelope(false);
+		properties.setOmitXmlDeclaration(true);
+
+		TagNode node = cleaner.clean(html);
+		Document output = new DomSerializer(properties).createDOM(node);
+		return output;
+	}
+
+	public static String transformXMLToString(Document input) throws TransformerException {
+		StringWriter sw = new StringWriter();
+		StreamResult result = new StreamResult(sw);
+		DOMSource source = new DOMSource(input);
+		getXHTMLTransformer().transform(source, result);
+		String xmlString = sw.toString();
+		return xmlString.trim();
 	}
 
 	/**

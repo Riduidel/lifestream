@@ -32,7 +32,7 @@
 						<configuration>
 							<filesets>
 								<fileset>
-									<directory>${site.dir}</directory>
+									<directory>${site.dir}/goodreads/</directory>
 									<includes>
 										<include>**/*</include>
 									</includes>
@@ -76,7 +76,7 @@
 						<configuration>
 							<filesets>
 								<fileset>
-									<directory>${site.dir}</directory>
+									<directory>${site.dir}/wordpress/</directory>
 									<includes>
 										<include>**/*</include>
 									</includes>
@@ -140,9 +140,9 @@
 						<configuration>
 							<!-- web.xml is not mandatory since JavaEE 5 -->
 							<failOnMissingWebXml>false</failOnMissingWebXml>
-							<!-- <filteringDeploymentDescriptors>true</filteringDeploymentDescriptors> 
-								<warSourceDirectory>WebContent</warSourceDirectory> <webResources> <resource> 
-								<directory>src/main/webapp2</directory> <filtering>true</filtering> </resource> 
+							<!-- <filteringDeploymentDescriptors>true</filteringDeploymentDescriptors>
+								<warSourceDirectory>WebContent</warSourceDirectory> <webResources> <resource>
+								<directory>src/main/webapp2</directory> <filtering>true</filtering> </resource>
 								</webResources> -->
 						</configuration>
 					</plugin>

@@ -13,5 +13,5 @@ public interface InputLoader<Type extends Input, ConfigurationType extends Confi
 	Collection<Type> load(WebClient client, ConfigurationType configuration);
 
 	public void output(Mode mode, Collection<Type> inputs, FileObject outputRoot, ConfigurationType configuration);
-	
+
 }

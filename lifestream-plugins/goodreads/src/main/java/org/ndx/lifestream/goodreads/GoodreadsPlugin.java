@@ -33,36 +33,10 @@ public class GoodreadsPlugin extends AbstractLifestreamPlugin<BookInfos, Goodrea
 	 */
 	protected String password;
 
-	/**
-	 * Output file where those markdown generated files will be written.
-	 * Notice the goodreads subfolder is automatically added to each file, so no need to add it by hand !
-	 *
-	 * @parameter
-	 *            default-value="${project.basedir}/src/main/site/markdown/"
-	 */
-	protected File output;
-
-	/**
-	 * Currently used rendering mode
-	 * @parameter alias="mode" default-value="gollum"
-	 */
-	protected String modeName;
-
 
 	@Override
 	protected InputLoader<BookInfos, GoodreadsConfiguration> loadInputLoader() {
-		Goodreads goodreadsEngine = new Goodreads();
-		return goodreadsEngine;
-	}
-
-	@Override
-	public File getOutput() {
-		return output;
-	}
-
-	@Override
-	public String getModeName() {
-		return modeName;
+		return new Goodreads();
 	}
 
 	@Override

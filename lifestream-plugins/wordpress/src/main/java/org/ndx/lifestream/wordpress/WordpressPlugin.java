@@ -35,21 +35,6 @@ public class WordpressPlugin extends AbstractLifestreamPlugin<Post, WordpressCon
 	protected String password;
 
 	/**
-	 * Output file where those markdown generated files will be written.
-	 * Notice the wordpress subfolder is automatically added to each file, so no need to add it by hand !
-	 *
-	 * @parameter
-	 *            default-value="${project.basedir}/src/main/site/markdown/"
-	 */
-	protected File output;
-
-	/**
-	 * Currently used rendering mode
-	 * @parameter alias="mode" default-value="gollum"
-	 */
-	protected String modeName;
-
-	/**
 	 * wordpress site address
 	 *
 	 * @parameter alias="site"
@@ -59,18 +44,7 @@ public class WordpressPlugin extends AbstractLifestreamPlugin<Post, WordpressCon
 
 	@Override
 	protected InputLoader<Post, WordpressConfiguration> loadInputLoader() {
-		Wordpress loader = new Wordpress();
-		return loader;
-	}
-
-	@Override
-	public File getOutput() {
-		return output;
-	}
-
-	@Override
-	public String getModeName() {
-		return modeName;
+		return new Wordpress();
 	}
 
 	@Override

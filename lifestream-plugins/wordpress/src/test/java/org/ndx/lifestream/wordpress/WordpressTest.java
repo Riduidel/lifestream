@@ -44,7 +44,7 @@ public class WordpressTest {
 
 	@Test
 	public void canTransformStringInPostCollection() throws IOException {
-		InputStream testXmlFile = getClass().getResourceAsStream("/riduidel039swordpress.wordpress.2013-08-25.xml");
+		InputStream testXmlFile = getClass().getResourceAsStream("/riduidel039swordpress.wordpress.2013-12-04.xml");
 		Collection<Post> posts = tested.buildPostCollection(testXmlFile);
 		assertThat(posts.size(), IsNot.not(0));
 	}

@@ -16,6 +16,7 @@ import org.junit.Ignore;
 import org.junit.Test;
 import org.ndx.lifestream.configuration.AbstractConfiguration;
 import org.ndx.lifestream.plugin.GaedoEnvironmentProvider;
+import org.ndx.lifestream.plugin.exceptions.AuthenticationFailedException;
 import org.ndx.lifestream.rendering.output.VFSHelper;
 import org.ndx.lifestream.utils.web.WebClientFactory;
 

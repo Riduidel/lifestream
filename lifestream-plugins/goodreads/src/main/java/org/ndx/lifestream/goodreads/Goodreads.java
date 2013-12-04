@@ -14,7 +14,6 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
-import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
@@ -23,8 +22,9 @@ import java.util.logging.Logger;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.vfs2.FileObject;
-import org.ndx.lifestream.configuration.AbstractConfiguration;
 import org.ndx.lifestream.plugin.GaedoEnvironmentProvider;
+import org.ndx.lifestream.plugin.exceptions.AuthenticationFailedException;
+import org.ndx.lifestream.plugin.exceptions.UnableToDownloadContentException;
 import org.ndx.lifestream.rendering.Mode;
 import org.ndx.lifestream.rendering.OutputWriter;
 import org.ndx.lifestream.rendering.model.InputLoader;
@@ -198,7 +198,7 @@ public class Goodreads implements InputLoader<BookInfos, GoodreadsConfiguration>
 		} catch(AuthenticationFailedException e) {
 			throw e;
 		} catch(Exception e) {
-			throw new UnableToDownloadCSVException(e);
+			throw new UnableToDownloadContentException("unable to download CSV from Goodreads", e);
 		}
 	}
 

@@ -29,10 +29,29 @@ public abstract class AbstractLifestreamPlugin<Type extends Input, Configuration
 	 * Long term configuration should only be created once
 	 */
 	private ConfigurationType configuration;
-	
-	public abstract File getOutput();
 
-	public abstract String getModeName();
+	/**
+	 * Currently used rendering mode
+	 * @parameter alias="mode" default-value="gollum"
+	 */
+	protected String modeName;
+
+	/**
+	 * Output file where those markdown generated files will be written.
+	 * Notice the goodreads subfolder is automatically added to each file, so no need to add it by hand !
+	 *
+	 * @parameter
+	 *            default-value="${project.basedir}/src/main/site/markdown/"
+	 */
+	protected File output;
+
+	public final File getOutput() {
+		return output;
+	}
+
+	public final String getModeName() {
+		return modeName;
+	}
 
 	protected abstract InputLoader<Type, ConfigurationType> loadInputLoader();
 

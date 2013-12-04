@@ -26,7 +26,7 @@ public class JBakeOutputter extends AbstractStringTemplateBackedOutputter implem
 
 	@Override
 	protected List<String> toRealPath(Input input) {
-		return toRealPath(input, ".html");
+		return toRealPath(input, ".md");
 	}
 
 	protected String render(Input input) {

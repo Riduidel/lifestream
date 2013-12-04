@@ -13,6 +13,9 @@ import java.util.logging.Logger;
 
 import org.apache.commons.vfs2.FileObject;
 import org.jdom.Element;
+import org.ndx.lifestream.plugin.exceptions.AuthenticationFailedException;
+import org.ndx.lifestream.plugin.exceptions.UnableToDownloadContentException;
+import org.ndx.lifestream.plugin.exceptions.UnableToReadStreamAsUTF8Exception;
 import org.ndx.lifestream.rendering.Mode;
 import org.ndx.lifestream.rendering.OutputWriter;
 import org.ndx.lifestream.rendering.model.InputLoader;
@@ -101,7 +104,7 @@ public class Wordpress implements InputLoader<Post, WordpressConfiguration> {
 						authenticationFailedMessage);
 			}
 		} catch (Exception e) {
-			throw new UnableToDownloadXMLException(e);
+			throw new UnableToDownloadContentException("Unable to download XML export from Wordpress site", e);
 		}
 	}
 

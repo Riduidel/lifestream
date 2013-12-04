@@ -10,7 +10,7 @@ import org.ndx.lifestream.rendering.model.Input;
 
 public class Post implements Input {
 	public static enum Type {
-		post, attachment
+		post, attachment, page, link;
 	}
 
 	String title;
