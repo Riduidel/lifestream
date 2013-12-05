@@ -1,9 +1,0 @@
-type: post
-status: published
-title: autopublicit?? d??risoire 
-tags: culture, egotrip, mavie, sciencefiction
-date: Mon Apr 27 13:08:00 CEST 2009
-~~~~~~
-# autopublicit?? d??risoire 
-
-Depuis des ann??es, je lis de la SF.Et depuis des ann??es, je partage mes lectures.??Au d??but, c'??tais sur [http://groups.google.fr/group/fr.rec.arts.sf/topics](http://groups.google.fr/group/fr.rec.arts.sf/topics)fras. Et, avec la d??liquescence de usenet, la fr??quentation sur fras a d??clin??. Lopngtemps, je me suis demand?? en arri??re-plan o?? pourrais-je aller balancer mes chroniques mal ??crites. On m'avait propos?? un moment de collaborer ?? [noosfere](http://www.noosfere.com/Icarus/Livres/critsigndetail.asp?NumAuteur=-46289). H??las, l'exigence (que je salue) de mes correcteurs ??tait trop haute pour le temps dont je disposais.Je me suis aussi demand?? si je n'allais pas simplement migrer vers l'un des multiples forums web de SF, mais je suis d??finitivement un dinosaure, adepte passion?? de la clart?? d'usenet. Donc, je n'ai jamais migr??.Et puis, il y a deux semaines, j'ai re??u une proposition de participation ?? [murmures](http://www.murmures.info/index.php?target=profil&action=view&user=924).Personne ne me demande d'am??liorer ma prose.Personne ne semble m??me me lire.Mais c'est pas grave : mes chroniques ont une visibilit?? bien sup??rieur ?? ce que fras et [goodreads](http://www.goodreads.com/user/show/1156136) peuvent leur offrir, et c'est tout ce qui compte.Bon, il y a sans doute une bonne dose d'[??gotisme](http://fr.wiktionary.org/wiki/??gotisme) ?? cette fa??on de rendre mes ??crits visibles, mais est-ce si important ?

@@ -1,9 +1,0 @@
-type: post
-status: published
-title: Chauffe-eau solaire ...
-tags: ??cologie, divers, dooapp
-date: Tue May 10 13:15:43 CEST 2005
-~~~~~~
-# Chauffe-eau solaire ...
-
-Pour ceux que ??a int??resse, je viens de me balader un peu dans le domaine des ??nergies alternatives et, en particulier, sur les sites expliquant la construction de chauffe-eau solaire. Dans la mesur o?? j'habite une r??gion ayant un ensoleillement assez faible (le nord), j'aurais tendance ?? privil??gier au classique [panneau chauffant](http://amet.pierre.free.fr/index.html) l'eau stock??e dans le chauffe-eau par un ??changeur (exactement comme dans une centrale nucl??aire) un m??canisme [pr??chauffant l'eau du chauffe-eau](http://basile.chez.tiscali.fr/capteur.htm), pour plusieurs raisons (moins de manipulation sur la tuyauterie, une soluton ?? priori plus ??conomique car r??utilisant le chauffe-eau existant sans le modifier le moins du monde, moins de risques sur la maison).Ce qui est bien, c'est que ce site m'a envoy?? sur tout un tas d'autres, dans le domaine de [l'autoconstruction](http://autoconstruction.free.fr/menu.htm), du [chauffe-eau](http://www.outilssolaires.com/) et de la [construction](http://www.construiresolaire.com/) solaire, de [l'??olien](http://www.windstuffnow.com/main/) (je me vois bien glisser une ??olienne au fond de mon jardin, ??a devrait produire un peu, m??me si le mieux serait ?? mon sens sur mon toit) ou [autres](http://www.otherpower.com/), naturellement, du [bricolage](http://www.ideesmaison.com/div/div/intro.htm), voire m??me de [ l'alternatif](http://www.onpeutlefaire.com/accueil.php) (qui m'int??resse en particulier, pour des raisons de sanibroyeur l??g??rement d??fectueux, dans le domaine de la toilette s??che) ou de [l'activisme ??cologique](http://www.negawatt.org/)via [Nicolas Delsaux's posterous import script](http://riduidel.posterous.com/quest-ce-que-cest-que-ce-flux-qui-clignote)

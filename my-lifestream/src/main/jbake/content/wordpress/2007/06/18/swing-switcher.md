@@ -1,9 +1,0 @@
-type: post
-status: published
-title: Swing switcher
-tags: code, informatique, java
-date: Mon Jun 18 15:25:16 CEST 2007
-~~~~~~
-# Swing switcher
-
-Bon, faut que je vous le dise, quand m??me.Ca fait deux semaines que j???ai chang?? de job.Pas bien compliqu?? comme id??e, hein ? Sauf que j???ai abandonn?? la s??curit?? un peu molle des grosses SSII poure retourner chez les fous.Bon, je ne vous expliquerai pas en d??tail tout ce que je peux avoir de griefs contre mon ancien employeur (la liste serait trop longue, inint??ressante, et susceptible de me valoir des poursuites <i class="footnote">(Je me connais, j???ai un peu tendance ?? me laisser aller, de temps en temps.)</i>). Le seul truc, c???est que je suis rudement content d?????tre parti chez IT-Finance, allez donc voir chez nous, on est aussi responsables de ProRealTime, une plateforme pour chartistes fous.J???en suis rudement content parce que j???ai abandonn?? le JEE pour revenir au vrai Java, qui commence par S et fait Swing. Parce que les gens qui sont l??-bas sont tous des dingues. Et surtout parce que du boulot, il y en a ?? la pelle. Et moi, ?? l???id??e de bosser dans un domaine difficilement compr??hensible, avec la responsabilit?? de la survie de la bo??te sur mes ??paules, j???imagine que ??a doit satisfaire ma m??galomanie. En tout cas, bizarrement, depuis ce changement d???emploi, j???ai le cerveau qui p??tille d???id??es toutes plus dingues les unes que les autres, des id??es qui d???ailleurs se diffusent au-del?? du simple code Java <i class="footnote">(Encore que dans ce cas bien pr??cis, parler de code siple est tr??s loin de la r??alit??.)</i>.Du cooup, je suis redevenu un d??veloppeur heureux. Et ??a, c???est bien. via [Nicolas Delsaux's posterous import script](http://riduidel.posterous.com/quest-ce-que-cest-que-ce-flux-qui-clignote)
