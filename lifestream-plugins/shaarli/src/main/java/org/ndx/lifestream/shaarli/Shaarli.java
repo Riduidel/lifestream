@@ -115,9 +115,9 @@ public class Shaarli implements InputLoader<MicroblogEntry, ShaarliConfiguration
 		return returned;
 	}
 
-	private MicroblogEntry createEntryFrom(Element DT, @Nullable Element DD) {
+	private MicroblogEntry createEntryFrom(Element dt, @Nullable Element dd) {
 		MicroblogEntry returned = new MicroblogEntry();
-		Element link = DT.getChild("a");
+		Element link = dt.getChild("a");
 		returned.setLink(link.getAttributeValue("href"));
 		returned.setTitle(HtmlToMarkdown.transformHtml(link.getText()).trim());
 		long parsedLong = Long.parseLong(link.getAttributeValue("add_date"));
@@ -133,8 +133,8 @@ public class Shaarli implements InputLoader<MicroblogEntry, ShaarliConfiguration
 			returned.setTags(Arrays.asList(tagsText.split(",")));
 		}
 		returned.setVisible(link.getAttributeValue("private").equals("0"));
-		if(DD!=null) {
-			returned.setComment(HtmlToMarkdown.transformHtml(DD.getText().trim()));
+		if(dd!=null) {
+			returned.setComment(HtmlToMarkdown.transformHtml(dd.getText().trim()));
 		}
 		return returned;
 	}
