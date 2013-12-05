@@ -134,7 +134,7 @@ public class Shaarli implements InputLoader<MicroblogEntry, ShaarliConfiguration
 		}
 		returned.setVisible(link.getAttributeValue("private").equals("0"));
 		if(DD!=null) {
-			returned.setComment(HtmlToMarkdown.transformHtml(DD.getText()));
+			returned.setComment(HtmlToMarkdown.transformHtml(DD.getText().trim()));
 		}
 		return returned;
 	}
