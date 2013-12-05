@@ -13,6 +13,7 @@
 		<!-- site.dir is configured in profiles -->
 		<site.basedir>${project.build.directory}/site/lifestream/</site.basedir>
 		<site.dir>${site.basedir}/content/</site.dir>
+		<site.output>${project.build.directory}/generatedSite</site.output>
 		<goodreads.dir>${site.dir}/</goodreads.dir>
 		<wordpress.dir>${site.dir}/</wordpress.dir>
 		<shaarli.dir>${site.dir}/</shaarli.dir>
@@ -123,7 +124,7 @@
 						<version>2.6</version>
 						<executions>
 							<execution>
-								<id>copy-resources</id>
+								<id>copy-jbake-templates</id>
 								<!-- here the phase you need -->
 								<phase>validate</phase>
 								<goals>
@@ -152,6 +153,10 @@
 								<goals>
 									<goal>generate</goal>
 								</goals>
+								<configuration>
+									<inputDirectory>${site.basedir}</inputDirectory>
+									<outputDirectory>${site.output}</outputDirectory>
+								</configuration>
 							</execution>
 						</executions>
 					</plugin>
