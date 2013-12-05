@@ -30,29 +30,6 @@ public abstract class AbstractLifestreamPlugin<Type extends Input, Configuration
 	 */
 	private ConfigurationType configuration;
 
-	/**
-	 * Currently used rendering mode
-	 * @parameter alias="mode" default-value="gollum"
-	 */
-	protected String modeName;
-
-	/**
-	 * Output file where those markdown generated files will be written.
-	 * Notice the goodreads subfolder is automatically added to each file, so no need to add it by hand !
-	 *
-	 * @parameter
-	 *            default-value="${project.basedir}/src/main/site/markdown/"
-	 */
-	protected File output;
-
-	public final File getOutput() {
-		return output;
-	}
-
-	public final String getModeName() {
-		return modeName;
-	}
-
 	protected abstract InputLoader<Type, ConfigurationType> loadInputLoader();
 
 	@Override
@@ -71,6 +48,10 @@ public abstract class AbstractLifestreamPlugin<Type extends Input, Configuration
 			throw new MojoExecutionException("there was a failure during goodreads pages construction", e);
 		}
 	}
+
+	protected abstract File getOutput();
+
+	protected abstract String getModeName();
 
 	protected ConfigurationType getConfiguration() {
 		if(configuration==null) {
