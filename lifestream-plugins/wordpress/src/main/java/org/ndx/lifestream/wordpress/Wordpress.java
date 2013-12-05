@@ -2,6 +2,7 @@ package org.ndx.lifestream.wordpress;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -11,6 +12,7 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.vfs2.FileObject;
 import org.jdom.Element;
 import org.ndx.lifestream.plugin.exceptions.AuthenticationFailedException;
@@ -71,6 +73,30 @@ public class Wordpress implements InputLoader<Post, WordpressConfiguration> {
 	}
 
 	public String loadXML(WebClient client, WordpressConfiguration configuration) {
+		try {
+			String content = null;
+			FileObject cachedExport = configuration.getCachedExport();
+			if(cachedExport.exists()) {
+				long lastModifiedTime = cachedExport.getContent().getLastModifiedTime();
+				// csv can be download each day (not many peop
+				if((System.currentTimeMillis()-lastModifiedTime)<configuration.getCacheTimeout()) {
+					try(InputStream fileContent = cachedExport.getContent().getInputStream()) {
+						content = IOUtils.toString(fileContent, Constants.UTF_8);
+					}
+				}
+			} else {
+				content = downloadXML(client, configuration);
+				try(OutputStream fileContent = cachedExport.getContent().getOutputStream()) {
+					IOUtils.write(content, fileContent, Constants.UTF_8);
+				}
+			}
+			return content;
+		} catch(Exception e) {
+			throw new UnableToDownloadContentException("unable to download content from Wordpress", e);
+		}
+	}
+
+	public String downloadXML(WebClient client, WordpressConfiguration configuration) {
 		try {
 			String siteLogin = configuration.getSiteLoginPage();
 			HtmlPage signIn = client.getPage(siteLogin);

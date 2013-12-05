@@ -38,7 +38,7 @@ public class WordpressTest {
 
 	@Test @Ignore
 	public void canLoadXMLData() {
-		String xml = tested.loadXML(WebClientFactory.getWebClient(), configuration);
+		String xml = tested.downloadXML(WebClientFactory.getWebClient(), configuration);
 		assertThat(xml, IsNull.notNullValue());
 	}
 

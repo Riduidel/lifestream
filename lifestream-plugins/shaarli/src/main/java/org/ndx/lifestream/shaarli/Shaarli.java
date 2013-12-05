@@ -1,6 +1,9 @@
 package org.ndx.lifestream.shaarli;
 
 import java.io.ByteArrayInputStream;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -8,12 +11,16 @@ import java.util.Date;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import javax.xml.parsers.ParserConfigurationException;
+
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.vfs2.FileObject;
 import org.jdom2.Content;
 import org.jdom2.Document;
 import org.jdom2.Element;
 import org.jdom2.Parent;
 import org.jdom2.filter.Filters;
+import org.jdom2.input.DOMBuilder;
 import org.jdom2.input.SAXBuilder;
 import org.jdom2.xpath.XPathExpression;
 import org.jdom2.xpath.XPathFactory;
@@ -25,6 +32,7 @@ import org.ndx.lifestream.rendering.model.InputLoader;
 import org.ndx.lifestream.utils.Constants;
 import org.ndx.lifestream.utils.transform.HtmlToMarkdown;
 
+import com.gargoylesoftware.htmlunit.CollectingAlertHandler;
 import com.gargoylesoftware.htmlunit.WebClient;
 import com.gargoylesoftware.htmlunit.html.HtmlForm;
 import com.gargoylesoftware.htmlunit.html.HtmlInput;
@@ -41,8 +49,38 @@ public class Shaarli implements InputLoader<MicroblogEntry, ShaarliConfiguration
 
 	@Override
 	public Collection<MicroblogEntry> load(WebClient client, ShaarliConfiguration configuration) {
-		Document entries = loadXML(client, configuration);
-		return buildEntriesCollection(entries);
+		String text =  loadXML(client, configuration);
+		DOMBuilder builder = new DOMBuilder();
+		Document document;
+		try {
+			document = builder.build(HtmlToMarkdown.transformToValidXhtmlDocument(text));
+		} catch (ParserConfigurationException e) {
+			throw new UnableToProduceXMLException(e);
+		}
+		return buildEntriesCollection(document);
+	}
+
+	public String loadXML(WebClient client, ShaarliConfiguration configuration) {
+		try {
+			String content = null;
+			FileObject cachedExport = configuration.getCachedExport();
+			if(cachedExport.exists()) {
+				long lastModifiedTime = cachedExport.getContent().getLastModifiedTime();
+				if((System.currentTimeMillis()-lastModifiedTime)<configuration.getCacheTimeout()) {
+					try(InputStream fileContent = cachedExport.getContent().getInputStream()) {
+						content = IOUtils.toString(fileContent, Constants.UTF_8);
+					}
+				}
+			} else {
+				content = downloadXML(client, configuration);
+				try(OutputStream fileContent = cachedExport.getContent().getOutputStream()) {
+					IOUtils.write(content, fileContent, Constants.UTF_8);
+				}
+			}
+			return content;
+		} catch(Exception e) {
+			throw new UnableToDownloadContentException("unable to download content from Wordpress", e);
+		}
 	}
 
 	/**
@@ -101,39 +139,35 @@ public class Shaarli implements InputLoader<MicroblogEntry, ShaarliConfiguration
 		return returned;
 	}
 
-	public Document loadXML(WebClient client, ShaarliConfiguration configuration) {
+	public String downloadXML(WebClient client, ShaarliConfiguration configuration) {
 		try {
 			String siteLogin = configuration.getSiteLoginPage();
 			HtmlPage signIn = client.getPage(siteLogin);
 			HtmlForm signInForm = signIn.getFormByName("loginform");
 			logger.log(Level.INFO, "logging in Shaarli as " + configuration.getLogin());
-			((HtmlInput) signInForm.getInputByName("login"))
-					.setValueAttribute(configuration.getLogin());
-			((HtmlInput) signInForm.getInputByName("password"))
-					.setValueAttribute(configuration.getPassword());
-			HtmlPage signedIn = ((HtmlSubmitInput) signInForm.getInputByValue("Login")).click();
-			String authenticationFailedMessage = "unable to sign in Shaarli using login "
-					+ configuration.getLogin()
-					+ " and password "
-					+ configuration.getPassword()
-					+ ". can you check it by opening a browser at "
-					+ siteLogin
-					+ " ?";
+			((HtmlInput) signInForm.getInputByName("login")).setValueAttribute(configuration.getLogin());
+			((HtmlInput) signInForm.getInputByName("password")).setValueAttribute(configuration.getPassword());
+			HtmlSubmitInput submitButton = (HtmlSubmitInput) signInForm.getInputByValue("Login");
+			HtmlPage signedIn = submitButton.click();
 			if (200 == signedIn.getWebResponse().getStatusCode()) {
-				if (signedIn.getUrl().equals(signIn.getUrl()))
+				String signedInUrl = signedIn.getUrl().toString();
+				if(signedInUrl.equals(siteLogin)) {
 					throw new AuthenticationFailedException(
-							authenticationFailedMessage);
+									configuration.getAuthenticationFailureMessage());
+				}
 				logger.log(Level.INFO, "logged in ... downloading html now ...");
+				// 404 will throw over all this stuff
 				HtmlPage xmlExportPage = client.getPage(configuration.getSiteExportPage());
 				// yay, serializing an XML document to deserialize it immediatly after may not be optimal. Objection received.
-				SAXBuilder builder = new SAXBuilder();
-				return builder.build(new ByteArrayInputStream(xmlExportPage.asXml().getBytes(Constants.UTF_8)));
+				return xmlExportPage.asXml();
 			} else {
 				throw new AuthenticationFailedException(
-						authenticationFailedMessage);
+						configuration.getAuthenticationFailureMessage());
 			}
+		} catch(AuthenticationFailedException e) {
+			throw e;
 		} catch(Exception e) {
-			throw new UnableToDownloadContentException("Unable to download HTML export from Shaarli", e);
+			throw new UnableToDownloadContentException("Unable to download HTML export from Shaarli\n"+configuration.getDownloadFailureMessage(), e);
 		}
 	}
 

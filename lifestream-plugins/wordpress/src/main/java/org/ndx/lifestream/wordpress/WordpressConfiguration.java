@@ -1,6 +1,7 @@
 package org.ndx.lifestream.wordpress;
 
 import org.apache.commons.vfs2.FileObject;
+import org.apache.commons.vfs2.FileSystemException;
 import org.ndx.lifestream.configuration.AbstractConfiguration;
 import org.ndx.lifestream.configuration.Configuration;
 
@@ -11,7 +12,7 @@ public class WordpressConfiguration extends AbstractConfiguration implements Con
 	private String site;
 
 	public WordpressConfiguration(FileObject baseFolder) {
-		super(baseFolder, CACHE_BASE_PATH+"/wordpress/");
+		super(baseFolder, CACHE_BASE_PATH+"wordpress/");
 	}
 
 	public String getLogin() {
@@ -21,17 +22,17 @@ public class WordpressConfiguration extends AbstractConfiguration implements Con
 	public void setLogin(String login) {
 		this.login = login;
 	}
-	
+
 	public WordpressConfiguration withLogin(String login) {
 		setLogin(login);
 		return this;
 	}
-	
+
 	public WordpressConfiguration withPassword(String password) {
 		setPassword(password);
 		return this;
 	}
-	
+
 	public WordpressConfiguration withSite(String site) {
 		setSite(site);
 		return this;
@@ -59,6 +60,10 @@ public class WordpressConfiguration extends AbstractConfiguration implements Con
 
 	public String getSiteExportPage() {
 		return site + "wp-admin/export.php?type=export";
+	}
+
+	public FileObject getCachedExport() throws FileSystemException {
+		return getCacheFolder().resolveFile("export.xml");
 	}
 
 }

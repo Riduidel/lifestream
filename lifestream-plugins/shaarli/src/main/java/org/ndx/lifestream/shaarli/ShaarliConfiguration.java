@@ -1,6 +1,7 @@
 package org.ndx.lifestream.shaarli;
 
 import org.apache.commons.vfs2.FileObject;
+import org.apache.commons.vfs2.FileSystemException;
 import org.ndx.lifestream.configuration.AbstractConfiguration;
 
 public class ShaarliConfiguration extends AbstractConfiguration {
@@ -10,7 +11,7 @@ public class ShaarliConfiguration extends AbstractConfiguration {
 	private String site;
 
 	public ShaarliConfiguration(FileObject baseFolder) {
-		super(baseFolder, CACHE_BASE_PATH+"/shaarli/");
+		super(baseFolder, CACHE_BASE_PATH+"shaarli/");
 	}
 
 	public String getLogin() {
@@ -58,6 +59,18 @@ public class ShaarliConfiguration extends AbstractConfiguration {
 
 	public String getSiteExportPage() {
 		return site + "?do=export&what=all";
+	}
+
+	public FileObject getCachedExport() throws FileSystemException {
+		return getCacheFolder().resolveFile("bookmarks.html");
+	}
+
+	public String getAuthenticationFailureMessage() {
+		return "unable to login into "+getSite()+" using following credentials\n\tlogin : "+getLogin()+"\n\tpassword : \""+getPassword()+"\"";
+	}
+
+	public String getDownloadFailureMessage() {
+		return "unable to download from "+getSite()+" using following credentials\n\tlogin : "+getLogin()+"\n\tpassword : HIDDEN THERE";
 	}
 
 }

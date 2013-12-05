@@ -178,7 +178,7 @@ public class Goodreads implements InputLoader<BookInfos, GoodreadsConfiguration>
 			if(cachedCSV.exists()) {
 				long lastModifiedTime = cachedCSV.getContent().getLastModifiedTime();
 				// csv can be download each day (not many peop
-				if((System.currentTimeMillis()-lastModifiedTime)<24*60*60*1000) {
+				if((System.currentTimeMillis()-lastModifiedTime)<configuration.getCacheTimeout()) {
 					try(InputStream fileContent = cachedCSV.getContent().getInputStream()) {
 						csvContent = IOUtils.toString(fileContent, Constants.UTF_8);
 					}

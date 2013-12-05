@@ -11,11 +11,11 @@
 	<description>My very own lifestream, using all provided modules to create a valid output</description>
 	<properties>
 		<!-- site.dir is configured in profiles -->
-		<site.dir>${project.basedir}/src/site/lifestream/</site.dir>
+		<site.basedir>${project.build.directory}/site/lifestream/</site.basedir>
+		<site.dir>${site.basedir}/content/</site.dir>
 		<goodreads.dir>${site.dir}/</goodreads.dir>
 		<wordpress.dir>${site.dir}/</wordpress.dir>
-		<wordpress.site>https://riduidel.wordpress.com/</wordpress.site>
-		<output.mode>jekyll</output.mode>
+		<shaarli.dir>${site.dir}/</shaarli.dir>
 	</properties>
 	<profiles>
 		<profile>
@@ -26,21 +26,6 @@
 			<id>download-goodreads</id>
 			<build>
 				<plugins>
-					<plugin>
-						<artifactId>maven-clean-plugin</artifactId>
-						<version>2.5</version>
-						<configuration>
-							<filesets>
-								<fileset>
-									<directory>${site.dir}/goodreads/</directory>
-									<includes>
-										<include>**/*</include>
-									</includes>
-									<followSymlinks>false</followSymlinks>
-								</fileset>
-							</filesets>
-						</configuration>
-					</plugin>
 					<plugin>
 						<groupId>${project.groupId}</groupId>
 						<artifactId>goodreads</artifactId>
@@ -71,21 +56,6 @@
 			<build>
 				<plugins>
 					<plugin>
-						<artifactId>maven-clean-plugin</artifactId>
-						<version>2.5</version>
-						<configuration>
-							<filesets>
-								<fileset>
-									<directory>${site.dir}/wordpress/</directory>
-									<includes>
-										<include>**/*</include>
-									</includes>
-									<followSymlinks>false</followSymlinks>
-								</fileset>
-							</filesets>
-						</configuration>
-					</plugin>
-					<plugin>
 						<groupId>${project.groupId}</groupId>
 						<artifactId>wordpress</artifactId>
 						<executions>
@@ -99,7 +69,37 @@
 									<output>${wordpress.dir}</output>
 									<username>${wordpress.login}</username>
 									<password>${wordpress.password}</password>
-									<site>${wordpress.site}</site>
+									<site>${wordpress.address}</site>
+								</configuration>
+							</execution>
+						</executions>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+		<profile>
+			<activation>
+				<activeByDefault>false</activeByDefault>
+			</activation>
+			<!-- Download content and transform it -->
+			<id>download-shaarli</id>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>${project.groupId}</groupId>
+						<artifactId>shaarli</artifactId>
+						<executions>
+							<execution>
+								<id>download shaarli</id>
+								<goals>
+									<goal>shaarli</goal>
+								</goals>
+								<configuration>
+									<mode>${output.mode}</mode>
+									<output>${shaarli.dir}</output>
+									<username>${shaarli.login}</username>
+									<password>${shaarli.password}</password>
+									<address>${shaarli.address}</address>
 								</configuration>
 							</execution>
 						</executions>
@@ -114,11 +114,33 @@
 			<!-- Generate website using JBake -->
 			<id>jbake</id>
 			<properties>
-				<site.dir>${project.basedir}/src/main/jbake/content/</site.dir>
 				<output.mode>jbake</output.mode>
 			</properties>
 			<build>
 				<plugins>
+					<plugin>
+						<artifactId>maven-resources-plugin</artifactId>
+						<version>2.6</version>
+						<executions>
+							<execution>
+								<id>copy-resources</id>
+								<!-- here the phase you need -->
+								<phase>validate</phase>
+								<goals>
+									<goal>copy-resources</goal>
+								</goals>
+								<configuration>
+									<outputDirectory>${site.basedir}</outputDirectory>
+									<resources>
+										<resource>
+											<directory>src/main/jbake</directory>
+											<filtering>true</filtering>
+										</resource>
+									</resources>
+								</configuration>
+							</execution>
+						</executions>
+					</plugin>
 					<plugin>
 						<groupId>br.com.ingenieux</groupId>
 						<artifactId>jbake-maven-plugin</artifactId>

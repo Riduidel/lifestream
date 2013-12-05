@@ -48,9 +48,9 @@ public class ShaarliTest {
 
 	@Test
 	public void canLoadXMLData() {
-		Document xml = tested.loadXML(WebClientFactory.getWebClient(), configuration);
+		String xml = tested.downloadXML(WebClientFactory.getWebClient(), configuration);
 		assertThat(xml, notNullValue());
-		assertThat(xml.getContentSize(), not(0));
+		assertThat(xml.length(), not(0));
 	}
 
 	@Test

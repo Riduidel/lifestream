@@ -15,7 +15,7 @@ public abstract class AbstractConfiguration implements Configuration {
 		cachePath = cacheSpecificPath;
 		this.baseFolder = baseFolder;
 	}
-	
+
 	public FileObject getCacheFolder() {
 		if(cacheFolder==null) {
 			try {
@@ -25,5 +25,9 @@ public abstract class AbstractConfiguration implements Configuration {
 			}
 		}
 		return cacheFolder;
+	}
+
+	public long getCacheTimeout() {
+		return 24*60*60*1000;
 	}
 }
