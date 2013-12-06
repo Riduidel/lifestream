@@ -12,6 +12,7 @@ import org.apache.commons.vfs2.FileObject;
 import org.apache.commons.vfs2.FileSystemException;
 import org.ndx.lifestream.rendering.OutputWriter;
 import org.ndx.lifestream.rendering.model.Input;
+import org.ndx.lifestream.rendering.output.jbake.JBakeOutputter;
 import org.ndx.lifestream.utils.Constants;
 import org.ndx.lifestream.utils.transform.HtmlToMarkdown;
 
@@ -84,6 +85,30 @@ public abstract class AbstractOutputter implements OutputWriter {
 			}
 		}
 		return returned;
+	}
+
+	/**
+	 * @param input
+	 * @return path converted to a URI : all File separator are hard-replaced with "/" character
+	 */
+	protected String getUriOf(Input input) {
+		return Joiner.on("/").join(toRealPath(input));
+	}
+
+	/**
+	 * Get a "depth" string indicating with "../" sequences how deep that file is in the hierarchy :
+	 * a file in a subfolder will have a depth of 1, and so on ..
+	 * @param input
+	 * @return a ["../"] sequence with one ".." for each folder
+	 * @see #toRealPath(Input)
+	 */
+	protected String getDepthOf(Input input) {
+		List<String> realPath = toRealPath(input);
+		StringBuilder sOut = new StringBuilder();
+		for (int i = 0; i < realPath.size()-1; i++) {
+			sOut.append("../");
+		}
+		return sOut.toString();
 	}
 
 	protected String markdownLink(Input from, Input to, String text) {
