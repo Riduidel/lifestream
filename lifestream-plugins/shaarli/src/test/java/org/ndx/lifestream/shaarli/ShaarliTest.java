@@ -46,7 +46,7 @@ public class ShaarliTest {
 		tested = new Shaarli();
 	}
 
-	@Test
+	@Test @Ignore
 	public void canLoadXMLData() {
 		String xml = tested.downloadXML(WebClientFactory.getWebClient(), configuration);
 		assertThat(xml, notNullValue());
