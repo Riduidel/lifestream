@@ -15,13 +15,17 @@ import org.ndx.lifestream.rendering.output.StringTemplateUtils;
 import org.stringtemplate.v4.ST;
 
 public class Serie extends BookInfos implements Input, Comparable<Serie> {
+	public  static final Date TODAY = new Date();
 	private static ST serie;
 
 	static {
 		serie = goodreadsGroup.getInstanceOf("serie");
 	}
 
-	private Date firstBookDate = new Date();
+	/**
+	 * First cycle book date is set as default to today and pushed in the past when books are added
+	 */
+	private Date firstBookDate = TODAY;
 	public String title;
 	public String description;
 

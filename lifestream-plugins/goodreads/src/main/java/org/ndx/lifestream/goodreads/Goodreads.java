@@ -239,7 +239,13 @@ public class Goodreads implements InputLoader<BookInfos, GoodreadsConfiguration>
 
 			@Override
 			public boolean apply(BookInfos input) {
-				return input.getTags().contains("read") || (input instanceof Serie);
+				if(input instanceof Book) {
+					return input.getTags().contains("read");
+				} else if(input instanceof Serie) {
+					// only output series that are set in the past (that's to say at least one book has been read)
+					return input.getWriteDate().compareTo(Serie.TODAY)<0;
+				}
+				return false;
 			}
 		});
 		OutputWriter writer = mode.getWriter();
