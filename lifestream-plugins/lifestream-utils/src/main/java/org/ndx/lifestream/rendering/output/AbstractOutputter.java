@@ -111,10 +111,10 @@ public abstract class AbstractOutputter implements OutputWriter {
 		return sOut.toString();
 	}
 
-	protected String markdownLink(Input from, Input to, String text) {
+	protected String markdownLink(Input from, Input to, String text, String extension) {
 		List<String> fromPath = toRealPath(from);
 		// remove last element of from path, as it's the file name
 		List<String> toPath = toRealPath(to);
-		return MarkdownUtils.link(fromPath, toPath, text);
+		return MarkdownUtils.link(fromPath, toPath, text, extension);
 	}
 }

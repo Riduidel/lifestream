@@ -20,7 +20,7 @@ public class JBakeOutputter extends AbstractStringTemplateBackedOutputter implem
 
 	@Override
 	public String link(Input from, Input to, String text) {
-		return markdownLink(from, to, text);
+		return markdownLink(from, to, text, "html");
 	}
 
 
