@@ -11,9 +11,10 @@
 	<description>My very own lifestream, using all provided modules to create a valid output</description>
 	<properties>
 		<!-- site.dir is configured in profiles -->
-		<site.basedir>${project.build.directory}/site/lifestream/</site.basedir>
-		<site.dir>${site.basedir}/content/</site.dir>
-		<site.output>${project.build.directory}/generatedSite</site.output>
+		<site.basedir>${project.build.directory}/site/generated/</site.basedir>
+		<site.source>${site.basedir}/source/</site.source>
+		<site.dir>${site.source}/content/</site.dir>
+		<site.output>${site.basedir}/target/</site.output>
 		<goodreads.dir>${site.dir}/</goodreads.dir>
 		<wordpress.dir>${site.dir}/</wordpress.dir>
 		<shaarli.dir>${site.dir}/</shaarli.dir>
@@ -116,6 +117,7 @@
 			<id>jbake</id>
 			<properties>
 				<output.mode>jbake</output.mode>
+				<site.target>${site.basedir}/target/</site.target>
 			</properties>
 			<build>
 				<plugins>
@@ -131,7 +133,7 @@
 									<goal>copy-resources</goal>
 								</goals>
 								<configuration>
-									<outputDirectory>${site.basedir}</outputDirectory>
+									<outputDirectory>${site.source}</outputDirectory>
 									<resources>
 										<resource>
 											<directory>src/main/jbake</directory>
@@ -154,7 +156,7 @@
 									<goal>generate</goal>
 								</goals>
 								<configuration>
-									<inputDirectory>${site.basedir}</inputDirectory>
+									<inputDirectory>${site.source}</inputDirectory>
 									<outputDirectory>${site.output}</outputDirectory>
 								</configuration>
 							</execution>
