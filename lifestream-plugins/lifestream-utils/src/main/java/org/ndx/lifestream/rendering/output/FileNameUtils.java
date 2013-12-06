@@ -20,6 +20,7 @@ public class FileNameUtils {
 		name = name
 				.replaceAll("[\\n\\x0B\\f\\r]", "")
 				.replace('\t', ' ')
+				.replace('/', '_')
 				.replaceAll("[*\"':]", "_");
 		// Thanks @glaforge : http://glaforge.appspot.com/article/how-to-remove-accents-from-a-string
 		return name;
@@ -27,7 +28,7 @@ public class FileNameUtils {
 
 	public static Iterable<String> simplify(Collection<String> expectedPath) {
 		return Iterables.transform(expectedPath, new Function<String, String>() {
-	
+
 			@Override
 			public String apply(String input) {
 				return simplify(input);
