@@ -32,8 +32,7 @@ public class JBakeOutputter extends AbstractStringTemplateBackedOutputter implem
 	protected String render(Input input) {
 		Map<String, Object> parameters = new HashMap<>();
 		parameters.put("depth", getDepthOf(input));
-// not useful with this jbake bplugin version
-//		parameters.put("uri", getUriOf(input));
+		parameters.put("uri", getUriOf(input));
 		parameters.put("input", input);
 		parameters.put("writeDate", jbakeFormat.format(input.getWriteDate()));
 		return StringTemplateUtils.applyParametersToTemplate(page, parameters);
