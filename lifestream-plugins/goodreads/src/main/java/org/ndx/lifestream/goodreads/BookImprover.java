@@ -43,10 +43,13 @@ public class BookImprover implements Callable<Void> {
 	 *
 	 */
 	public static class FindWork {
-		private static final String QUERY = Goodreads.GOODREADS_BASE+"search.xml?key="+DEVELOPPER_KEY+"&q=";
+		private static final String QUERY = Goodreads.GOODREADS_BASE+"book/isbn?key="+DEVELOPPER_KEY+"&isbn=";
 
 		private XPathExpression<Element> xpathForImageUrl = XPathFactory.instance().compile("//image_url", Filters.element());
 		private XPathExpression<Element> xpathForTitle = XPathFactory.instance().compile("//title", Filters.element());
+		private XPathExpression<Element> xpathForDescription = XPathFactory.instance().compile("//description", Filters.element());
+		private XPathExpression<Element> xpathForSmallImage = XPathFactory.instance().compile("//small_image_url", Filters.element());
+		private XPathExpression<Element> xpathForUrl = XPathFactory.instance().compile("//url", Filters.element());
 		private XPathExpression<Element> xpathForWorkId = XPathFactory.instance().compile("//work/id", Filters.element());
 
 		/**
@@ -65,7 +68,7 @@ public class BookImprover implements Callable<Void> {
 			Document bookXmlData = queryToJDOM(client, QUERY+query, configuration, "books", query);
 			Element imageUrlText = xpathForImageUrl.evaluateFirst(bookXmlData);
 			if(imageUrlText!=null)
-				returned.imageUrl = imageUrlText.getText();
+				returned.image = imageUrlText.getText();
 			// I used to replace title, but it's in fact a bad idea, because localized title is replaced by english one
 			if(returned.title==null) {
 				Element titleText = xpathForTitle.evaluateFirst(bookXmlData);
@@ -75,6 +78,18 @@ public class BookImprover implements Callable<Void> {
 			Element workId = xpathForWorkId.evaluateFirst(bookXmlData);
 			if(workId==null)
 				throw new UnableToLocateWorkIdException("we were unable to find work id for query "+query+"\nA cache file should be available at "+getCachedFileForKey(configuration, "books", query));
+			Element description = xpathForDescription.evaluateFirst(bookXmlData);
+			if(description!=null) {
+				returned.description = HtmlToMarkdown.transformHtml(description.getText());
+			}
+			Element smallImage = xpathForSmallImage.evaluateFirst(bookXmlData);
+			if(smallImage!=null) {
+				returned.smallImage = description.getText();
+			}
+			Element url = xpathForUrl.evaluateFirst(bookXmlData);
+			if(url!=null) {
+				returned.url = description.getText();
+			}
 			return workId.getText();
 		}
 	}

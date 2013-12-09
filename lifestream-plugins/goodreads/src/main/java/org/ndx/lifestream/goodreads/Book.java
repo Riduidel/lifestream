@@ -64,7 +64,16 @@ public class Book extends BookInfos implements Input {
 	 */
 	protected String text;
 
-	public String imageUrl;
+	public String image;
+	/**
+	 * Source description (usually book's back text)
+	 */
+	public String description;
+	public String smallImage;
+	/**
+	 * Book url on goodreads
+	 */
+	public String url;
 
 
 	public Book() {

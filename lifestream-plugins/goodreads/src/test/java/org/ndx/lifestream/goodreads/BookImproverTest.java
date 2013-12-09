@@ -46,7 +46,7 @@ public class BookImproverTest {
 		BookInfos book = returned.iterator().next();
 		assertThat(book, IsInstanceOf.instanceOf(Book.class));
 		Book improved = (Book) book;
-		assertThat(improved.imageUrl, Is.is("http://d202m5krfqbpi5.cloudfront.net/books/1369382445m/17973574.jpg"));
+		assertThat(improved.image, Is.is("http://d202m5krfqbpi5.cloudfront.net/books/1369382445m/17973574.jpg"));
 		assertThat(improved.title, Is.is("Le chasseur et son ombre"));
 	}
 
