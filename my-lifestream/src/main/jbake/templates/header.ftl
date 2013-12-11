@@ -1,15 +1,4 @@
-<#function fix_uri uri>
-	<#assign text = uri>
-	<#assign text = text?replace("%5C", "/")>
-	<#assign text = text?replace("\\", "/")>
-	<#if text?starts_with("/")>
-		<#assign text = text?substring(1)>
-		<#return text>
-	<#else>
-		<#return text>
-	</#if>
-</#function>
-
+<#include "_functions.ftl">
 
 <!DOCTYPE html>
 <html lang="en">
@@ -21,7 +10,7 @@
     <meta name="author" content="Nicolas Delsaux">
     <meta name="keywords" content="">
 
-    <!-- Le styles -->
+    <!-- The styles -->
     <#if (content.depth)??>
     <link href="${content.depth}css/bootstrap.min.css" rel="stylesheet">
     <link href="${content.depth}css/asciidoctor.css" rel="stylesheet">
@@ -33,6 +22,8 @@
     <link href="css/base.css" rel="stylesheet">
     <link href="css/bootstrap-responsive.min.css" rel="stylesheet">
     </#if>
+    <!-- Some additional thingies -->
+    <link href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css" rel="stylesheet">
 
   </head>
   <body>
