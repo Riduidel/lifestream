@@ -5,5 +5,15 @@ tags=<input.tags; separator=", ">
 date=<writeDate>
 depth=<depth>
 uri=<uri>
+style=<input.style>
+<if(input.bigImage)>
+bigImage=<input.bigImage>
+<endif>
+<if(input.smallImage)>
+smallImage=<input.smallImage>
+<endif>
+<if(input.source)>
+source=<input.source>
+<endif>
 ~~~~~~
 <input.text>

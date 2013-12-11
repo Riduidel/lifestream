@@ -40,4 +40,27 @@ public interface Input {
 	 */
 	void accept(OutputWriter writer);
 
+	/**
+	 * Get path for a big image about that entry.
+	 * @return may be null
+	 */
+	String getBigImagePath();
+
+	/**
+	 * Get path for a small image for that entry
+	 * @return may be null
+	 */
+	String getSmallImagePath();
+
+	/**
+	 * Get style to use to render that entry
+	 * @return
+	 */
+	String getStyle();
+
+	/**
+	 * Get a source url for that entry
+	 * @return
+	 */
+	String getSource();
 }

@@ -64,7 +64,7 @@ public class Book extends BookInfos implements Input {
 	 */
 	protected String text;
 
-	public String image;
+	public String bigImage;
 	/**
 	 * Source description (usually book's back text)
 	 */
@@ -202,6 +202,21 @@ public class Book extends BookInfos implements Input {
 
 	public static String authorAsTag(String author) {
 		return author.replace(' ', '_');
+	}
+
+	@Override
+	public String getBigImagePath() {
+		return bigImage;
+	}
+
+	@Override
+	public String getSmallImagePath() {
+		return smallImage;
+	}
+
+	@Override
+	public String getSource() {
+		return url;
 	}
 
 }

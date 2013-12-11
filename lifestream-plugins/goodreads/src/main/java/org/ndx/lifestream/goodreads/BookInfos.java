@@ -27,4 +27,24 @@ public abstract class BookInfos implements Input {
 	public void setId(String id) {
 		this.id = id;
 	}
+
+	@Override
+	public String getBigImagePath() {
+		return null;
+	}
+
+	@Override
+	public String getSmallImagePath() {
+		return null;
+	}
+
+	@Override
+	public String getStyle() {
+		return "goodreads";
+	}
+
+	@Override
+	public String getSource() {
+		return null;
+	}
 }

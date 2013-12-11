@@ -165,4 +165,23 @@ public class MicroblogEntry implements Input {
 		builder.append("]");
 		return builder.toString();
 	}
+
+	@Override
+	public String getBigImagePath() {
+		return null;
+	}
+
+	@Override
+	public String getSmallImagePath() {
+		return null;
+	}
+
+	@Override
+	public String getStyle() {
+		return "goodreads";
+	}
+	@Override
+	public String getSource() {
+		return null;
+	}
 }

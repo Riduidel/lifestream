@@ -68,7 +68,7 @@ public class BookImprover implements Callable<Void> {
 			Document bookXmlData = queryToJDOM(client, QUERY+query, configuration, "books", query);
 			Element imageUrlText = xpathForImageUrl.evaluateFirst(bookXmlData);
 			if(imageUrlText!=null)
-				returned.image = imageUrlText.getText();
+				returned.bigImage = imageUrlText.getText();
 			// I used to replace title, but it's in fact a bad idea, because localized title is replaced by english one
 			if(returned.title==null) {
 				Element titleText = xpathForTitle.evaluateFirst(bookXmlData);
@@ -84,11 +84,11 @@ public class BookImprover implements Callable<Void> {
 			}
 			Element smallImage = xpathForSmallImage.evaluateFirst(bookXmlData);
 			if(smallImage!=null) {
-				returned.smallImage = description.getText();
+				returned.smallImage = smallImage.getText();
 			}
 			Element url = xpathForUrl.evaluateFirst(bookXmlData);
 			if(url!=null) {
-				returned.url = description.getText();
+				returned.url = url.getText();
 			}
 			return workId.getText();
 		}

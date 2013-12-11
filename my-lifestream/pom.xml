@@ -10,6 +10,7 @@
 	<packaging>pom</packaging>
 	<description>My very own lifestream, using all provided modules to create a valid output</description>
 	<properties>
+		<output.mode>jbake</output.mode>
 		<!-- site.dir is configured in profiles -->
 		<site.basedir>${project.build.directory}/site/generated/</site.basedir>
 		<site.source>${site.basedir}/source/</site.source>

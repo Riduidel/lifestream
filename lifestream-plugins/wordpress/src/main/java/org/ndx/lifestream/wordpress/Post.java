@@ -64,5 +64,23 @@ public class Post implements Input {
 
 	}
 
+	@Override
+	public String getBigImagePath() {
+		return null;
+	}
 
+	@Override
+	public String getSmallImagePath() {
+		return null;
+	}
+
+	@Override
+	public String getStyle() {
+		return "wordpress";
+	}
+
+	@Override
+	public String getSource() {
+		return null;
+	}
 }
