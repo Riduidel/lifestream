@@ -9,3 +9,7 @@
 		<#return text>
 	</#if>
 </#function>
+
+<#macro link_to_post post path=".">
+	<a href="${path}${fix_uri(post.uri)}">${post.title}</a>
+</#macro>

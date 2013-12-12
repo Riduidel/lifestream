@@ -1,5 +1,13 @@
 <#include "_functions.ftl">
 
+<#macro css>
+    <link href="<#nested/>css/bootstrap.min.css" rel="stylesheet">
+    <!-- I don't use ascii doctor, so no need for the associated stylesheet which unfortunatly loads font-awesome from a CDN -->
+    <link href="<#nested/>css/asciidoctor.css" rel="stylesheet">
+    <link href="<#nested/>css/base.css" rel="stylesheet">
+    <link href="<#nested/>css/bootstrap-responsive.min.css" rel="stylesheet">
+</#macro>
+
 <!DOCTYPE html>
 <html lang="en">
   <head>
@@ -12,18 +20,13 @@
 
     <!-- The styles -->
     <#if (content.depth)??>
-    <link href="${content.depth}css/bootstrap.min.css" rel="stylesheet">
-    <link href="${content.depth}css/asciidoctor.css" rel="stylesheet">
-    <link href="${content.depth}css/base.css" rel="stylesheet">
-    <link href="${content.depth}css/bootstrap-responsive.min.css" rel="stylesheet">
+    	<@css>${content.depth}</@css>
+    <#elseif (path)??>
+    	<@css>${path}</@css>
 	<#else>
-    <link href="css/bootstrap.min.css" rel="stylesheet">
-    <link href="css/asciidoctor.css" rel="stylesheet">
-    <link href="css/base.css" rel="stylesheet">
-    <link href="css/bootstrap-responsive.min.css" rel="stylesheet">
+    	<@css></@css>
     </#if>
     <!-- Some additional thingies -->
-    <link href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css" rel="stylesheet">
 
   </head>
   <body>
