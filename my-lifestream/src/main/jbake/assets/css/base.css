@@ -5,6 +5,7 @@ html,
 body {
   height: 100%;
   /* The html and body elements cannot have any padding or margin. */
+  text-align: justify;
 }
 
 /* Wrapper for page content to push down footer */
@@ -50,3 +51,19 @@ body {
 /*code {
   font-size: 80%;
 }*/
+
+/* NDX personal CSS elements ! */
+.tags ul {
+	margin: 0px;
+	padding: 0px;
+	display: block;
+}
+
+.tags li {
+	display: inline;
+}
+
+.goodreads a.source:before {
+	content: url("../img/goodreads.png");
+	margin-right: 0.5em;
+}
