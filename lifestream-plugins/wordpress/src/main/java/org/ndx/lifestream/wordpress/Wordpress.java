@@ -15,6 +15,7 @@ import java.util.logging.Logger;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.vfs2.FileObject;
 import org.jdom.Element;
+import org.ndx.lifestream.configuration.CacheLoader;
 import org.ndx.lifestream.plugin.exceptions.AuthenticationFailedException;
 import org.ndx.lifestream.plugin.exceptions.UnableToDownloadContentException;
 import org.ndx.lifestream.plugin.exceptions.UnableToReadStreamAsUTF8Exception;
@@ -72,25 +73,15 @@ public class Wordpress implements InputLoader<Post, WordpressConfiguration> {
 		}
 	}
 
-	public String loadXML(WebClient client, WordpressConfiguration configuration) {
+	public String loadXML(final WebClient client, final WordpressConfiguration configuration) {
 		try {
-			String content = null;
-			FileObject cachedExport = configuration.getCachedExport();
-			if(cachedExport.exists()) {
-				long lastModifiedTime = cachedExport.getContent().getLastModifiedTime();
-				// csv can be download each day (not many peop
-				if((System.currentTimeMillis()-lastModifiedTime)<configuration.getCacheTimeout()) {
-					try(InputStream fileContent = cachedExport.getContent().getInputStream()) {
-						content = IOUtils.toString(fileContent, Constants.UTF_8);
-					}
+			return configuration.refreshCacheWith(new CacheLoader() {
+
+				@Override
+				public String load() {
+					return downloadXML(client, configuration);
 				}
-			} else {
-				content = downloadXML(client, configuration);
-				try(OutputStream fileContent = cachedExport.getContent().getOutputStream()) {
-					IOUtils.write(content, fileContent, Constants.UTF_8);
-				}
-			}
-			return content;
+			});
 		} catch(Exception e) {
 			throw new UnableToDownloadContentException("unable to download content from Wordpress", e);
 		}

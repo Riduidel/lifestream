@@ -1,9 +1,14 @@
 package org.ndx.lifestream.wordpress;
 
+import java.io.InputStream;
+import java.io.OutputStream;
+
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.vfs2.FileObject;
 import org.apache.commons.vfs2.FileSystemException;
 import org.ndx.lifestream.configuration.AbstractConfiguration;
 import org.ndx.lifestream.configuration.Configuration;
+import org.ndx.lifestream.utils.Constants;
 
 public class WordpressConfiguration extends AbstractConfiguration implements Configuration {
 
@@ -62,6 +67,7 @@ public class WordpressConfiguration extends AbstractConfiguration implements Con
 		return site + "wp-admin/export.php?type=export";
 	}
 
+	@Override
 	public FileObject getCachedExport() throws FileSystemException {
 		return getCacheFolder().resolveFile("export.xml");
 	}

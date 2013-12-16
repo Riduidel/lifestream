@@ -24,6 +24,7 @@ import org.jdom2.input.DOMBuilder;
 import org.jdom2.input.SAXBuilder;
 import org.jdom2.xpath.XPathExpression;
 import org.jdom2.xpath.XPathFactory;
+import org.ndx.lifestream.configuration.CacheLoader;
 import org.ndx.lifestream.plugin.exceptions.AuthenticationFailedException;
 import org.ndx.lifestream.plugin.exceptions.UnableToDownloadContentException;
 import org.ndx.lifestream.rendering.Mode;
@@ -60,24 +61,15 @@ public class Shaarli implements InputLoader<MicroblogEntry, ShaarliConfiguration
 		return buildEntriesCollection(document);
 	}
 
-	public String loadXML(WebClient client, ShaarliConfiguration configuration) {
+	public String loadXML(final WebClient client, final ShaarliConfiguration configuration) {
 		try {
-			String content = null;
-			FileObject cachedExport = configuration.getCachedExport();
-			if(cachedExport.exists()) {
-				long lastModifiedTime = cachedExport.getContent().getLastModifiedTime();
-				if((System.currentTimeMillis()-lastModifiedTime)<configuration.getCacheTimeout()) {
-					try(InputStream fileContent = cachedExport.getContent().getInputStream()) {
-						content = IOUtils.toString(fileContent, Constants.UTF_8);
-					}
+			return configuration.refreshCacheWith(new CacheLoader() {
+
+				@Override
+				public String load() throws Exception {
+					return downloadXML(client, configuration);
 				}
-			} else {
-				content = downloadXML(client, configuration);
-				try(OutputStream fileContent = cachedExport.getContent().getOutputStream()) {
-					IOUtils.write(content, fileContent, Constants.UTF_8);
-				}
-			}
-			return content;
+			});
 		} catch(Exception e) {
 			throw new UnableToDownloadContentException("unable to download content from Wordpress", e);
 		}

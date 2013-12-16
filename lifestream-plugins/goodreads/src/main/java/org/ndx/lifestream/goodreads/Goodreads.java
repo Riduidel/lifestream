@@ -22,6 +22,7 @@ import java.util.logging.Logger;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.vfs2.FileObject;
+import org.ndx.lifestream.configuration.CacheLoader;
 import org.ndx.lifestream.plugin.GaedoEnvironmentProvider;
 import org.ndx.lifestream.plugin.exceptions.AuthenticationFailedException;
 import org.ndx.lifestream.plugin.exceptions.UnableToDownloadContentException;
@@ -166,30 +167,19 @@ public class Goodreads implements InputLoader<BookInfos, GoodreadsConfiguration>
 		return returned;
 	}
 
-	public List<String[]> loadCSV(WebClient client, GoodreadsConfiguration configuration) {
+	public List<String[]> loadCSV(final WebClient client, final GoodreadsConfiguration configuration) {
 		try {
-			// May cause memory error, but later ...
-			String csvContent = null;
-			FileObject cachedCSV = configuration.getCachedExport();
-			if(cachedCSV.exists()) {
-				long lastModifiedTime = cachedCSV.getContent().getLastModifiedTime();
-				// csv can be download each day (not many peop
-				if((System.currentTimeMillis()-lastModifiedTime)<configuration.getCacheTimeout()) {
-					try(InputStream fileContent = cachedCSV.getContent().getInputStream()) {
-						csvContent = IOUtils.toString(fileContent, Constants.UTF_8);
-					}
+			String csvContent = configuration.refreshCacheWith(new CacheLoader() {
+
+				@Override
+				public String load() throws Exception {
+					authenticateInGoodreads(client, configuration.getMail(), configuration.getPassword());
+					logger.log(Level.INFO, "logged in ... downloading csv now ...");
+					Page csv = client.getPage(GOODREADS_BASE+"review_porter/goodreads_export.csv");
+					// May cause memory error, but later ...
+					return csv.getWebResponse().getContentAsString();
 				}
-			}
-			if(csvContent==null) {
-				authenticateInGoodreads(client, configuration.getMail(), configuration.getPassword());
-				logger.log(Level.INFO, "logged in ... downloading csv now ...");
-				Page csv = client.getPage(GOODREADS_BASE+"review_porter/goodreads_export.csv");
-				// May cause memory error, but later ...
-				csvContent = csv.getWebResponse().getContentAsString();
-				try(OutputStream fileContent = cachedCSV.getContent().getOutputStream()) {
-					IOUtils.write(csvContent, fileContent, Constants.UTF_8);
-				}
-			}
+			});
 			return splitIntoRows(csvContent);
 		} catch(AuthenticationFailedException e) {
 			throw e;
