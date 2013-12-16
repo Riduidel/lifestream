@@ -27,6 +27,10 @@ import com.google.common.collect.Maps;
  * A class extracting content from the infamous Expando to a more "object" notion
  */
 public class Book extends BookInfos implements Input {
+	private static final String YEAR_DATE_FORMAT = "yyyy";
+	private static final DateFormat YEAR_FORMATTER = new SimpleDateFormat(YEAR_DATE_FORMAT);
+	private static final String MONTH_DATE_FORMAT = "MMM";
+	private static final DateFormat MONTH_FORMATTER = new SimpleDateFormat(MONTH_DATE_FORMAT);
 	private static final Logger logger = Logger.getLogger(Book.class.getName());
 	private static DateFormat READ_FORMATTER = new SimpleDateFormat("yyyy/MM/dd");
 	private static ST book;
@@ -201,7 +205,7 @@ public class Book extends BookInfos implements Input {
 	}
 
 	public static String authorAsTag(String author) {
-		return author.replace(' ', '_');
+		return "by_"+author.replace(' ', '_');
 	}
 
 	@Override
@@ -217,6 +221,18 @@ public class Book extends BookInfos implements Input {
 	@Override
 	public String getSource() {
 		return url;
+	}
+
+	public static String readYearAsTag(Date d) {
+		return "read_in_"+YEAR_FORMATTER.format(d);
+	}
+
+	public static String readMonthAsTag(Date d) {
+		return "read_on_"+MONTH_FORMATTER.format(d);
+	}
+
+	public static String ratingAsTag(Number rating) {
+		return "rated_"+rating;
 	}
 
 }

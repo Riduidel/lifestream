@@ -49,10 +49,6 @@ public class Goodreads implements InputLoader<BookInfos, GoodreadsConfiguration>
 	private static final DateFormat INPUT_FORMATTER = new SimpleDateFormat(INPUT_DATE_FORMAT);
 	private static final String OUTPUT_DATE_FORMAT = "yyyy-MM-dd'T'HH:mm:ss.SSSZ";
 	public static final DateFormat OUTPUT_FORMATTER = new SimpleDateFormat(OUTPUT_DATE_FORMAT);
-	private static final String YEAR_DATE_FORMAT = "yyyy";
-	private static final DateFormat YEAR_FORMATTER = new SimpleDateFormat(YEAR_DATE_FORMAT);
-	private static final String MONTH_DATE_FORMAT = "MM";
-	private static final DateFormat MONTH_FORMATTER = new SimpleDateFormat(MONTH_DATE_FORMAT);
 
 	private GaedoEnvironmentProvider goodreadsEnvironment = new GaedoEnvironmentProvider();
 
@@ -122,18 +118,18 @@ public class Goodreads implements InputLoader<BookInfos, GoodreadsConfiguration>
 		// adds special author tags
 		if(book.authors.size()>0) {
 			for(String author : book.authors) {
-				book.tags.add("author:"+Book.authorAsTag(author));
+				book.tags.add(Book.authorAsTag(author));
 			}
 		}
 		// Add a tag for book score
 		if(book.rating.floatValue()>0)
-			book.tags.add("rating:"+book.rating);
+			book.tags.add(Book.ratingAsTag(book.rating));
 		// Add a tag for book read year
 		if(book.read!=null) {
 			try {
 				Date d = OUTPUT_FORMATTER.parse(book.read);
-				book.tags.add("read_year:"+YEAR_FORMATTER.format(d));
-				book.tags.add("read_month:"+MONTH_FORMATTER.format(d));
+				book.tags.add(Book.readYearAsTag(d));
+				book.tags.add(Book.readMonthAsTag(d));
 			} catch(Exception e) {
 				if (logger.isLoggable(Level.WARNING)) {
 					logger.log(Level.WARNING, "unable to parse read date "+book.read, e);
