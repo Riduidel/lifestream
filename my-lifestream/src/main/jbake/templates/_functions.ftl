@@ -25,6 +25,7 @@
   <div class="row-fluid <#if (content.style)??>${content.style}</#if>">
     <div class="span2">
 		<div class="date"><em>${content.date?string("dd MMMM yyyy")}</em></div>
+		<#if (content.tags)??>
 		<div class="tags">
 			<ul>
 			<#list content.tags as tag>
@@ -32,6 +33,7 @@
 			</#list>
 			</ul>
 		</div>
+		</#if>
 		<#if (content.source)??><a href="${content.source}" class="source">source</a></#if>
     </div>
     <div class="span10">
