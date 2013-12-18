@@ -94,7 +94,10 @@ public class Goodreads implements InputLoader<BookInfos, GoodreadsConfiguration>
 		String additionalAuthors = line[columns.get("Additional Authors")];
 		List<String> authorsAsList = Arrays.asList(additionalAuthors.split(","));
 		for(String author : authorsAsList) {
-			book.authors.add(author.trim());
+			String trimedAuthor = author.trim();
+			if(trimedAuthor.length()>0) {
+				book.authors.add(trimedAuthor);
+			}
 		}
 		book.setIsbn10(filterIsbn(line[columns.get("ISBN")]));
 		book.setIsbn13(filterIsbn(line[columns.get("ISBN13")]));
