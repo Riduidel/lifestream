@@ -5,7 +5,9 @@
 	<div class="container-fluid">
 	<@display_post content=content depth=content.depth>
 		<#if (content.bigImage)??>
-		<img src="${content.bigImage}"/>
+		<div class="image">
+			<img src="${content.bigImage}"/>
+		</div>
 		</#if>
 	</@display_post>
 	</div>
