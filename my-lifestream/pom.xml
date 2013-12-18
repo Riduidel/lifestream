@@ -20,6 +20,28 @@
 		<wordpress.dir>${site.dir}/</wordpress.dir>
 		<shaarli.dir>${site.dir}/</shaarli.dir>
 	</properties>
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-assembly-plugin</artifactId>
+				<configuration>
+					<descriptors>
+						<descriptor>src/main/assemblies/source-markdown.xml</descriptor>
+					</descriptors>
+				</configuration>
+				<executions>
+					<execution>
+						<id>make-assembly</id> <!-- this is used for inheritance merges -->
+						<phase>package</phase> <!-- bind to the packaging phase -->
+						<goals>
+							<goal>single</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+		</plugins>
+	</build>
 	<profiles>
 		<profile>
 			<activation>
@@ -118,7 +140,7 @@
 			<id>jbake</id>
 			<properties>
 				<output.mode>jbake</output.mode>
-				<site.target>${site.basedir}/target/</site.target>
+				<site.jbake>${site.output}/jbake/</site.jbake>
 			</properties>
 			<build>
 				<plugins>
@@ -158,10 +180,19 @@
 								</goals>
 								<configuration>
 									<inputDirectory>${site.source}</inputDirectory>
-									<outputDirectory>${site.output}</outputDirectory>
+									<outputDirectory>${site.jbake}</outputDirectory>
 								</configuration>
 							</execution>
 						</executions>
+					</plugin>
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-assembly-plugin</artifactId>
+						<configuration>
+							<descriptors>
+								<descriptor>src/main/assemblies/generated-jbake.xml</descriptor>
+							</descriptors>
+						</configuration>
 					</plugin>
 					<plugin>
 						<groupId>org.apache.maven.plugins</groupId>
