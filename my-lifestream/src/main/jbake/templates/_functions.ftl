@@ -24,6 +24,7 @@
   </div>
   <div class="row-fluid <#if (content.style)??>${content.style}</#if>">
     <div class="span2">
+    	<#nested/>
 		<div class="date"><em>${content.date?string("dd MMMM yyyy")}</em></div>
 		<#if (content.tags)??>
 		<div class="tags">
