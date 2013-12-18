@@ -67,3 +67,8 @@ body {
 	content: url("../img/goodreads.png");
 	margin-right: 0.5em;
 }
+
+.wordpress a.source:before {
+	content: url("../img/wordpress.png");
+	margin-right: 0.5em;
+}
