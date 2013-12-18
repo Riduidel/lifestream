@@ -146,6 +146,7 @@ public class Wordpress implements InputLoader<Post, WordpressConfiguration> {
 		post.tags = getEntryTags(entry);
 		post.text = getEntryText(entry);
 		post.uri = entry.getUri();
+		post.source = entry.getLink();
 		post.type = Post.Type.valueOf(getEntryType(entry));
 		try {
 			post.basename = new URL(entry.getLink()).getPath();

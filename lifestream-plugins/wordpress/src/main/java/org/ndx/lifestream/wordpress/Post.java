@@ -21,6 +21,7 @@ public class Post implements Input {
 
 	String basename;
 	Type type;
+	public String source;
 
 	@Override
 	public String getText() {
@@ -31,7 +32,10 @@ public class Post implements Input {
 	public Collection<String> getExpectedPath() {
 		Collection<String> returned = new LinkedList<>();
 		returned.add("wordpress");
-		returned.addAll(Arrays.asList(basename.split("/")));
+		for(String path : basename.split("/")) {
+			if(path.trim().length()>0)
+				returned.add(path);
+		}
 		return returned;
 	}
 
@@ -81,6 +85,6 @@ public class Post implements Input {
 
 	@Override
 	public String getSource() {
-		return null;
+		return source;
 	}
 }
