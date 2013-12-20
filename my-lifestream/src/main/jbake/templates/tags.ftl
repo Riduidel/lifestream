@@ -8,6 +8,7 @@
 		<h1>Tag: ${tag}</h1>
 	</div>
 
+	<div class="tag_posts">
 	<!--<ul>-->
 		<#list tag_posts as post>
 		<#if (last_month)??>
@@ -21,9 +22,14 @@
 			<ul>
 		</#if>
 
-		<li>${post.date?string("dd")} - <@link_to_post post=post path=path/></li>
+		<li class="post-filter-unselected">${post.date?string("dd")} - <@link_to_post post=post path=path/><br/>
+			<#if (post.tags)??>
+			<@tag_list tagList=post.tags depth="" excludedTag=tag/>
+			</#if>
+		</li>
 		<#assign last_month = post.date?string("MMMM yyyy")>
 		</#list>
 	</ul>
+	</div>
 
 <#include "footer.ftl">

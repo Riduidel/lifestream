@@ -2,7 +2,7 @@
 
 	<#include "menu.ftl">
 
-	<div class="container-fluid">
+	<div class="container-fluid post">
 	<@display_post content=content depth=content.depth>
 		<#if (content.bigImage)??>
 		<div class="image">

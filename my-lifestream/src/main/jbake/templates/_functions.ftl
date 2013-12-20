@@ -15,6 +15,25 @@
 	<a href="${path}${fix_uri(post.uri)}">${post.title}</a>
 </#macro>
 
+<#macro tag_list tagList depth="" excludedTag="">
+	<div class="tags">
+		<ul>
+		<#list tagList as tag>
+			<#if (tag!=excludedTag)>
+			<li class="tag">
+				<a href="${fix_uri(depth)}${tag?trim}.html">${tag?trim}</a>
+				<span class="add-filter">
+					<span class="icon-plus-sign"></span>
+				</span>
+				<span class="remove-filter">
+					<span class="icon-minus-sign"></span>
+				</span>
+			</li>
+			</#if>
+		</#list>
+		</ul>
+	</div>
+</#macro>
 
 <#macro display_post content depth="">
   <div class="row-fluid">
@@ -27,13 +46,7 @@
     	<#nested/>
 		<div class="date"><em>${content.date?string("dd MMMM yyyy")}</em></div>
 		<#if (content.tags)??>
-		<div class="tags">
-			<ul>
-			<#list content.tags as tag>
-				<li><a href="${fix_uri(depth)}tags/${tag?trim}.html">${tag?trim}</a></li>
-			</#list>
-			</ul>
-		</div>
+			<@tag_list tagList=content.tags depth=depth+"tags/"/>
 		</#if>
 		<#if (content.source)??><a href="${content.source}" class="source">source</a></#if>
     </div>

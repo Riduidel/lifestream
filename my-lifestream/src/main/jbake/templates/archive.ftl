@@ -6,6 +6,7 @@
 		<h1>Blog Archive</h1>
 	</div>
 
+	<div class=""archive_posts">
 	<!--<ul>-->
 		<#list published_posts as post>
 		<#if (last_month)??>
@@ -19,9 +20,14 @@
 			<ul>
 		</#if>
 
-		<li>${post.date?string("dd")} - <@link_to_post post=post/></li>
+		<li>${post.date?string("dd")} - <@link_to_post post=post/><br/>
+			<#if (post.tags)??>
+			<@tag_list tagList=post.tags depth="../tags/"/>
+			</#if>
+		</li>
 		<#assign last_month = post.date?string("MMMM yyyy")>
 		</#list>
 	</ul>
+	</div>
 
 <#include "footer.ftl">

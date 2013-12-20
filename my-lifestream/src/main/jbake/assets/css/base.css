@@ -62,7 +62,16 @@ body {
 .tags li {
 	display: inline;
 }
+.remove-filter {
+	display:none;
+}
+.add-filter {
+	display:none;
+}
 
+.post-filter-unselected .add-filter {
+	display:inline;
+}
 .goodreads a.source:before {
 	content: url("../img/goodreads.png");
 	margin-right: 0.5em;
