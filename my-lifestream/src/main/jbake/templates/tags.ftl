@@ -5,7 +5,7 @@
 	<#include "menu.ftl">
 
 	<div class="page-header">
-		<h1>Tag: ${tag}</h1>
+		<h1 id="filtering-tags">Tag: <span class="tag" data-tag="${tag?trim}">${tag?trim}</span></h1>
 	</div>
 
 	<div class="tag_posts">
@@ -22,11 +22,7 @@
 			<ul>
 		</#if>
 
-		<li class="post-filter-unselected">${post.date?string("dd")} - <@link_to_post post=post path=path/><br/>
-			<#if (post.tags)??>
-			<@tag_list tagList=post.tags depth="" excludedTag=tag/>
-			</#if>
-		</li>
+		<@link_to_post_in_list post=post path=path excludedTag=tag/>
 		<#assign last_month = post.date?string("MMMM yyyy")>
 		</#list>
 	</ul>

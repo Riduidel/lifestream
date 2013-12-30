@@ -68,8 +68,25 @@ body {
 .add-filter {
 	display:none;
 }
+/** used to hide the excluded tag, but have it in the page for filtering */
+div.tags li.excluded {
+	display:none;
+}
 
-.post-filter-unselected .add-filter {
+/** used to hide filtering tag */
+div.tags li.filtering {
+	display:none;
+}
+
+/** used to hide tag elements that don't match set of required tags */
+li.not_matching {
+	display:none;
+}
+
+.post-link .add-filter {
+	display:inline;
+}
+#filtering-tags .remove-filter {
 	display:inline;
 }
 .goodreads a.source:before {

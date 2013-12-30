@@ -1,9 +1,12 @@
+<#assign path=""/>
+
 <#include "header.ftl">
 
 	<#include "menu.ftl">
 
 	<div class="page-header">
 		<h1>Blog Archive</h1>
+		<h2 id="filtering-tags"></h2>
 	</div>
 
 	<div class=""archive_posts">
@@ -20,11 +23,7 @@
 			<ul>
 		</#if>
 
-		<li>${post.date?string("dd")} - <@link_to_post post=post/><br/>
-			<#if (post.tags)??>
-			<@tag_list tagList=post.tags depth="../tags/"/>
-			</#if>
-		</li>
+		<@link_to_post_in_list post=post path=path/>
 		<#assign last_month = post.date?string("MMMM yyyy")>
 		</#list>
 	</ul>
