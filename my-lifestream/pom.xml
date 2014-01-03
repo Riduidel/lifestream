@@ -19,8 +19,33 @@
 		<goodreads.dir>${site.dir}/</goodreads.dir>
 		<wordpress.dir>${site.dir}/</wordpress.dir>
 		<shaarli.dir>${site.dir}/</shaarli.dir>
+		<site.upload.dir>lifestream/</site.upload.dir>
+		<site.upload.url>ftp://ftpperso.free.fr</site.upload.url>
 	</properties>
+	<distributionManagement>
+		<repository>
+			<id>ftpperso.free.fr</id>
+			<url>${site.upload.url}/${site.upload.dir}/</url>
+		</repository>
+	</distributionManagement>
 	<build>
+		<extensions>
+			<extension>
+				<groupId>org.apache.maven.wagon</groupId>
+				<artifactId>wagon-ftp</artifactId>
+			</extension>
+		</extensions>
+		<!-- standard deploy is disabled for this plugin as I don't want to see it appear anywhere. -->
+		<pluginManagement>
+			<plugins>
+				<plugin>
+					<artifactId>maven-deploy-plugin</artifactId>
+					<configuration>
+						<skip>true</skip>
+					</configuration>
+				</plugin>
+			</plugins>
+		</pluginManagement>
 		<plugins>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
@@ -206,6 +231,26 @@
 								<directory>src/main/webapp2</directory> <filtering>true</filtering> </resource>
 								</webResources> -->
 						</configuration>
+					</plugin>
+					<plugin>
+						<groupId>org.codehaus.mojo</groupId>
+						<artifactId>wagon-maven-plugin</artifactId>
+						<executions>
+							<execution>
+								<id>upload-generated-site-to-ftp</id>
+								<phase>deploy</phase>
+								<goals>
+									<goal>upload</goal>
+								</goals>
+								<configuration>
+									<fromDir>${site.jbake}</fromDir>
+									<includes>**/*</includes>
+									<url>${site.upload.url}</url>
+									<toDir>${site.upload.dir}</toDir>
+									<serverId>ftpperso.free.fr</serverId>
+								</configuration>
+							</execution>
+						</executions>
 					</plugin>
 				</plugins>
 			</build>
