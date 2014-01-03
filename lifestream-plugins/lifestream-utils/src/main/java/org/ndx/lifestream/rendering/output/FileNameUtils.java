@@ -19,7 +19,7 @@ public class FileNameUtils {
 		name = Normalizer.normalize(name, Normalizer.Form.NFD).replaceAll("[^\\p{ASCII}]", "");
 		name = name
 				.replaceAll("[\\n\\x0B\\f\\r]", "")
-				.replace('\t', ' ')
+				.replaceAll("\\p{Blank}", "_")
 				.replace('/', '_')
 				.replaceAll("[*\"':]", "_");
 		// Thanks @glaforge : http://glaforge.appspot.com/article/how-to-remove-accents-from-a-string
