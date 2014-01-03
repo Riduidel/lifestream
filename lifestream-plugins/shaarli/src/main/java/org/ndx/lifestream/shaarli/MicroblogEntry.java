@@ -5,9 +5,11 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map;
+import java.util.TreeMap;
 
 import org.ndx.lifestream.rendering.OutputWriter;
 import org.ndx.lifestream.rendering.model.Input;
+import org.ndx.lifestream.rendering.model.Input.Headers;
 import org.ndx.lifestream.rendering.output.StringTemplateUtils;
 import org.stringtemplate.v4.ST;
 import org.stringtemplate.v4.STRawGroupDir;
@@ -30,6 +32,7 @@ public class MicroblogEntry implements Input {
 	 * Getenerated by the {@link #accept(OutputWriter)} method
 	 */
 	private String text;
+	private String source;
 	/**
 	 * @return the title
 	 * @category getter
@@ -167,21 +170,19 @@ public class MicroblogEntry implements Input {
 	}
 
 	@Override
-	public String getBigImagePath() {
-		return null;
-	}
-
-	@Override
-	public String getSmallImagePath() {
-		return null;
-	}
-
-	@Override
 	public String getStyle() {
-		return "goodreads";
+		return "shaarli";
 	}
 	@Override
 	public String getSource() {
-		return null;
+		return source;
+	}
+	@Override
+	public Map<String, String> getAdditionalHeaders() {
+		Map<String, String> returned = new TreeMap<>();
+		return returned;
+	}
+	public void setSource(String sourceLink) {
+		this.source = sourceLink;
 	}
 }

@@ -3,6 +3,7 @@ package org.ndx.lifestream.goodreads;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -15,7 +16,6 @@ import org.ndx.lifestream.rendering.output.StringTemplateUtils;
 import org.stringtemplate.v4.ST;
 
 public class Serie extends BookInfos implements Input, Comparable<Serie> {
-	public  static final Date TODAY = new Date();
 	private static ST serie;
 
 	static {
@@ -25,7 +25,7 @@ public class Serie extends BookInfos implements Input, Comparable<Serie> {
 	/**
 	 * First cycle book date is set as default to today and pushed in the past when books are added
 	 */
-	private Date firstBookDate = TODAY;
+	private Date firstBookDate = BookInfos.TODAY;
 	public String title;
 	public String description;
 
@@ -44,11 +44,11 @@ public class Serie extends BookInfos implements Input, Comparable<Serie> {
 
 	@Override
 	public Collection<String> getTags() {
-		return Arrays.asList(getSerieTag(title));
+		return Arrays.asList(getAssociatedTag());
 	}
 
-	public static String getSerieTag(String serieName) {
-		return "serie:"+serieName;
+	String getAssociatedTag() {
+		return "in_serie_"+forTag(title);
 	}
 
 	/**
@@ -127,5 +127,10 @@ public class Serie extends BookInfos implements Input, Comparable<Serie> {
 	public String toString() {
 		return "Serie [title=" + title + ", getExpectedPath()="
 				+ getExpectedPath() + "]";
+	}
+
+	@Override
+	public Map<String, String> getAdditionalHeaders() {
+		return Collections.emptyMap();
 	}
 }

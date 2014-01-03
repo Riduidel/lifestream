@@ -4,9 +4,12 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Date;
 import java.util.LinkedList;
+import java.util.Map;
+import java.util.TreeMap;
 
 import org.ndx.lifestream.rendering.OutputWriter;
 import org.ndx.lifestream.rendering.model.Input;
+import org.ndx.lifestream.rendering.model.Input.Headers;
 
 public class Post implements Input {
 	public static enum Type {
@@ -69,16 +72,6 @@ public class Post implements Input {
 	}
 
 	@Override
-	public String getBigImagePath() {
-		return null;
-	}
-
-	@Override
-	public String getSmallImagePath() {
-		return null;
-	}
-
-	@Override
 	public String getStyle() {
 		return "wordpress";
 	}
@@ -86,5 +79,10 @@ public class Post implements Input {
 	@Override
 	public String getSource() {
 		return source;
+	}
+	@Override
+	public Map<String, String> getAdditionalHeaders() {
+		Map<String, String> returned = new TreeMap<>();
+		return returned;
 	}
 }

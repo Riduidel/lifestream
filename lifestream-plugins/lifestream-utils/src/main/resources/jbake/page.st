@@ -6,11 +6,8 @@ date=<writeDate>
 depth=<depth>
 uri=<uri>
 style=<input.style>
-<if(input.bigImage)>
-bigImage=<input.bigImage>
-<endif>
-<if(input.smallImage)>
-smallImage=<input.smallImage>
+<if(input.additionalHeaders)>
+<input.additionalHeaders.keys:{k | $k$=$amap.(k)$\n}>
 <endif>
 <if(input.source)>
 source=<input.source>

@@ -2,6 +2,7 @@ package org.ndx.lifestream.rendering.model;
 
 import java.util.Collection;
 import java.util.Date;
+import java.util.Map;
 
 import org.ndx.lifestream.rendering.OutputWriter;
 
@@ -11,6 +12,10 @@ import org.ndx.lifestream.rendering.OutputWriter;
  *
  */
 public interface Input {
+	public static interface Headers {
+		static final String SMALL_IMAGE = "smallImage";
+		static final String BIG_IMAGE = "bigImage";
+	}
 
 	/**
 	 * @return input basic text (that's to say no tags, no categories, no date, no title, nothing)
@@ -41,18 +46,6 @@ public interface Input {
 	void accept(OutputWriter writer);
 
 	/**
-	 * Get path for a big image about that entry.
-	 * @return may be null
-	 */
-	String getBigImagePath();
-
-	/**
-	 * Get path for a small image for that entry
-	 * @return may be null
-	 */
-	String getSmallImagePath();
-
-	/**
 	 * Get style to use to render that entry
 	 * @return
 	 */
@@ -63,4 +56,9 @@ public interface Input {
 	 * @return
 	 */
 	String getSource();
+	/**
+	 * Allow input to provide additional header entries. 
+	 * @return a non null map, please
+	 */
+	Map<String, String> getAdditionalHeaders();
 }
