@@ -20,7 +20,13 @@
 </#function>
 
 <#macro link_to_post post path="">
-	<a href="${path}${fix_uri(post.uri)}">${post.title}</a>
+	<a href="${path}${fix_uri(post.uri)}">
+	<#if (post.title)??>
+	${post.title}
+	<#else>
+	Untitled entry
+	</#if>
+	</a>
 </#macro>
 
 <#macro tag_list tagList depth="" excludedTag="">
@@ -60,15 +66,17 @@
 </#macro>
 
 <#macro display_post content depth="">
+	<#if (content.title)??>
   <div class="row-fluid">
     <div class="span10 offset2">
   		<a href="${fix_uri(content.uri)}"><h1>${content.title}</h1></a>
 	</div>
   </div>
+  </#if>
   <div class="row-fluid <#if (content.style)??>${content.style}</#if>">
     <div class="span2">
     	<#nested/>
-		<div class="date"><em>${content.date?string("dd MMMM yyyy")}</em></div>
+		<div class="date"><a href="${depth}archive.html"><em>${content.date?string("dd MMMM yyyy")}</a></em></div>
 		<#if (content.tags)??>
 			<@tag_list tagList=content.tags depth=depth+"tags/"/>
 		</#if>
