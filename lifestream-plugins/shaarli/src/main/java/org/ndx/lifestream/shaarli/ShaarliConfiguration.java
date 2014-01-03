@@ -72,5 +72,4 @@ public class ShaarliConfiguration extends AbstractConfiguration {
 	public String getDownloadFailureMessage() {
 		return "unable to download from "+getSite()+" using following credentials\n\tlogin : "+getLogin()+"\n\tpassword : HIDDEN THERE";
 	}
-
 }

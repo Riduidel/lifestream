@@ -98,3 +98,9 @@ li.not_matching {
 	content: url("../img/wordpress.png");
 	margin-right: 0.5em;
 }
+
+.shaarli a.source:before {
+	content: url("../img/shaarli.png");
+	margin-right: 0.5em;
+	vertical-align:middle;
+}

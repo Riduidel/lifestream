@@ -58,7 +58,7 @@ public class Shaarli implements InputLoader<MicroblogEntry, ShaarliConfiguration
 		} catch (ParserConfigurationException e) {
 			throw new UnableToProduceXMLException(e);
 		}
-		return buildEntriesCollection(document);
+		return buildEntriesCollection(configuration, document);
 	}
 
 	public String loadXML(final WebClient client, final ShaarliConfiguration configuration) {
@@ -77,10 +77,11 @@ public class Shaarli implements InputLoader<MicroblogEntry, ShaarliConfiguration
 
 	/**
 	 * Read
+	 * @param configuration
 	 * @param entries
 	 * @return
 	 */
-	public Collection<MicroblogEntry> buildEntriesCollection(Document entries) {
+	public Collection<MicroblogEntry> buildEntriesCollection(ShaarliConfiguration configuration, Document entries) {
 		Collection<MicroblogEntry> returned = new ArrayList<>();
 		for(Element entry : xpathForImageUrl.evaluate(entries)) {
 			// Notice we need both the DT and the immediatly following DD
@@ -94,11 +95,11 @@ public class Shaarli implements InputLoader<MicroblogEntry, ShaarliConfiguration
 					Element nextElement = (Element) next;
 					if(nextElement.getName().equalsIgnoreCase("DD")) {
 						dd = nextElement;
-						returned.add(createEntryFrom(entry, dd));
+						returned.add(createEntryFrom(configuration, entry, dd));
 					}
 					if(nextElement.getName().equalsIgnoreCase("dt")) {
 						// there is no text for this entry ... weird
-						returned.add(createEntryFrom(entry, dd));
+						returned.add(createEntryFrom(configuration, entry, dd));
 					}
 				}
 				index++;
@@ -107,8 +108,9 @@ public class Shaarli implements InputLoader<MicroblogEntry, ShaarliConfiguration
 		return returned;
 	}
 
-	private MicroblogEntry createEntryFrom(Element dt, @Nullable Element dd) {
+	private MicroblogEntry createEntryFrom(ShaarliConfiguration configuration, Element dt, @Nullable Element dd) {
 		MicroblogEntry returned = new MicroblogEntry();
+		returned.setSource(configuration.getSite());
 		Element link = dt.getChild("a");
 		returned.setLink(link.getAttributeValue("href"));
 		returned.setTitle(HtmlToMarkdown.transformHtml(link.getText()).trim());

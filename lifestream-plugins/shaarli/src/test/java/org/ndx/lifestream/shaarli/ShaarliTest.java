@@ -59,7 +59,7 @@ public class ShaarliTest {
 		String text = IOUtils.toString(testXmlFile);
 		DOMBuilder builder = new DOMBuilder();
 		Document document = builder.build(HtmlToMarkdown.transformToValidXhtmlDocument(text));
-		Collection<MicroblogEntry> posts = tested.buildEntriesCollection(document);
+		Collection<MicroblogEntry> posts = tested.buildEntriesCollection(configuration, document);
 		assertThat(posts.size(), IsNot.not(0));
 	}
 
