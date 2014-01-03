@@ -50,6 +50,7 @@ public class BookImprover implements Callable<Void> {
 		private XPathExpression<Element> xpathForDescription = XPathFactory.instance().compile("//description", Filters.element());
 		private XPathExpression<Element> xpathForSmallImage = XPathFactory.instance().compile("//small_image_url", Filters.element());
 		private XPathExpression<Element> xpathForUrl = XPathFactory.instance().compile("//url", Filters.element());
+		private XPathExpression<Element> xpathForAuthors = XPathFactory.instance().compile("GoodreadsResponse/book/authors/author", Filters.element());
 		private XPathExpression<Element> xpathForWorkId = XPathFactory.instance().compile("//work/id", Filters.element());
 
 		/**
@@ -58,13 +59,14 @@ public class BookImprover implements Callable<Void> {
 		 * @param query
 		 * @param returned
 		 * @param configuration
+		 * @param destination destination servide for storing all output objects. It is used to locate/create authors
 		 * @return first work id, which will be used to grab serie
 		 * @throws FileSystemException
 		 * @throws IOException
 		 * @throws JDOMException
 		 * @throws UnsupportedEncodingException
 		 */
-		public String improveBook(WebClient client, String query, Book returned, AbstractConfiguration configuration) throws FileSystemException {
+		public String improveBook(WebClient client, String query, Book returned, AbstractConfiguration configuration, FinderCrudService<BookInfos,BookInfosInformer> destination) throws FileSystemException {
 			Document bookXmlData = queryToJDOM(client, QUERY+query, configuration, "books", query);
 			Element imageUrlText = xpathForImageUrl.evaluateFirst(bookXmlData);
 			if(imageUrlText!=null)
@@ -90,7 +92,26 @@ public class BookImprover implements Callable<Void> {
 			if(url!=null) {
 				returned.url = url.getText();
 			}
+			List<Element> authors = xpathForAuthors.evaluate(bookXmlData);
+			for(Element author : authors) {
+				addBookToAuthor(destination, returned, author);
+			}
 			return workId.getText();
+		}
+
+		private void addBookToAuthor(
+				FinderCrudService<BookInfos, BookInfosInformer> destination,
+				Book returned, Element element) {
+			String authorId = element.getChildTextTrim("id");
+			String authorName = element.getChildTextTrim("name");
+			String image = element.getChildTextTrim("image_url");
+
+			Author used = findOrCreateSubClass(destination, authorId, Author.class);
+			used.setId(authorId);
+			used.setName(authorName);
+			used.setImage(image);
+			used.addBook(returned);
+			destination.update(used);
 		}
 	}
 
@@ -142,30 +163,10 @@ public class BookImprover implements Callable<Void> {
 				logger.log(Level.WARNING, "something went wrong while parsing one serie of work "+workId, e);
 			}
 
-			Serie used = findOrCreate(destination, serieId);
+			Serie used = findOrCreateSubClass(destination, serieId, Serie.class);
 			used.title = xpathForSerieTitle.evaluateFirst(element).getText().trim();
 			used.description = serieDesc;
 			used.setBook(positionInSerie, source);
-		}
-
-		private Serie findOrCreate(
-				FinderCrudService<BookInfos, BookInfosInformer> destination,
-				final String serieId) {
-			try {
-				return (Serie) destination.find().matching(new QueryBuilder<BookInfosInformer>() {
-
-					@Override
-					public QueryExpression createMatchingExpression(BookInfosInformer informer) {
-						return informer.getId().equalsTo(serieId);
-					}
-				}).getFirst();
-			} catch(Exception e) {
-				Serie returned = new Serie();
-				returned.setId(serieId);
-				synchronized(destination) {
-					return (Serie) destination.create(returned);
-				}
-			}
 		}
 
 	}
@@ -201,6 +202,31 @@ public class BookImprover implements Callable<Void> {
 
 	private static String getCachePath(String cacheFolder, String cacheKey) {
 		return cacheFolder+"/"+cacheKey+".xml";
+	}
+
+	static <Type extends BookInfos> Type findOrCreateSubClass(
+			FinderCrudService<BookInfos, BookInfosInformer> destination,
+			final String serieId, Class<Type> createdType) {
+		try {
+			return (Type) destination.find().matching(new QueryBuilder<BookInfosInformer>() {
+
+				@Override
+				public QueryExpression createMatchingExpression(BookInfosInformer informer) {
+					return informer.getId().equalsTo(serieId);
+				}
+			}).getFirst();
+		} catch(Exception e) {
+				Type returned;
+				try {
+					returned = createdType.newInstance();
+					returned.setId(serieId);
+					synchronized(destination) {
+						return (Type) destination.create(returned);
+					}
+				} catch (InstantiationException | IllegalAccessException cantCreate) {
+					throw new GoodreadsException("Seems like the "+createdType.getName()+" class has no accessible public constructor ...", cantCreate);
+				}
+		}
 	}
 
 	private FindWork workFinder = new FindWork();
@@ -250,7 +276,7 @@ public class BookImprover implements Callable<Void> {
 				synchronized(destination) {
 					book = (Book) destination.create(book);
 				}
-				String workId = workFinder.improveBook(client, query, book, configuration);
+				String workId = workFinder.improveBook(client, query, book, configuration, destination);
 				synchronized(destination) {
 					book = (Book) destination.update(book);
 				}

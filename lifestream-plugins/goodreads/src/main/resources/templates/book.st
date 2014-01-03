@@ -1,3 +1,10 @@
+<if(authors)>
+## Authors
+
+<authors:{authorLink |
+ * <authorLink>}>
+<endif>
+
 <if(book.description)>
 <book.description>
 <endif>

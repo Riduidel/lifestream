@@ -1,5 +1,6 @@
 package org.ndx.lifestream.goodreads;
 
+import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
 
 import java.util.Collection;
@@ -42,7 +43,8 @@ public class BookImproverTest {
 				service, configuration);
 		tested.call();
 		Collection<BookInfos> returned = CollectionUtils.asList(service.findAll());
-		assertThat(returned.size(), Is.is(1));
+		// Don't forget there are ALSO authors infos there
+		assertThat(returned.size(), is(4));
 		BookInfos book = returned.iterator().next();
 		assertThat(book, IsInstanceOf.instanceOf(Book.class));
 		Book improved = (Book) book;
@@ -59,7 +61,7 @@ public class BookImproverTest {
 				service, configuration);
 		tested.call();
 		Collection<BookInfos> returned = CollectionUtils.asList(service.findAll());
-		assertThat(returned.size(), Is.is(3));
+		assertThat(returned.size(), Is.is(6));
 		BookInfos book = returned.iterator().next();
 		assertThat(book, IsInstanceOf.instanceOf(Book.class));
 		Book improved = (Book) book;
@@ -76,7 +78,7 @@ public class BookImproverTest {
 				service, configuration);
 		tested.call();
 		Collection<BookInfos> returned = CollectionUtils.asList(service.findAll());
-		assertThat(returned.size(), Is.is(2));
+		assertThat(returned.size(), Is.is(3));
 		BookInfos book = returned.iterator().next();
 		assertThat(book, IsInstanceOf.instanceOf(Book.class));
 		Book improved = (Book) book;
@@ -93,7 +95,7 @@ public class BookImproverTest {
 				service, configuration);
 		tested.call();
 		Collection<BookInfos> returned = CollectionUtils.asList(service.findAll());
-		assertThat(returned.size(), Is.is(3));
+		assertThat(returned.size(), Is.is(4));
 		BookInfos book = returned.iterator().next();
 		assertThat(book, IsInstanceOf.instanceOf(Book.class));
 		Book improved = (Book) book;

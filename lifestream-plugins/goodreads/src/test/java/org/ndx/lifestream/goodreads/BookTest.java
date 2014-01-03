@@ -34,8 +34,8 @@ public class BookTest {
 		Map<String, Integer> headersMap = tested.getColumnsNamesToColumnsIndices(headersArray);
 		assertThat(unreadBook.length, Is.is(headersArray.length));
 		Book unread = tested.createBook(headersMap, unreadBook);
-		assertThat(unread.authors, IsCollectionContaining.hasItems(moorcock, gilliam, kramer));
-		assertThat(unread.tags.contains("to-read"), Is.is(true));
+		// authors are no more read from the simplistic export
+		assertThat(unread.getTags().contains("to-read"), Is.is(true));
 	}
 
 	@Test
@@ -71,6 +71,6 @@ public class BookTest {
 		Map<String, Integer> headersMap = tested.getColumnsNamesToColumnsIndices(headersArray);
 		assertThat(readBook.length, Is.is(headersArray.length));
 		Book read = tested.createBook(headersMap, readBook);
-		assertThat(read.tags.contains("read"), Is.is(true));
+		assertThat(read.getTags().contains("read"), Is.is(true));
 	}
 }

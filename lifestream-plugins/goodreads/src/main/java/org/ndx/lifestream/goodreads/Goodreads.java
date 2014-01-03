@@ -90,15 +90,7 @@ public class Goodreads implements InputLoader<BookInfos, GoodreadsConfiguration>
 	Book createBook(Map<String, Integer> columns, String[] line) {
 		Book book = new Book();
 		book.title = line[columns.get("Title")];
-		book.authors.add(line[columns.get("Author")]);
 		String additionalAuthors = line[columns.get("Additional Authors")];
-		List<String> authorsAsList = Arrays.asList(additionalAuthors.split(","));
-		for(String author : authorsAsList) {
-			String trimedAuthor = author.trim();
-			if(trimedAuthor.length()>0) {
-				book.authors.add(trimedAuthor);
-			}
-		}
 		book.setIsbn10(filterIsbn(line[columns.get("ISBN")]));
 		book.setIsbn13(filterIsbn(line[columns.get("ISBN13")]));
 		book.rating = new Integer(line[columns.get("My Rating")]);
@@ -110,36 +102,16 @@ public class Goodreads implements InputLoader<BookInfos, GoodreadsConfiguration>
 		}
 		book.initialPublication = line[columns.get("Original Publication Year")];
 		String dateRead = line[columns.get("Date Read")];
-		if(dateRead==null || dateRead.length()==0)
-			book.read = null;
-		else
-			book.read = parseDate(dateRead);
-		book.tags.addAll(Arrays.asList(line[columns.get("Bookshelves")].split(",")));
-		book.tags.addAll(Arrays.asList(line[columns.get("Exclusive Shelf")].split(",")));
+		if(!(dateRead==null || dateRead.length()==0))
+			book.setRead(parseDate(dateRead));
+		book.addAllTags(Arrays.asList(line[columns.get("Bookshelves")].split(",")));
+		book.addAllTags(Arrays.asList(line[columns.get("Exclusive Shelf")].split(",")));
 		book.review = HtmlToMarkdown.transformHtml(line[columns.get("My Review")]);
 		book.notes = line[columns.get("Private Notes")];
 		book.owns = new Integer(line[columns.get("Owned Copies")]);
-		// adds special author tags
-		if(book.authors.size()>0) {
-			for(String author : book.authors) {
-				book.tags.add(Book.authorAsTag(author));
-			}
-		}
 		// Add a tag for book score
 		if(book.rating.floatValue()>0)
-			book.tags.add(Book.ratingAsTag(book.rating));
-		// Add a tag for book read year
-		if(book.read!=null) {
-			try {
-				Date d = OUTPUT_FORMATTER.parse(book.read);
-				book.tags.add(Book.readYearAsTag(d));
-				book.tags.add(Book.readMonthAsTag(d));
-			} catch(Exception e) {
-				if (logger.isLoggable(Level.WARNING)) {
-					logger.log(Level.WARNING, "unable to parse read date "+book.read, e);
-				}
-			}
-		}
+			book.addTag(Book.ratingAsTag(book.rating));
 		return book;
 	}
 
@@ -149,11 +121,11 @@ public class Goodreads implements InputLoader<BookInfos, GoodreadsConfiguration>
 		return null;
 	}
 
-	String parseDate(String text) {
+	Date parseDate(String text) {
 		Date d;
 		try {
 			d = INPUT_FORMATTER.parse(text);
-			return OUTPUT_FORMATTER.format(d);
+			return d;
 		} catch (ParseException e) {
 			if (logger.isLoggable(Level.WARNING)) {
 				logger.log(Level.WARNING, "unable to parse date "+text, e);
@@ -232,7 +204,9 @@ public class Goodreads implements InputLoader<BookInfos, GoodreadsConfiguration>
 					return input.getTags().contains("read");
 				} else if(input instanceof Serie) {
 					// only output series that are set in the past (that's to say at least one book has been read)
-					return input.getWriteDate().compareTo(Serie.TODAY)<0;
+					return input.getWriteDate().compareTo(BookInfos.TODAY)<0;
+				} else if(input instanceof Author) {
+					return true;
 				}
 				return false;
 			}

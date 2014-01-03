@@ -1,6 +1,9 @@
 package org.ndx.lifestream.goodreads;
 
+import java.util.Date;
+
 import org.ndx.lifestream.rendering.model.Input;
+import org.ndx.lifestream.rendering.output.FileNameUtils;
 import org.stringtemplate.v4.ST;
 import org.stringtemplate.v4.STGroupDir;
 import org.stringtemplate.v4.STRawGroupDir;
@@ -18,7 +21,17 @@ public abstract class BookInfos implements Input {
 		goodreadsGroup = new STRawGroupDir("templates");
 	}
 
+	/**
+	 * Utility method used to transform an input tag name into something usable for a file name
+	 * @param tag
+	 * @return
+	 */
+	protected static String forTag(String tag) {
+		return FileNameUtils.simplify(tag);
+	}
+
 	private String id;
+	public  static final Date TODAY = new Date();
 
 	public String getId() {
 		return id;
@@ -26,16 +39,6 @@ public abstract class BookInfos implements Input {
 
 	public void setId(String id) {
 		this.id = id;
-	}
-
-	@Override
-	public String getBigImagePath() {
-		return null;
-	}
-
-	@Override
-	public String getSmallImagePath() {
-		return null;
 	}
 
 	@Override
