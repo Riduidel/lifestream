@@ -4,6 +4,7 @@ import org.ndx.lifestream.rendering.output.gollum.GollumOutputter;
 import org.ndx.lifestream.rendering.output.gumdrop.GumdropOutputter;
 import org.ndx.lifestream.rendering.output.jbake.JBakeOutputter;
 import org.ndx.lifestream.rendering.output.jekyll.JekyllOutputter;
+import org.ndx.lifestream.rendering.output.opoopress.OpooPressOutputter;
 
 /**
  * Defines the various usable rendering modes. Each mode define how obejcts are

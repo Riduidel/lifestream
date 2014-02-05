@@ -1,7 +1,8 @@
-package org.ndx.lifestream.rendering;
+package org.ndx.lifestream.rendering.output.opoopress;
 
 import java.util.List;
 
+import org.ndx.lifestream.rendering.OutputWriter;
 import org.ndx.lifestream.rendering.model.Input;
 import org.ndx.lifestream.rendering.output.AbstractStringTemplateBackedOutputter;
 
