@@ -1,5 +1,6 @@
 package org.ndx.lifestream.wordpress;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Date;
@@ -21,10 +22,12 @@ public class Post implements Input {
 	Collection<String> tags;
 	String text;
 	Date writeDate;
+	Collection<Comment> comments = new ArrayList<>();
 
 	String basename;
 	Type type;
 	public String source;
+	public String excerpt;
 
 	@Override
 	public String getText() {
@@ -83,6 +86,7 @@ public class Post implements Input {
 	@Override
 	public Map<String, String> getAdditionalHeaders() {
 		Map<String, String> returned = new TreeMap<>();
+		returned.put("excerpt", excerpt);
 		return returned;
 	}
 }

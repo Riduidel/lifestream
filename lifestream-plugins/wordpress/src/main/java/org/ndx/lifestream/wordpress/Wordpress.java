@@ -2,7 +2,6 @@ package org.ndx.lifestream.wordpress;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
-import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -12,7 +11,6 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import org.apache.commons.io.IOUtils;
 import org.apache.commons.vfs2.FileObject;
 import org.jdom.Element;
 import org.ndx.lifestream.configuration.CacheLoader;
@@ -140,14 +138,13 @@ public class Wordpress implements InputLoader<Post, WordpressConfiguration> {
 	}
 
 	private Post createPostFromEntry(SyndEntry entry) {
-		Post post = new Post();
+		Post post = new Post(); // TODO Use http://sujitpal.blogspot.fr/2008/08/parsing-custom-modules-with-rome.html to parse wp:comment
 		post.writeDate = entry.getPublishedDate()==null ? entry.getUpdatedDate() : entry.getPublishedDate();
 		post.title = entry.getTitle();
 		post.tags = getEntryTags(entry);
 		post.text = getEntryText(entry);
 		post.uri = entry.getUri();
 		post.source = entry.getLink();
-		post.type = Post.Type.valueOf(getEntryType(entry));
 		try {
 			post.basename = new URL(entry.getLink()).getPath();
 			if(post.basename.endsWith("/")) {
@@ -157,19 +154,23 @@ public class Wordpress implements InputLoader<Post, WordpressConfiguration> {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		return post;
-	}
-
-	private String getEntryType(SyndEntry entry) {
 		List<Element> elements = (List<Element>) entry.getForeignMarkup();
 		for(Element e : elements) {
-			if(e.getName().equals("post_type")) {
-				return e.getText();
+			switch(e.getName()) {
+			case "post_type": post.type = Post.Type.valueOf(e.getText()); break;
+			case "comment": post.comments.add(new Comment(e)); break;
+			case "post_name": break;
+			case "post_parent": break;
+			case "post_id": break;
+			case "postmeta": break;
+			case "encoded": post.excerpt = e.getText(); break;
+			case "status": break;
+			default:
 			}
 		}
-		return null;
+		return post;
 	}
-
+	
 	private String getEntryText(SyndEntry entry) {
 		StringBuilder sOut = new StringBuilder();
 		for(SyndContent content : (Collection<SyndContent>) entry.getContents()) {
