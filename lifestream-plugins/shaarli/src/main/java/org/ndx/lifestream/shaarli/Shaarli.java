@@ -71,7 +71,7 @@ public class Shaarli implements InputLoader<MicroblogEntry, ShaarliConfiguration
 				}
 			});
 		} catch(Exception e) {
-			throw new UnableToDownloadContentException("unable to download content from Wordpress", e);
+			throw new UnableToDownloadContentException("unable to download content from Shaarli "+configuration.getSite(), e);
 		}
 	}
 

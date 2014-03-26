@@ -45,7 +45,7 @@ public abstract class AbstractLifestreamPlugin<Type extends Input, Configuration
 			// Now output all using given mode
 			loader.output(mode, inputs, outputRoot, getConfiguration());
 		} catch (Exception e) {
-			throw new MojoExecutionException("there was a failure during goodreads pages construction", e);
+			throw new MojoExecutionException("there was a failure during pages construction", e);
 		}
 	}
 
