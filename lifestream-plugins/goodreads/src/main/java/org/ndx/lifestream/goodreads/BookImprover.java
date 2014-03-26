@@ -8,9 +8,8 @@ import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashSet;
-import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.Callable;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -26,6 +25,8 @@ import org.jdom2.input.SAXBuilder;
 import org.jdom2.xpath.XPathExpression;
 import org.jdom2.xpath.XPathFactory;
 import org.ndx.lifestream.configuration.AbstractConfiguration;
+import org.ndx.lifestream.goodreads.references.Reference;
+import org.ndx.lifestream.goodreads.references.References;
 import org.ndx.lifestream.utils.Constants;
 import org.ndx.lifestream.utils.transform.HtmlToMarkdown;
 
@@ -66,16 +67,19 @@ public class BookImprover implements Callable<Void> {
 		 * @throws JDOMException
 		 * @throws UnsupportedEncodingException
 		 */
-		public String improveBook(WebClient client, String query, Book returned, AbstractConfiguration configuration, FinderCrudService<BookInfos,BookInfosInformer> destination) throws FileSystemException {
+		public String improveBook(WebClient client, String query,
+				Book returned,
+				AbstractConfiguration configuration,
+				FinderCrudService<BookInfos,BookInfosInformer> destination) throws FileSystemException {
 			Document bookXmlData = queryToJDOM(client, QUERY+query, configuration, "books", query);
 			Element imageUrlText = xpathForImageUrl.evaluateFirst(bookXmlData);
 			if(imageUrlText!=null)
 				returned.bigImage = imageUrlText.getText();
 			// I used to replace title, but it's in fact a bad idea, because localized title is replaced by english one
-			if(returned.title==null) {
+			if(returned.getTitle()==null) {
 				Element titleText = xpathForTitle.evaluateFirst(bookXmlData);
 				if(titleText!=null)
-					returned.title = titleText.getText();
+					returned.setTitle(titleText.getText());
 			}
 			Element workId = xpathForWorkId.evaluateFirst(bookXmlData);
 			if(workId==null)
@@ -164,7 +168,7 @@ public class BookImprover implements Callable<Void> {
 			}
 
 			Serie used = findOrCreateSubClass(destination, serieId, Serie.class);
-			used.title = xpathForSerieTitle.evaluateFirst(element).getText().trim();
+			used.setTitle(xpathForSerieTitle.evaluateFirst(element).getText().trim());
 			used.description = serieDesc;
 			used.setBook(positionInSerie, source);
 		}
@@ -265,8 +269,8 @@ public class BookImprover implements Callable<Void> {
 		String query = null;
 		try {
 			if(book.getIsbn13()==null) {
-				if(book.title==null) {
-					query = book.title;
+				if(book.getTitle()==null) {
+					query = book.getTitle();
 				}
 			} else {
 				query = book.getIsbn13();

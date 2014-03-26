@@ -5,4 +5,5 @@ import com.dooapp.gaedo.finders.informers.StringFieldInformer;
 
 public interface BookInfosInformer extends Informer<BookInfos> {
 	StringFieldInformer getId();
+	StringFieldInformer getTitle();
 }

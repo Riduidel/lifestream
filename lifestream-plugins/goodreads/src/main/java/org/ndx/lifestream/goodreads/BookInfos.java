@@ -30,6 +30,7 @@ public abstract class BookInfos implements Input {
 		return FileNameUtils.simplify(tag);
 	}
 
+	private String title;
 	private String id;
 	public  static final Date TODAY = new Date();
 
@@ -49,5 +50,23 @@ public abstract class BookInfos implements Input {
 	@Override
 	public String getSource() {
 		return null;
+	}
+
+	/**
+	 * @return the title
+	 * @category getter
+	 * @category title
+	 */
+	public String getTitle() {
+		return title;
+	}
+
+	/**
+	 * @param title the title to set
+	 * @category setter
+	 * @category title
+	 */
+	public void setTitle(String title) {
+		this.title = title;
 	}
 }

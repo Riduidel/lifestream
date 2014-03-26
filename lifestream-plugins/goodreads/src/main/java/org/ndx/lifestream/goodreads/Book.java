@@ -3,13 +3,11 @@ package org.ndx.lifestream.goodreads;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedList;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.SortedSet;
@@ -19,12 +17,11 @@ import java.util.UUID;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import org.ndx.lifestream.goodreads.references.Reference;
 import org.ndx.lifestream.rendering.OutputWriter;
 import org.ndx.lifestream.rendering.model.Input;
 import org.ndx.lifestream.rendering.output.StringTemplateUtils;
 import org.stringtemplate.v4.ST;
-
-import com.google.common.collect.Maps;
 
 /**
  * A class extracting content from the infamous Expando to a more "object" notion
@@ -93,9 +90,11 @@ public class Book extends BookInfos implements Input {
 	 */
 	public String read;
 
-	public String review;
+	private String review;
+	/** Set of series this book is member of */
 	private Set<Serie> series = new TreeSet<>();
 	public String smallImage;
+	/** All the tags assignated to this review */
 	private SortedSet<String> tags = new TreeSet<String>();
 
 
@@ -104,11 +103,11 @@ public class Book extends BookInfos implements Input {
 	 */
 	protected String text;
 
-	public String title;
 	/**
 	 * Book url on goodreads
 	 */
 	public String url;
+	private Collection<Reference> references = new LinkedList<>();
 	public Book() {
 		setId(UUID.randomUUID().toString());
 	}
@@ -118,12 +117,19 @@ public class Book extends BookInfos implements Input {
 	 */
 	@Override
 	public void accept(OutputWriter writer) {
-
+		review = resolveReferences(review, references, writer);
 		Map<String, Object> parameters = new HashMap<>();
 		parameters.put("series", generateLinks(series, writer));
 		parameters.put("authors", generateLinks(authors, writer));
 		parameters.put("book", this);
 		text = StringTemplateUtils.applyParametersToTemplate(book, parameters);
+	}
+	String resolveReferences(String review, Collection<Reference> references, OutputWriter writer) {
+		// before to write entry, replace refrences by their values - if any
+		for(Reference ref : references) {
+			review = review.replace(ref.getId(), ref.getLink(writer, this));
+		}
+		return review;
 	}
 	public void addAllTags(Collection<String> list) {
 		tags.addAll(list);
@@ -153,10 +159,10 @@ public class Book extends BookInfos implements Input {
 				return false;
 		} else if (!isbn13.equals(other.isbn13))
 			return false;
-		if (title == null) {
-			if (other.title != null)
+		if (getTitle() == null) {
+			if (other.getTitle() != null)
 				return false;
-		} else if (!title.equals(other.title))
+		} else if (!getTitle().equals(other.getTitle()))
 			return false;
 		return true;
 	}
@@ -178,7 +184,7 @@ public class Book extends BookInfos implements Input {
 		else if(isbn10!=null)
 			returned.add(isbn10);
 		else
-			returned.add(title.replace(' ', '_'));
+			returned.add(getTitle().replace(' ', '_'));
 		return returned;
 	}
 
@@ -215,11 +221,6 @@ public class Book extends BookInfos implements Input {
 	}
 
 	@Override
-	public String getTitle() {
-		return title;
-	}
-
-	@Override
 	public Date getWriteDate() {
 		try {
 			if(read==null || read.trim().length()==0)
@@ -235,7 +236,7 @@ public class Book extends BookInfos implements Input {
 		final int prime = 31;
 		int result = 1;
 		result = prime * result + ((isbn13 == null) ? 0 : isbn13.hashCode());
-		result = prime * result + ((title == null) ? 0 : title.hashCode());
+		result = prime * result + ((getTitle() == null) ? 0 : getTitle().hashCode());
 		return result;
 	}
 
@@ -259,7 +260,7 @@ public class Book extends BookInfos implements Input {
 
 	@Override
 	public String toString() {
-		return "title : "+title+" - basename : "+getExpectedPath();
+		return "title : "+getTitle()+" - basename : "+getExpectedPath();
 	}
 	@Override
 	public Map<String, String> getAdditionalHeaders() {
@@ -268,5 +269,26 @@ public class Book extends BookInfos implements Input {
 		returned.put(Headers.SMALL_IMAGE, smallImage);
 		return returned;
 	}
-
+	public String getReview() {
+		return review;
+	}
+	/**
+	 * Set review (yup, crazy, I know). When doing so, #references map is populated with required references
+	 * @param review
+	 */
+	public void setReview(String review) {
+		this.review = review;
+	}
+	public boolean add(Reference e) {
+		return references.add(e);
+	}
+	public boolean addAll(Collection<? extends Reference> c) {
+		return references.addAll(c);
+	}
+	public Collection<Reference> getReferences() {
+		return references;
+	}
+	public void setReferences(Collection<Reference> references) {
+		this.references = references;
+	}
 }

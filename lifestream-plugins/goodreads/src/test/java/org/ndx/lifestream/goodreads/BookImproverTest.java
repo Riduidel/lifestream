@@ -4,6 +4,7 @@ import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
 
 import java.util.Collection;
+import java.util.TreeMap;
 
 import org.apache.commons.vfs2.FileSystemException;
 import org.hamcrest.core.Is;
@@ -12,6 +13,7 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.ndx.lifestream.configuration.AbstractConfiguration;
+import org.ndx.lifestream.goodreads.references.Reference;
 import org.ndx.lifestream.plugin.GaedoEnvironmentProvider;
 import org.ndx.lifestream.rendering.output.VFSHelper;
 import org.ndx.lifestream.utils.web.WebClientFactory;
@@ -24,6 +26,7 @@ public class BookImproverTest {
 	private static WebClient webClient;
 	private static AbstractConfiguration configuration;
 	private GaedoEnvironmentProvider goodreadsEnvironment;
+	private TreeMap<String, Reference> references;
 
 	@BeforeClass public static void loadWebClient() throws FileSystemException {
 		webClient = WebClientFactory.getWebClient();
@@ -32,6 +35,7 @@ public class BookImproverTest {
 
 	@Before public void loadGaedo() throws FileSystemException {
 		goodreadsEnvironment = new GaedoEnvironmentProvider();
+		references = new TreeMap<>();
 	}
 
 	@Test public void canImproveHunterAndHisPrey() throws Exception {
@@ -49,7 +53,7 @@ public class BookImproverTest {
 		assertThat(book, IsInstanceOf.instanceOf(Book.class));
 		Book improved = (Book) book;
 		assertThat(improved.bigImage, Is.is("http://d202m5krfqbpi5.cloudfront.net/books/1369382445m/17973574.jpg"));
-		assertThat(improved.title, Is.is("Le chasseur et son ombre"));
+		assertThat(improved.getTitle(), Is.is("Le chasseur et son ombre"));
 	}
 
 	@Test public void canImproveTheLastHero() throws Exception {
@@ -65,7 +69,7 @@ public class BookImproverTest {
 		BookInfos book = returned.iterator().next();
 		assertThat(book, IsInstanceOf.instanceOf(Book.class));
 		Book improved = (Book) book;
-		assertThat(improved.title, Is.is("Le Dernier héros (Les Annales du Disque-monde, #27)"));
+		assertThat(improved.getTitle(), Is.is("Le Dernier héros (Les Annales du Disque-monde, #27)"));
 		assertThat(improved.getSeries().size(), Is.is(2));
 	}
 
@@ -82,7 +86,7 @@ public class BookImproverTest {
 		BookInfos book = returned.iterator().next();
 		assertThat(book, IsInstanceOf.instanceOf(Book.class));
 		Book improved = (Book) book;
-		assertThat(improved.title, Is.is("Battle Angel - Alita Last Order: Angel of Protest (Vol. 4)"));
+		assertThat(improved.getTitle(), Is.is("Battle Angel - Alita Last Order: Angel of Protest (Vol. 4)"));
 		assertThat(improved.getSeries().size(), Is.is(1));
 	}
 
@@ -99,7 +103,7 @@ public class BookImproverTest {
 		BookInfos book = returned.iterator().next();
 		assertThat(book, IsInstanceOf.instanceOf(Book.class));
 		Book improved = (Book) book;
-		assertThat(improved.title, Is.is("Un clone encombrant"));
+		assertThat(improved.getTitle(), Is.is("Un clone encombrant"));
 		assertThat(improved.getSeries().size(), Is.is(2));
 	}
 }

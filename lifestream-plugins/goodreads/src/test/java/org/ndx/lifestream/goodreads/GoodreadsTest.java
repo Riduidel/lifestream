@@ -75,36 +75,4 @@ public class GoodreadsTest {
 			assertThat(row.length, IsNot.not(1));
 		}
 	}
-
-	/**
-	 * Seems like we loose some CSV rows during parsing
-	 */
-	@Test
-	public void noRowIsLostDuringCSVParsing() throws Exception {
-		InputStream testCsvFile = getClass().getResourceAsStream("/goodreads_export_Riduidel_20310812.csv");
-		String testedString = IOUtils.toString(testCsvFile);
-		List<String[]> rows = tested.splitIntoRows(testedString);
-		assertThat(rows.size(), IsNot.not(0));
-		// check all rows have the same number of columns, which is not 1
-		assertColumnCountIsOK(rows);
-		FinderCrudService<BookInfos, BookInfosInformer> books = tested.buildBooksCollection(null /* no web client is given for faster test */, rows, configuration);
-		Collection<BookInfos> all = CollectionUtils.asList(books.findAll());
-		assertThat(all.size(), Is.is(rows.size()-1));
-		// adding some test regarding some book for which I found out infos were incorrect
-		testForChronoliths(books);
-	}
-
-	private void testForChronoliths(FinderCrudService<BookInfos, BookInfosInformer> books) {
-		final String isbn13 = "9782207253168";
-		BookInfos infos = books.find().matching(new QueryBuilder<BookInfosInformer>() {
-
-			@Override
-			public QueryExpression createMatchingExpression(BookInfosInformer informer) {
-				return informer.getId().equalsTo(isbn13);
-			}
-		}).getFirst();
-		assertThat(infos, IsInstanceOf.instanceOf(Book.class));
-		Book book = (Book) infos;
-		assertThat(book.getWriteDate(), Is.is(new Date(2006-1900, 03-1,28)));
-	}
 }

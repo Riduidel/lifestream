@@ -25,7 +25,6 @@ public class Author extends BookInfos implements Comparable<Author>{
 	}
 
 
-	private String name;
 	private Set<Book> books = new TreeSet<>(new Book.ByWriteDate());
 	private String text;
 	private Date date = TODAY;
@@ -47,7 +46,7 @@ public class Author extends BookInfos implements Comparable<Author>{
 	}
 
 	String getAssociatedTag() {
-		return "by_"+forTag(name);
+		return "by_"+forTag(getTitle());
 	}
 
 	@Override
@@ -55,9 +54,12 @@ public class Author extends BookInfos implements Comparable<Author>{
 		return date;
 	}
 
-	@Override
-	public String getTitle() {
-		return name;
+	public void setName(String name) {
+		setTitle(name);
+	}
+
+	public String getName() {
+		return getTitle();
 	}
 
 	@Override
@@ -81,9 +83,6 @@ public class Author extends BookInfos implements Comparable<Author>{
 		return returned;
 	}
 
-	public void setName(String authorName) {
-		this.name = authorName;
-	}
 
 	public void addBook(Book book) {
 		this.books.add(book);
@@ -94,14 +93,14 @@ public class Author extends BookInfos implements Comparable<Author>{
 
 	@Override
 	public int compareTo(Author o) {
-		return name.compareTo(o.name);
+		return getTitle().compareTo(o.getTitle());
 	}
 
 	@Override
 	public String toString() {
 		StringBuilder builder = new StringBuilder();
 		builder.append("Author [name=");
-		builder.append(name);
+		builder.append(getTitle());
 		builder.append("]");
 		return builder.toString();
 	}

@@ -2,34 +2,37 @@ package org.ndx.lifestream.goodreads;
 
 import java.io.CharArrayReader;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
 import java.net.MalformedURLException;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Date;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
+import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import org.apache.commons.io.IOUtils;
 import org.apache.commons.vfs2.FileObject;
 import org.ndx.lifestream.configuration.CacheLoader;
+import org.ndx.lifestream.goodreads.references.Reference;
+import org.ndx.lifestream.goodreads.references.ReferencesMerger;
+import org.ndx.lifestream.goodreads.references.Resolvers;
 import org.ndx.lifestream.plugin.GaedoEnvironmentProvider;
 import org.ndx.lifestream.plugin.exceptions.AuthenticationFailedException;
 import org.ndx.lifestream.plugin.exceptions.UnableToDownloadContentException;
 import org.ndx.lifestream.rendering.Mode;
 import org.ndx.lifestream.rendering.OutputWriter;
 import org.ndx.lifestream.rendering.model.InputLoader;
-import org.ndx.lifestream.utils.Constants;
 import org.ndx.lifestream.utils.transform.HtmlToMarkdown;
 
 import au.com.bytecode.opencsv.CSVReader;
@@ -65,50 +68,94 @@ public class Goodreads implements InputLoader<BookInfos, GoodreadsConfiguration>
 	 * @param csv source csv file
 	 * @return a collection of valid and usable books
 	 */
-	FinderCrudService<BookInfos, BookInfosInformer> buildBooksCollection(WebClient client, List<String[]> csv, GoodreadsConfiguration configuration) {
-		FinderCrudService<BookInfos, BookInfosInformer> service = goodreadsEnvironment.getServiceFor(BookInfos.class, BookInfosInformer.class);
+	public FinderCrudService<BookInfos, BookInfosInformer> buildBooksCollection(WebClient client, List<String[]> csv, GoodreadsConfiguration configuration) {
+		FinderCrudService<BookInfos, BookInfosInformer> bookService = goodreadsEnvironment.getServiceFor(BookInfos.class, BookInfosInformer.class);
+		TreeMap<String, Reference> allReferences = new TreeMap<>();
+		Map<String, Reference> references = Collections.synchronizedSortedMap(allReferences);
 		ExecutorService executor = Executors.newFixedThreadPool(configuration.getThreadCount());
 		Map<String, Integer> columns = getColumnsNamesToColumnsIndices(csv.get(0));
 		List<String[]> usableLines = csv.subList(1, csv.size());
+		// Assynchronous submit allow us to wait for completion without stopping executor service
+		Collection<Callable<Void>> toRun = new LinkedList<>();
 		for(String[] line : usableLines) {
 			Book rawBook = createBook(columns, line);
-			if(client==null) {
-				service.create(rawBook);
-			} else {
-				executor.submit(new BookImprover(client, rawBook, service, configuration));
-			}
+			toRun.add(new BookImprover(client, rawBook, bookService, configuration));
 		}
+		// We in fact don't care about the results
+		// Bu this is the way to wait for termination of those specific tasks
 		try {
+			executor.invokeAll(toRun);
+			toRun.clear();
+			// Now build references
+			for(BookInfos b : bookService.findAll()) {
+				if(b instanceof Book) {
+					toRun.add(new ReferencesMerger((Book) b, references));
+				}
+			}
+			executor.invokeAll(toRun);
+			toRun.clear();
+			// now books have been improved, we can resolve all references
+			for (Reference reference : references.values()) {
+				toRun.add(Resolvers.resolverFor(reference, bookService));
+			}
+			executor.invokeAll(toRun);
 			executor.shutdown();
 			executor.awaitTermination(1, TimeUnit.DAYS);
 		} catch (InterruptedException e) {
-			throw new UnableToEndBookInfoDownloadException(e);
+			throw new UnableTRunImprovementTasksException(e);
 		}
-		return service;
+		return bookService;
+	}
+	public static enum Columns {
+		Title, Additional_Authors, ISBN, ISBN13, My_Rating, Average_Rating, Number_of_Pages, Original_Publication_Year, Date_Read, Bookshelves, Exclusive_Shelf, My_Review, Private_Notes, Owned_Copies;
+		
+		private String asHeader() {
+			return name().replace('_', ' ');
+		}
+
+		public String getString(Map<String, Integer> columns, String[] line) {
+			int index = columns.get(asHeader());
+			if(index<line.length)
+				return line[index];
+			else
+				return "";
+		}
+		
+		public Integer getInteger(Map<String, Integer> columns, String[] line) {
+			String v = getString(columns, line);
+			if(v.length()==0)
+				return 0;
+			else
+				return  new Integer(v);
+		}
+		
+		public Float getFloat(Map<String, Integer> columns, String[] line) {
+			String v = getString(columns, line);
+			if(v.length()==0)
+				return 0f;
+			else
+				return  new Float(v);
+		}
 	}
 
 	Book createBook(Map<String, Integer> columns, String[] line) {
 		Book book = new Book();
-		book.title = line[columns.get("Title")];
-		String additionalAuthors = line[columns.get("Additional Authors")];
-		book.setIsbn10(filterIsbn(line[columns.get("ISBN")]));
-		book.setIsbn13(filterIsbn(line[columns.get("ISBN13")]));
-		book.rating = new Integer(line[columns.get("My Rating")]);
-		book.average = new Float(line[columns.get("Average Rating")]);
-		book.pages = 0;
-		try {
-			book.pages = new Integer(line[columns.get("Number of Pages")]);
-		} catch(Exception e) {
-		}
-		book.initialPublication = line[columns.get("Original Publication Year")];
-		String dateRead = line[columns.get("Date Read")];
+		book.setTitle(Columns.Title.getString(columns, line));
+//		String additionalAuthors = Columns.Additional_Authors.getString(columns, line);
+		book.setIsbn10(filterIsbn(Columns.ISBN.getString(columns, line)));
+		book.setIsbn13(filterIsbn(Columns.ISBN13.getString(columns, line)));
+		book.rating = Columns.My_Rating.getInteger(columns, line);
+		book.average = Columns.Average_Rating.getFloat(columns, line);
+		book.pages = Columns.Number_of_Pages.getInteger(columns, line);
+		book.initialPublication = Columns.Original_Publication_Year.getString(columns, line);
+		String dateRead = Columns.Date_Read.getString(columns, line);
 		if(!(dateRead==null || dateRead.length()==0))
 			book.setRead(parseDate(dateRead));
-		book.addAllTags(Arrays.asList(line[columns.get("Bookshelves")].split(",")));
-		book.addAllTags(Arrays.asList(line[columns.get("Exclusive Shelf")].split(",")));
-		book.review = HtmlToMarkdown.transformHtml(line[columns.get("My Review")]);
-		book.notes = line[columns.get("Private Notes")];
-		book.owns = new Integer(line[columns.get("Owned Copies")]);
+		book.addAllTags(Arrays.asList(Columns.Bookshelves.getString(columns, line).split(",")));
+		book.addAllTags(Arrays.asList(Columns.Exclusive_Shelf.getString(columns, line).split(",")));
+		book.setReview(HtmlToMarkdown.transformHtml(Columns.My_Review.getString(columns, line)));
+		book.notes = Columns.Private_Notes.getString(columns, line);
+		book.owns = Columns.Owned_Copies.getInteger(columns, line);
 		// Add a tag for book score
 		if(book.rating.floatValue()>0)
 			book.addTag(Book.ratingAsTag(book.rating));
@@ -225,6 +272,7 @@ public class Goodreads implements InputLoader<BookInfos, GoodreadsConfiguration>
 			List<String[]> rawData = loadCSV(client, configuration);
 			logger.info("transforming that data into books");
 			FinderCrudService<BookInfos, BookInfosInformer> allBookInfos = buildBooksCollection(client, rawData, configuration);
+			// Now all book infos have been loaded, we can resolve references
 			return CollectionUtils.asList(allBookInfos.findAll());
 		} catch(Exception e) {
 			throw new UnableToBuildBookCollection(e);

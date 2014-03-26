@@ -26,7 +26,6 @@ public class Serie extends BookInfos implements Input, Comparable<Serie> {
 	 * First cycle book date is set as default to today and pushed in the past when books are added
 	 */
 	private Date firstBookDate = BookInfos.TODAY;
-	public String title;
 	public String description;
 
 	private Map<Book, String> books = new HashMap<>();
@@ -39,7 +38,7 @@ public class Serie extends BookInfos implements Input, Comparable<Serie> {
 
 	@Override
 	public Collection<String> getExpectedPath() {
-		return Arrays.asList("goodreads", "series", title.replace(' ', '_'));
+		return Arrays.asList("goodreads", "series", getTitle().replace(' ', '_'));
 	}
 
 	@Override
@@ -48,7 +47,7 @@ public class Serie extends BookInfos implements Input, Comparable<Serie> {
 	}
 
 	String getAssociatedTag() {
-		return "in_serie_"+forTag(title);
+		return "in_serie_"+forTag(getTitle());
 	}
 
 	/**
@@ -57,11 +56,6 @@ public class Serie extends BookInfos implements Input, Comparable<Serie> {
 	@Override
 	public Date getWriteDate() {
 		return firstBookDate;
-	}
-
-	@Override
-	public String getTitle() {
-		return title;
 	}
 
 	/**
@@ -115,17 +109,17 @@ public class Serie extends BookInfos implements Input, Comparable<Serie> {
 		}
 		// now they've been filtered, create strings and add them
 		for(Book b : numbered.values()) {
-			returned.add(writer.link(this, b, b.title));
+			returned.add(writer.link(this, b, b.getTitle()));
 		}
 		for(Book b : unnumbered) {
-			returned.add(writer.link(this, b, b.title));
+			returned.add(writer.link(this, b, b.getTitle()));
 		}
 		return returned;
 	}
 
 	@Override
 	public String toString() {
-		return "Serie [title=" + title + ", getExpectedPath()="
+		return "Serie [title=" + getTitle() + ", getExpectedPath()="
 				+ getExpectedPath() + "]";
 	}
 
