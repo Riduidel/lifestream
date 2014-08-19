@@ -6,20 +6,46 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.vfs2.FileObject;
 import org.apache.commons.vfs2.FileSystemException;
 import org.ndx.lifestream.rendering.OutputWriter;
 import org.ndx.lifestream.rendering.model.Input;
-import org.ndx.lifestream.rendering.output.jbake.JBakeOutputter;
 import org.ndx.lifestream.utils.Constants;
 import org.ndx.lifestream.utils.transform.HtmlToMarkdown;
 
 import com.google.common.base.Joiner;
 
+import freemarker.template.Configuration;
+import freemarker.template.Template;
+
 public abstract class AbstractOutputter implements OutputWriter {
 
+	private static final String DEFAULT_TEMPLATE_NAME = "page.ftl";
+	private Configuration configuration;
+	private String templateName;
+
+	public AbstractOutputter() {
+		this(DEFAULT_TEMPLATE_NAME);
+	}
+	public AbstractOutputter(String templateName) {
+		configuration = buildConfiguration();
+		this.templateName = templateName; 
+	}
+
+	/**
+	 * Build configuration from Freemarker reference
+	 * @return
+	 * @see http://freemarker.org/docs/pgui_quickstart_createconfiguration.html
+	 */
+	private Configuration buildConfiguration() {
+		Configuration returned = Freemarker.getConfiguration();
+		returned.setClassForTemplateLoading(getClass(), "");
+		return returned;
+	}
 	public void write(Input input, FileObject output) {
 		FileObject resultFile = toRealFile(input, output);
 		try {
@@ -29,8 +55,6 @@ public abstract class AbstractOutputter implements OutputWriter {
 			throw new UnableToRenderException("unable to output render for input file "+resultFile.getName().getPath(), e);
 		}
 	}
-
-	protected abstract String render(Input input);
 
 	protected void writeFile(FileObject resultFile, String resultText)
 			throws IOException, FileSystemException {
@@ -116,5 +140,20 @@ public abstract class AbstractOutputter implements OutputWriter {
 		// remove last element of from path, as it's the file name
 		List<String> toPath = toRealPath(to);
 		return MarkdownUtils.link(fromPath, toPath, text, extension);
+	}
+
+	protected String render(Map<String, Object> parameters) {
+		Template template;
+		try {
+			template = configuration.getTemplate(templateName);
+			return Freemarker.render(template, parameters);
+		} catch (IOException e) {
+			throw new UnableToRenderException("unable to render parameters using template named "+templateName, e);
+		}
+	}
+	protected String render(Input input) {
+		Map<String, Object> parameters = new TreeMap<String, Object>();
+		parameters.put("input", input);
+		return render(parameters);
 	}
 }

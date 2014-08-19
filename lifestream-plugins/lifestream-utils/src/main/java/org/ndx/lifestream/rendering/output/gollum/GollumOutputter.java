@@ -1,23 +1,16 @@
 package org.ndx.lifestream.rendering.output.gollum;
 
-import java.io.OutputStream;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import org.apache.commons.io.IOUtils;
 import org.apache.commons.vfs2.FileObject;
 import org.ndx.lifestream.rendering.OutputWriter;
 import org.ndx.lifestream.rendering.model.Input;
 import org.ndx.lifestream.rendering.output.AbstractOutputter;
 import org.ndx.lifestream.rendering.output.FileNameUtils;
-import org.ndx.lifestream.rendering.output.StringTemplateUtils;
-import org.ndx.lifestream.utils.transform.HtmlToMarkdown;
-import org.stringtemplate.v4.ST;
 
 import com.google.common.base.Joiner;
 
@@ -28,14 +21,10 @@ import com.google.common.base.Joiner;
  *
  */
 public class GollumOutputter extends AbstractOutputter implements OutputWriter {
+
 	private static final Logger logger = Logger.getLogger(GollumOutputter.class.getName());
 
 	private static final Joiner PATH_JOINER = Joiner.on('/').skipNulls();
-
-	/**
-	 * Gollum template is simple, non ?
-	 */
-	private ST gollum= new ST("<text>");
 
 	@Override
 	protected List<String> toRealPath(Input input) {
@@ -54,12 +43,6 @@ public class GollumOutputter extends AbstractOutputter implements OutputWriter {
 		} catch (Exception e) {
 			throw new GollumException("unable to output render for input "+usedPath, e);
 		}
-	}
-
-	protected String render(Input input) {
-		Map<String, Object> parameters = new HashMap<>();
-		parameters.put("text", input);
-		return StringTemplateUtils.applyParametersToTemplate(gollum, parameters);
 	}
 
 	@Override

@@ -8,15 +8,10 @@ import java.util.Map;
 
 import org.ndx.lifestream.rendering.OutputWriter;
 import org.ndx.lifestream.rendering.model.Input;
-import org.ndx.lifestream.rendering.output.AbstractStringTemplateBackedOutputter;
-import org.ndx.lifestream.rendering.output.StringTemplateUtils;
+import org.ndx.lifestream.rendering.output.AbstractOutputter;
 
-public class JBakeOutputter extends AbstractStringTemplateBackedOutputter implements OutputWriter {
+public class JBakeOutputter extends AbstractOutputter implements OutputWriter {
 	private static DateFormat jbakeFormat = new SimpleDateFormat("yyyy-MM-dd");
-
-	public JBakeOutputter() {
-		super("jbake", "page");
-	}
 
 	@Override
 	public String link(Input from, Input to, String text) {
@@ -35,6 +30,6 @@ public class JBakeOutputter extends AbstractStringTemplateBackedOutputter implem
 		parameters.put("uri", getUriOf(input));
 		parameters.put("input", input);
 		parameters.put("writeDate", jbakeFormat.format(input.getWriteDate()));
-		return StringTemplateUtils.applyParametersToTemplate(page, parameters);
+		return render(parameters);
 	}
 }

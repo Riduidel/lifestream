@@ -1,12 +1,14 @@
 package org.ndx.lifestream.goodreads;
 
+import java.io.IOException;
 import java.util.Date;
 
 import org.ndx.lifestream.rendering.model.Input;
 import org.ndx.lifestream.rendering.output.FileNameUtils;
-import org.stringtemplate.v4.ST;
-import org.stringtemplate.v4.STGroupDir;
-import org.stringtemplate.v4.STRawGroupDir;
+import org.ndx.lifestream.rendering.output.Freemarker;
+
+import freemarker.template.Configuration;
+import freemarker.template.Template;
 
 
 /**
@@ -15,10 +17,12 @@ import org.stringtemplate.v4.STRawGroupDir;
  *
  */
 public abstract class BookInfos implements Input {
-	protected static STGroupDir goodreadsGroup;
+	protected static Configuration goodreadsTemplates;
 
 	static {
-		goodreadsGroup = new STRawGroupDir("templates");
+		goodreadsTemplates = Freemarker.getConfiguration();
+		// we set template path here
+		goodreadsTemplates.setClassForTemplateLoading(BookInfos.class, "/templates");
 	}
 
 	/**
@@ -68,5 +72,13 @@ public abstract class BookInfos implements Input {
 	 */
 	public void setTitle(String title) {
 		this.title = title;
+	}
+
+	public static Template loadTemplate(String string) {
+		try {
+			return goodreadsTemplates.getTemplate(string);
+		} catch (IOException e) {
+			throw new UnableToConfigureGoodreadsException(e);
+		}
 	}
 }

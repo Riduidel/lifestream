@@ -12,14 +12,15 @@ import java.util.TreeMap;
 
 import org.ndx.lifestream.rendering.OutputWriter;
 import org.ndx.lifestream.rendering.model.Input;
-import org.ndx.lifestream.rendering.output.StringTemplateUtils;
-import org.stringtemplate.v4.ST;
+import org.ndx.lifestream.rendering.output.Freemarker;
+
+import freemarker.template.Template;
 
 public class Serie extends BookInfos implements Input, Comparable<Serie> {
-	private static ST serie;
+	private static Template serie;
 
 	static {
-		serie = goodreadsGroup.getInstanceOf("serie");
+		serie = BookInfos.loadTemplate("serie.ftl");
 	}
 
 	/**
@@ -86,7 +87,7 @@ public class Serie extends BookInfos implements Input, Comparable<Serie> {
 		Map<String, Object> parameters = new HashMap<>();
 		parameters.put("serie", this);
 		parameters.put("books", createBooksList(writer));
-		text = StringTemplateUtils.applyParametersToTemplate(serie, parameters);
+		text = Freemarker.render(serie, parameters);
 	}
 
 	/**

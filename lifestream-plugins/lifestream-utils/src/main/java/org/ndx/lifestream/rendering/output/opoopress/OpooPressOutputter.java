@@ -4,13 +4,10 @@ import java.util.List;
 
 import org.ndx.lifestream.rendering.OutputWriter;
 import org.ndx.lifestream.rendering.model.Input;
-import org.ndx.lifestream.rendering.output.AbstractStringTemplateBackedOutputter;
+import org.ndx.lifestream.rendering.output.AbstractOutputter;
 
-public class OpooPressOutputter extends AbstractStringTemplateBackedOutputter
+public class OpooPressOutputter extends AbstractOutputter
 		implements OutputWriter {
-	public OpooPressOutputter() {
-		super("opoopress", "page");
-	}
 
 	@Override
 	public String link(Input from, Input to, String text) {

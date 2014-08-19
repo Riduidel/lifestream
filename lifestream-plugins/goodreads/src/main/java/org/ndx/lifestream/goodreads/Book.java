@@ -1,5 +1,6 @@
 package org.ndx.lifestream.goodreads;
 
+import java.io.IOException;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -20,8 +21,9 @@ import java.util.logging.Logger;
 import org.ndx.lifestream.goodreads.references.Reference;
 import org.ndx.lifestream.rendering.OutputWriter;
 import org.ndx.lifestream.rendering.model.Input;
-import org.ndx.lifestream.rendering.output.StringTemplateUtils;
-import org.stringtemplate.v4.ST;
+import org.ndx.lifestream.rendering.output.Freemarker;
+
+import freemarker.template.Template;
 
 /**
  * A class extracting content from the infamous Expando to a more "object" notion
@@ -43,7 +45,7 @@ public class Book extends BookInfos implements Input {
 		}
 
 	}
-	private static ST book;
+	private static Template book;
 	private static final Logger logger = Logger.getLogger(Book.class.getName());
 	private static final String MONTH_DATE_FORMAT = "MMM";
 	private static final DateFormat MONTH_FORMATTER = new SimpleDateFormat(MONTH_DATE_FORMAT);
@@ -52,14 +54,7 @@ public class Book extends BookInfos implements Input {
 	private static final DateFormat YEAR_FORMATTER = new SimpleDateFormat(YEAR_DATE_FORMAT);
 
 	static {
-		try {
-			book = goodreadsGroup.getInstanceOf("book");
-		} catch(RuntimeException e) {
-			if (logger.isLoggable(Level.SEVERE)) {
-				logger.log(Level.SEVERE, "unable to load standard book template", e);
-			}
-			throw e;
-		}
+		book = BookInfos.loadTemplate("book.ftl");
 	}
 	public static String ratingAsTag(Number rating) {
 		return "rated_"+rating;
@@ -122,7 +117,7 @@ public class Book extends BookInfos implements Input {
 		parameters.put("series", generateLinks(series, writer));
 		parameters.put("authors", generateLinks(authors, writer));
 		parameters.put("book", this);
-		text = StringTemplateUtils.applyParametersToTemplate(book, parameters);
+		text = Freemarker.render(book, parameters);
 	}
 	String resolveReferences(String review, Collection<Reference> references, OutputWriter writer) {
 		// before to write entry, replace refrences by their values - if any

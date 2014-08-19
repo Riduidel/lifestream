@@ -21,6 +21,7 @@
 		<shaarli.dir>${site.dir}/</shaarli.dir>
 		<site.upload.dir>lifestream/</site.upload.dir>
 		<site.upload.url>ftp://ftpperso.free.fr</site.upload.url>
+		<pegdown.version>1.4.2</pegdown.version>
 	</properties>
 	<distributionManagement>
 		<repository>
@@ -35,7 +36,8 @@
 				<artifactId>wagon-ftp</artifactId>
 			</extension>
 		</extensions>
-		<!-- standard deploy is disabled for this plugin as I don't want to see it appear anywhere. -->
+		<!-- standard deploy is disabled for this plugin as I don't want to see 
+			it appear anywhere. -->
 		<pluginManagement>
 			<plugins>
 				<plugin>
@@ -195,6 +197,7 @@
 					<plugin>
 						<groupId>br.com.ingenieux</groupId>
 						<artifactId>jbake-maven-plugin</artifactId>
+						<version>0.0.7</version>
 						<executions>
 							<execution>
 								<id>generate_jbake</id>
@@ -209,6 +212,24 @@
 								</configuration>
 							</execution>
 						</executions>
+						<dependencies>
+							<dependency>
+								<groupId>org.jbake</groupId>
+								<artifactId>jbake-core</artifactId>
+								<version>2.3.1</version>
+							</dependency>
+							<dependency>
+								<groupId>org.freemarker</groupId>
+								<artifactId>freemarker</artifactId>
+								<version>${freemarker.version}</version>
+							</dependency>
+							<dependency>
+								<groupId>org.pegdown</groupId>
+								<artifactId>pegdown</artifactId>
+								<version>${pegdown.version}</version>
+								<optional>true</optional>
+							</dependency>
+						</dependencies>
 					</plugin>
 					<plugin>
 						<groupId>org.apache.maven.plugins</groupId>
@@ -226,9 +247,9 @@
 						<configuration>
 							<!-- web.xml is not mandatory since JavaEE 5 -->
 							<failOnMissingWebXml>false</failOnMissingWebXml>
-							<!-- <filteringDeploymentDescriptors>true</filteringDeploymentDescriptors>
-								<warSourceDirectory>WebContent</warSourceDirectory> <webResources> <resource>
-								<directory>src/main/webapp2</directory> <filtering>true</filtering> </resource>
+							<!-- <filteringDeploymentDescriptors>true</filteringDeploymentDescriptors> 
+								<warSourceDirectory>WebContent</warSourceDirectory> <webResources> <resource> 
+								<directory>src/main/webapp2</directory> <filtering>true</filtering> </resource> 
 								</webResources> -->
 						</configuration>
 					</plugin>

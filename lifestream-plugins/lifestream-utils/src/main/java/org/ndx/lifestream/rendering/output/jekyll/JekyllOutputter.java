@@ -3,32 +3,23 @@ package org.ndx.lifestream.rendering.output.jekyll;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 
-import org.apache.commons.vfs2.FileObject;
 import org.ndx.lifestream.rendering.OutputWriter;
 import org.ndx.lifestream.rendering.model.Input;
 import org.ndx.lifestream.rendering.output.AbstractOutputter;
-import org.ndx.lifestream.rendering.output.AbstractStringTemplateBackedOutputter;
 import org.ndx.lifestream.rendering.output.FileNameUtils;
-import org.stringtemplate.v4.STRawGroupDir;
-
-import com.google.common.base.Joiner;
 
 /**
  * Notice here file name is to be manipulated
  * @author ndx
  *
  */
-public class JekyllOutputter extends AbstractStringTemplateBackedOutputter implements OutputWriter {
+public class JekyllOutputter extends AbstractOutputter implements OutputWriter {
 	private static final String DATE_FORMAT = "yyyy-MM-dd";
 	private static final DateFormat FORMATTER = new SimpleDateFormat(DATE_FORMAT);
-	public JekyllOutputter() {
-		super("jekyll", "page");
-	}
 
 	/**
 	 * Create a real path from the expected path that {@link Input} can return

@@ -1,5 +1,6 @@
 package org.ndx.lifestream.shaarli;
 
+import java.io.IOException;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
@@ -9,16 +10,21 @@ import java.util.TreeMap;
 
 import org.ndx.lifestream.rendering.OutputWriter;
 import org.ndx.lifestream.rendering.model.Input;
-import org.ndx.lifestream.rendering.model.Input.Headers;
-import org.ndx.lifestream.rendering.output.StringTemplateUtils;
-import org.stringtemplate.v4.ST;
-import org.stringtemplate.v4.STRawGroupDir;
+import org.ndx.lifestream.rendering.output.Freemarker;
+
+import freemarker.template.Configuration;
+import freemarker.template.Template;
 
 public class MicroblogEntry implements Input {
-	private static ST template;
+	private static Template template;
 	static {
-		STRawGroupDir shaarliGroup = new STRawGroupDir("templates");
-		template = shaarliGroup.getInstanceOf("link");
+		Configuration shaarliGroup = Freemarker.getConfiguration();
+		shaarliGroup.setClassForTemplateLoading(MicroblogEntry.class, "/templates");
+		try {
+			template = shaarliGroup.getTemplate("link.ftl");
+		} catch (IOException e) {
+			throw new UnableToConfigureShaarliException(e);
+		}
 
 	}
 
@@ -142,7 +148,7 @@ public class MicroblogEntry implements Input {
 	public void accept(OutputWriter writer) {
 		Map<String, Object> parameters = new HashMap<>();
 		parameters.put("link", this);
-		text = StringTemplateUtils.applyParametersToTemplate(template, parameters);
+		text = Freemarker.render(template, parameters);
 	}
 	@Override
 	public String getText() {

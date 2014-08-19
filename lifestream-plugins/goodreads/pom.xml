@@ -46,7 +46,7 @@
 								</requireProperty>
 								<requireProperty>
 									<property>goodreads.password</property>
-									<message><![CDATA[You must set a Goodreads user password (&lt;goodreads.password&gt;guesst what ?&lt;/goodreads.password&gt;) for tests]]></message>
+									<message><![CDATA[You must set a Goodreads user password (&lt;goodreads.password&gt;guess what ?&lt;/goodreads.password&gt;) for tests]]></message>
 								</requireProperty>
 							</rules>
 						</configuration>
