@@ -1,9 +1,5 @@
 package org.ndx.lifestream.shaarli;
 
-import java.io.ByteArrayInputStream;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -13,7 +9,6 @@ import java.util.logging.Logger;
 
 import javax.xml.parsers.ParserConfigurationException;
 
-import org.apache.commons.io.IOUtils;
 import org.apache.commons.vfs2.FileObject;
 import org.jdom2.Content;
 import org.jdom2.Document;
@@ -21,7 +16,6 @@ import org.jdom2.Element;
 import org.jdom2.Parent;
 import org.jdom2.filter.Filters;
 import org.jdom2.input.DOMBuilder;
-import org.jdom2.input.SAXBuilder;
 import org.jdom2.xpath.XPathExpression;
 import org.jdom2.xpath.XPathFactory;
 import org.ndx.lifestream.configuration.CacheLoader;
@@ -30,10 +24,8 @@ import org.ndx.lifestream.plugin.exceptions.UnableToDownloadContentException;
 import org.ndx.lifestream.rendering.Mode;
 import org.ndx.lifestream.rendering.OutputWriter;
 import org.ndx.lifestream.rendering.model.InputLoader;
-import org.ndx.lifestream.utils.Constants;
 import org.ndx.lifestream.utils.transform.HtmlToMarkdown;
 
-import com.gargoylesoftware.htmlunit.CollectingAlertHandler;
 import com.gargoylesoftware.htmlunit.WebClient;
 import com.gargoylesoftware.htmlunit.html.HtmlForm;
 import com.gargoylesoftware.htmlunit.html.HtmlInput;
@@ -46,7 +38,7 @@ import com.google.inject.internal.Nullable;
 public class Shaarli implements InputLoader<MicroblogEntry, ShaarliConfiguration> {
 	private static final Logger logger = Logger.getLogger(Shaarli.class.getName());
 
-	private XPathExpression<Element> xpathForImageUrl = XPathFactory.instance().compile("//dt", Filters.element());
+	private XPathExpression<Element> xpath = XPathFactory.instance().compile("//dt", Filters.element());
 
 	@Override
 	public Collection<MicroblogEntry> load(WebClient client, ShaarliConfiguration configuration) {
@@ -76,34 +68,70 @@ public class Shaarli implements InputLoader<MicroblogEntry, ShaarliConfiguration
 	}
 
 	/**
-	 * Read
+	 * Read data.
+	 * Shaarli outputs data in the form of the legacy bookmarks.xml file that any browser can read.
+	 * This file is poorly specified, but well, let's try.
+	 * 
+	 * Here is an example
+	 * 
+	 * <pre>
+    <dt>
+      <a href="http://www.launchy.net/" add_date="1147251974" private="0" tags="@toinstall,freeware,launcher,productivity,software,open-source,windows,XP,keyboard">
+        Launchy
+      </a>
+    </dt>
+    <dd>
+      Un clone aux fonctionnalités très limitées de Quicksilver, mais déja très pratique pour ne plus toucher le menu Démarrer
+
+    </dd>
+    <dt>
+      <a href="http://chinesebodyart.blogspot.com/" add_date="1147161744" private="0" tags="adult,erotica,art,bodypaint">
+        Chinese Body Paint
+      </a>
+    </dt>
+    <dt>
+      <a href="http://www.mylifeorganized.net/" add_date="1146834774" private="0" tags="freeware,outliner,productivity,shareware,software,windows">
+        :: My Life Organized :: Goals Projects Task Tracking and Time Management Software. Outliner and To-Do List Manager with Outlook sync
+      </a>
+    </dt>
+	 * </pre>
+	 * 
+	 * As one may see, each bookmark is defined as a "dt" tag, possibly followed by a "dd" tag containing additional text.
+	 * The "dt" contains one "a" tag, which contains all infos about the submitted link with non-standard HTML tags.
+	 * 
+	 * To parse that structure, we use two method.
+	 * This one uses XPath navigation to locate all "dt" tags, then navigates in document looking for next dd tag.
+	 * Notice navigation is done by iterating over next XML element, which may be an empty text (for the line return)
+	 * 
 	 * @param configuration
 	 * @param entries
 	 * @return
 	 */
 	public Collection<MicroblogEntry> buildEntriesCollection(ShaarliConfiguration configuration, Document entries) {
 		Collection<MicroblogEntry> returned = new ArrayList<>();
-		for(Element entry : xpathForImageUrl.evaluate(entries)) {
+		for(Element entry : xpath.evaluate(entries)) {
 			// Notice we need both the DT and the immediatly following DD
 			Parent entryParent = entry.getParent();
 			int index = entryParent.indexOf(entry);
 			index++;
-			Element dd = null;
-			while(dd==null) {
+			MicroblogEntry created = null;
+			while(created==null) {
 				Content next = entryParent.getContent(index);
 				if(next instanceof Element) {
 					Element nextElement = (Element) next;
+					// Hey, there is some text to add, cool !
 					if(nextElement.getName().equalsIgnoreCase("DD")) {
-						dd = nextElement;
-						returned.add(createEntryFrom(configuration, entry, dd));
+						created = createEntryFrom(configuration, entry, nextElement);
 					}
+					// Damn, no text ? Then create entry with no text.
 					if(nextElement.getName().equalsIgnoreCase("dt")) {
 						// there is no text for this entry ... weird
-						returned.add(createEntryFrom(configuration, entry, dd));
+						created = createEntryFrom(configuration, entry, null);
 					}
 				}
 				index++;
 			}
+			returned.add(created);
 		}
 		return returned;
 	}
