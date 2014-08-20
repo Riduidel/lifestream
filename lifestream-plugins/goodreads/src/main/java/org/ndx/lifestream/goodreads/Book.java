@@ -1,9 +1,6 @@
 package org.ndx.lifestream.goodreads;
 
-import java.io.IOException;
-import java.text.DateFormat;
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.Date;
@@ -12,16 +9,15 @@ import java.util.LinkedList;
 import java.util.Map;
 import java.util.Set;
 import java.util.SortedSet;
-import java.util.TreeMap;
 import java.util.TreeSet;
 import java.util.UUID;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import org.ndx.lifestream.goodreads.references.Reference;
 import org.ndx.lifestream.rendering.OutputWriter;
 import org.ndx.lifestream.rendering.model.Input;
 import org.ndx.lifestream.rendering.output.Freemarker;
+import org.ndx.lifestream.utils.ThreadSafeSimpleDateFormat;
 
 import freemarker.template.Template;
 
@@ -47,11 +43,8 @@ public class Book extends BookInfos implements Input {
 	}
 	private static Template book;
 	private static final Logger logger = Logger.getLogger(Book.class.getName());
-	private static final String MONTH_DATE_FORMAT = "MMM";
-	private static final DateFormat MONTH_FORMATTER = new SimpleDateFormat(MONTH_DATE_FORMAT);
-	private static DateFormat READ_FORMATTER = new SimpleDateFormat("yyyy/MM/dd");
-	private static final String YEAR_DATE_FORMAT = "yyyy";
-	private static final DateFormat YEAR_FORMATTER = new SimpleDateFormat(YEAR_DATE_FORMAT);
+	private static final ThreadSafeSimpleDateFormat MONTH_FORMATTER = new ThreadSafeSimpleDateFormat("MMM");
+	private static final ThreadSafeSimpleDateFormat YEAR_FORMATTER = new ThreadSafeSimpleDateFormat("yyyy");
 
 	static {
 		book = BookInfos.loadTemplate("book.ftl");

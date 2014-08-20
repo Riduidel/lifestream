@@ -5,7 +5,6 @@ import java.io.IOException;
 import java.net.MalformedURLException;
 import java.text.DateFormat;
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
@@ -17,7 +16,6 @@ import java.util.TreeMap;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -33,6 +31,7 @@ import org.ndx.lifestream.plugin.exceptions.UnableToDownloadContentException;
 import org.ndx.lifestream.rendering.Mode;
 import org.ndx.lifestream.rendering.OutputWriter;
 import org.ndx.lifestream.rendering.model.InputLoader;
+import org.ndx.lifestream.utils.ThreadSafeSimpleDateFormat;
 import org.ndx.lifestream.utils.transform.HtmlToMarkdown;
 
 import au.com.bytecode.opencsv.CSVReader;
@@ -50,9 +49,9 @@ public class Goodreads implements InputLoader<BookInfos, GoodreadsConfiguration>
 	private static final Logger logger = Logger.getLogger(Goodreads.class.getName());
 
 	private static final String INPUT_DATE_FORMAT = "yyyy/MM/dd";
-	private static final DateFormat INPUT_FORMATTER = new SimpleDateFormat(INPUT_DATE_FORMAT);
+	private static final ThreadSafeSimpleDateFormat INPUT_FORMATTER = new ThreadSafeSimpleDateFormat(INPUT_DATE_FORMAT);
 	private static final String OUTPUT_DATE_FORMAT = "yyyy-MM-dd'T'HH:mm:ss.SSSZ";
-	public static final DateFormat OUTPUT_FORMATTER = new SimpleDateFormat(OUTPUT_DATE_FORMAT);
+	public static final ThreadSafeSimpleDateFormat OUTPUT_FORMATTER = new ThreadSafeSimpleDateFormat(OUTPUT_DATE_FORMAT);
 
 	private GaedoEnvironmentProvider goodreadsEnvironment = new GaedoEnvironmentProvider();
 

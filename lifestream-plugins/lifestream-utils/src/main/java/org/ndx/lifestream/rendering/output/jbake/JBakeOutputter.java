@@ -1,7 +1,5 @@
 package org.ndx.lifestream.rendering.output.jbake;
 
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -9,9 +7,10 @@ import java.util.Map;
 import org.ndx.lifestream.rendering.OutputWriter;
 import org.ndx.lifestream.rendering.model.Input;
 import org.ndx.lifestream.rendering.output.AbstractOutputter;
+import org.ndx.lifestream.utils.ThreadSafeSimpleDateFormat;
 
 public class JBakeOutputter extends AbstractOutputter implements OutputWriter {
-	private static DateFormat jbakeFormat = new SimpleDateFormat("yyyy-MM-dd");
+	private static ThreadSafeSimpleDateFormat jbakeFormat = new ThreadSafeSimpleDateFormat("yyyy-MM-dd");
 
 	@Override
 	public String link(Input from, Input to, String text) {

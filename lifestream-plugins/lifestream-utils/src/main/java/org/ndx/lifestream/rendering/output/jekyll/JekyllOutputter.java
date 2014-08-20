@@ -1,7 +1,5 @@
 package org.ndx.lifestream.rendering.output.jekyll;
 
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Iterator;
@@ -11,6 +9,7 @@ import org.ndx.lifestream.rendering.OutputWriter;
 import org.ndx.lifestream.rendering.model.Input;
 import org.ndx.lifestream.rendering.output.AbstractOutputter;
 import org.ndx.lifestream.rendering.output.FileNameUtils;
+import org.ndx.lifestream.utils.ThreadSafeSimpleDateFormat;
 
 /**
  * Notice here file name is to be manipulated
@@ -19,7 +18,7 @@ import org.ndx.lifestream.rendering.output.FileNameUtils;
  */
 public class JekyllOutputter extends AbstractOutputter implements OutputWriter {
 	private static final String DATE_FORMAT = "yyyy-MM-dd";
-	private static final DateFormat FORMATTER = new SimpleDateFormat(DATE_FORMAT);
+	private static final ThreadSafeSimpleDateFormat FORMATTER = new ThreadSafeSimpleDateFormat(DATE_FORMAT);
 
 	/**
 	 * Create a real path from the expected path that {@link Input} can return
