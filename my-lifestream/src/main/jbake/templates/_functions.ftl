@@ -53,7 +53,10 @@
 
 <#macro link_to_post_with_tags post=post path=path excludedTag="">
 		<span
-			data-tags="${merge_tags_for_hiding(post.tags)}">${post.date?string("dd")} - <@link_to_post post=post path=path/><br/>
+			<#if post.tags??>
+			data-tags="${merge_tags_for_hiding(post.tags)}"
+			</#if>
+			>${post.date?string("dd")} - <@link_to_post post=post path=path/><br/>
 			<#if (post.tags)??>
 			<@tag_list tagList=post.tags depth=path+"tags/" excludedTag=tag/>
 			</#if>
@@ -61,7 +64,11 @@
 </#macro>
 
 <#macro link_to_post_in_list post=post path=path excludedTag="">
-		<li class="post-link" data-tags="${merge_tags_for_hiding(post.tags)}">
+		<li class="post-link" 
+		<#if post.tags??>
+			data-tags="${merge_tags_for_hiding(post.tags)}"
+		</#if>
+		>
 			<@link_to_post_with_tags post=post path=path excludedTag=excludedTag/></li>
 </#macro>
 
