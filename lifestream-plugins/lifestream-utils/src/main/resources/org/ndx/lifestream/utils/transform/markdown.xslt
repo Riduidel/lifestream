@@ -217,6 +217,7 @@
                <xsl:text>&gt; </xsl:text>
             </xsl:if>
             <xsl:apply-templates select="node()"/>
+            <xsl:value-of select="$newline"/>
          </xsl:otherwise>
       </xsl:choose>
    </xsl:template>
@@ -255,7 +256,7 @@
       </xsl:choose>
    </xsl:template>
    
-   <xsl:template match="pre[code]">
+   <xsl:template match="pre">
       <xsl:param name="context"/>
       <xsl:choose>
          <xsl:when test="$context = 'html'">
@@ -264,7 +265,8 @@
          <xsl:otherwise>
             <xsl:call-template name="newblock"/>
             <xsl:value-of select="$tab"/>
-            <xsl:apply-templates select="code/node()"/>
+            <xsl:apply-templates select="node()"/>
+            <xsl:value-of select="$newline"/>
          </xsl:otherwise>
       </xsl:choose>
    </xsl:template>
