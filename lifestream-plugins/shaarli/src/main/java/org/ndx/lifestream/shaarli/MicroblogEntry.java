@@ -10,6 +10,7 @@ import java.util.TreeMap;
 
 import org.ndx.lifestream.rendering.OutputWriter;
 import org.ndx.lifestream.rendering.model.Input;
+import org.ndx.lifestream.rendering.model.Input.Headers;
 import org.ndx.lifestream.rendering.output.Freemarker;
 
 import freemarker.template.Configuration;
@@ -174,20 +175,14 @@ public class MicroblogEntry implements Input {
 		builder.append("]");
 		return builder.toString();
 	}
-
-	@Override
-	public String getStyle() {
-		return "shaarli";
-	}
-	@Override
-	public String getSource() {
-		return source;
-	}
 	@Override
 	public Map<String, String> getAdditionalHeaders() {
 		Map<String, String> returned = new TreeMap<>();
+		returned.put(Headers.STYLE, "shaarli");
+		returned.put(Headers.SOURCE, source);
 		return returned;
 	}
+
 	public void setSource(String sourceLink) {
 		this.source = sourceLink;
 	}

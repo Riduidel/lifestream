@@ -2,8 +2,11 @@ package org.ndx.lifestream.goodreads;
 
 import java.io.IOException;
 import java.util.Date;
+import java.util.Map;
+import java.util.TreeMap;
 
 import org.ndx.lifestream.rendering.model.Input;
+import org.ndx.lifestream.rendering.model.Input.Headers;
 import org.ndx.lifestream.rendering.output.FileNameUtils;
 import org.ndx.lifestream.rendering.output.Freemarker;
 
@@ -46,16 +49,6 @@ public abstract class BookInfos implements Input {
 		this.id = id;
 	}
 
-	@Override
-	public String getStyle() {
-		return "goodreads";
-	}
-
-	@Override
-	public String getSource() {
-		return null;
-	}
-
 	/**
 	 * @return the title
 	 * @category getter
@@ -72,6 +65,12 @@ public abstract class BookInfos implements Input {
 	 */
 	public void setTitle(String title) {
 		this.title = title;
+	}
+	@Override
+	public Map<String, String> getAdditionalHeaders() {
+		Map<String, String> returned = new TreeMap<>();
+		returned.put(Headers.STYLE, "goodreads");
+		return returned;
 	}
 
 	public static Template loadTemplate(String string) {

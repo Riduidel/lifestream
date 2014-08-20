@@ -12,9 +12,17 @@ import org.ndx.lifestream.rendering.OutputWriter;
  *
  */
 public interface Input {
+	/**
+	 * List of known additional header keys 
+	 * @author ndx
+	 *
+	 */
 	public static interface Headers {
 		static final String SMALL_IMAGE = "smallImage";
 		static final String BIG_IMAGE = "bigImage";
+		static final String SOURCE = "source";
+		static final String STYLE = "style";
+		static final String EXCERPT = "excerpt";
 	}
 
 	/**
@@ -44,18 +52,6 @@ public interface Input {
 	 * @param writer writer used to finally write file
 	 */
 	void accept(OutputWriter writer);
-
-	/**
-	 * Get style to use to render that entry
-	 * @return
-	 */
-	String getStyle();
-
-	/**
-	 * Get a source url for that entry
-	 * @return
-	 */
-	String getSource();
 	/**
 	 * Allow input to provide additional header entries. 
 	 * @return a non null map, please

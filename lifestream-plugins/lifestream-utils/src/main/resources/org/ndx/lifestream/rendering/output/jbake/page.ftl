@@ -1,3 +1,4 @@
+<#compress>
 type=post
 status=published
 title=${input.title}
@@ -9,9 +10,17 @@ tags=
 date=${writeDate}
 depth=${depth}
 uri=${uri}
-style=${input.style}
-<#if input.source??>
-source=${input.source}
+<#if input.additionalHeaders??>
+<#assign headers=input.additionalHeaders>
+<#list headers?keys as key>
+<#if key??>
+<#if headers[key]??>
+${key}=${headers[key]}
 </#if>
+</#if>
+</#list>
+</#if>
+</#compress>
+
 ~~~~~~
 ${input.text}

@@ -75,18 +75,11 @@ public class Post implements Input {
 	}
 
 	@Override
-	public String getStyle() {
-		return "wordpress";
-	}
-
-	@Override
-	public String getSource() {
-		return source;
-	}
-	@Override
 	public Map<String, String> getAdditionalHeaders() {
 		Map<String, String> returned = new TreeMap<>();
-		returned.put("excerpt", excerpt);
+		returned.put(Headers.EXCERPT, excerpt);
+		returned.put(Headers.STYLE, "wordpress");
+		returned.put(Headers.SOURCE, source);
 		return returned;
 	}
 }

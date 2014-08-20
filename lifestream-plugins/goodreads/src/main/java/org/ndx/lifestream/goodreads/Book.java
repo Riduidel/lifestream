@@ -201,11 +201,6 @@ public class Book extends BookInfos implements Input {
 	}
 
 	@Override
-	public String getSource() {
-		return url;
-	}
-
-	@Override
 	public Collection<String> getTags() {
 		return tags;
 	}
@@ -259,9 +254,10 @@ public class Book extends BookInfos implements Input {
 	}
 	@Override
 	public Map<String, String> getAdditionalHeaders() {
-		Map<String, String> returned = new TreeMap<>();
+		Map<String, String> returned = super.getAdditionalHeaders();
 		returned.put(Headers.BIG_IMAGE, bigImage);
 		returned.put(Headers.SMALL_IMAGE, smallImage);
+		returned.put(Headers.SOURCE, url);
 		return returned;
 	}
 	public String getReview() {
