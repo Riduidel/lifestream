@@ -17,7 +17,7 @@ public class WordpressConfiguration extends AbstractConfiguration implements Con
 	private String site;
 
 	public WordpressConfiguration(FileObject baseFolder) {
-		super(baseFolder, CACHE_BASE_PATH+"wordpress/");
+		super(baseFolder, "wordpress/");
 	}
 
 	public String getLogin() {

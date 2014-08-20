@@ -17,8 +17,15 @@ import org.ndx.lifestream.rendering.output.VFSHelper;
  * @requiresDependencyResolution runtime
  */
 public class WordpressPlugin extends AbstractLifestreamPlugin<Post, WordpressConfiguration> {
+	
 	/**
-	 * username on goodreads site
+	 * Path for caching any kind of data, be it data downloaded from the web, or built by plugin
+	 * @parameter
+	 *            default-value="${project.basedir}/.cache/"
+	 */
+	protected File cache;
+	/**
+	 * username on Wordpress site
 	 *
 	 * @parameter alias="username"
 	 * @required
@@ -27,7 +34,7 @@ public class WordpressPlugin extends AbstractLifestreamPlugin<Post, WordpressCon
 
 
 	/**
-	 * password on goodreads site
+	 * password on Wordpress site
 	 *
 	 * @parameter alias="password"
 	 * @required
@@ -72,7 +79,12 @@ public class WordpressPlugin extends AbstractLifestreamPlugin<Post, WordpressCon
 
 	@Override
 	protected WordpressConfiguration createConfiguration() {
-		return new WordpressConfiguration(VFSHelper.getRunningDir()).withLogin(username).withPassword(password).withSite(site);
+		return new WordpressConfiguration(getCacheObject()).withLogin(username).withPassword(password).withSite(site);
+	}
+
+	@Override
+	protected File getCache() {
+		return cache;
 	}
 
 }

@@ -31,7 +31,7 @@ public class WordpressTest {
 		site = System.getProperty("wordpress.address");
 		assertThat(site, IsNull.notNullValue());
 
-		configuration = new WordpressConfiguration(VFSHelper.getRunningDir()).withLogin(login).withPassword(password).withSite(site);
+		configuration = new WordpressConfiguration(VFSHelper.getRunningDir_for_tests_only()).withLogin(login).withPassword(password).withSite(site);
 
 		tested = new Wordpress();
 	}

@@ -32,7 +32,7 @@ public class BookImproverTest {
 
 	@BeforeClass public static void loadWebClient() throws FileSystemException {
 		webClient = WebClientFactory.getWebClient();
-		configuration = new GoodreadsConfiguration(VFSHelper.getRunningDir());
+		configuration = new GoodreadsConfiguration(VFSHelper.getRunningDir_for_tests_only());
 	}
 
 	@Before public void loadGaedo() throws FileSystemException {

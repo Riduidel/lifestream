@@ -2,6 +2,8 @@ package org.ndx.lifestream.shaarli;
 
 import java.io.File;
 
+import org.apache.commons.vfs2.FileObject;
+import org.apache.commons.vfs2.FileSystemException;
 import org.ndx.lifestream.plugin.AbstractLifestreamPlugin;
 import org.ndx.lifestream.rendering.model.InputLoader;
 import org.ndx.lifestream.rendering.output.VFSHelper;
@@ -13,6 +15,13 @@ import org.ndx.lifestream.rendering.output.VFSHelper;
 * @requiresDependencyResolution runtime
 */
 public class ShaarliPlugin extends AbstractLifestreamPlugin<MicroblogEntry, ShaarliConfiguration> {
+	
+	/**
+	 * Path for caching any kind of data, be it data downloaded from the web, or built by plugin
+	 * @parameter
+	 *            default-value="${project.basedir}/.cache/"
+	 */
+	protected File cache;
 	/**
 	 * username on Shaarli site
 	 *
@@ -68,7 +77,13 @@ public class ShaarliPlugin extends AbstractLifestreamPlugin<MicroblogEntry, Shaa
 
 	@Override
 	protected ShaarliConfiguration createConfiguration() {
-		return new ShaarliConfiguration(VFSHelper.getRunningDir()).withLogin(username).withPassword(password).withSite(address);
+		return new ShaarliConfiguration(getCacheObject())
+			.withLogin(username).withPassword(password).withSite(address);
+	}
+
+	@Override
+	protected File getCache() {
+		return cache;
 	}
 
 }

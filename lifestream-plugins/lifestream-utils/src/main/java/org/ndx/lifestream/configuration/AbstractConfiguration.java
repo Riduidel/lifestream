@@ -12,7 +12,6 @@ import org.ndx.lifestream.utils.exception.LifestreamException;
 
 public abstract class AbstractConfiguration implements Configuration {
 
-	protected static final String CACHE_BASE_PATH = "target/cache/";
 	private final FileObject baseFolder;
 	private FileObject cacheFolder;
 	private String cachePath;

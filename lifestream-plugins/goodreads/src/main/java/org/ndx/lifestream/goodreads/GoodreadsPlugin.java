@@ -16,6 +16,13 @@ import org.ndx.lifestream.rendering.output.VFSHelper;
  * @requiresDependencyResolution runtime
  */
 public class GoodreadsPlugin extends AbstractLifestreamPlugin<BookInfos, GoodreadsConfiguration>  {
+	
+	/**
+	 * Path for caching any kind of data, be it data downloaded from the web, or built by plugin
+	 * @parameter
+	 *            default-value="${project.basedir}/.cache/"
+	 */
+	protected File cache;
 	/**
 	 * username on goodreads site
 	 *
@@ -64,6 +71,11 @@ public class GoodreadsPlugin extends AbstractLifestreamPlugin<BookInfos, Goodrea
 
 	@Override
 	protected GoodreadsConfiguration createConfiguration() {
-		return new GoodreadsConfiguration(VFSHelper.getRunningDir()).withUsername(username).withPassword(password);
+		return new GoodreadsConfiguration(getCacheObject()).withUsername(username).withPassword(password);
+	}
+
+	@Override
+	protected File getCache() {
+		return cache;
 	}
 }
