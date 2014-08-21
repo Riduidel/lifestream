@@ -89,7 +89,7 @@
 		</#if>
 		<#if (content.source)??><a href="${content.source}" class="source">source</a></#if>
     </div>
-    <div class="span10">
+    <div class="span10 content">
 		${content.body}
 	</div>
   </div>

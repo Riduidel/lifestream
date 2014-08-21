@@ -8,7 +8,9 @@
 	<div class="container-fluid">
 	<#list posts as post>
   		<#if (post.status == "published")>
+  			<div class="no-relatives">
 			<@display_post content=post/>
+			</div>
   		</#if>
   	</#list>
 	</div>

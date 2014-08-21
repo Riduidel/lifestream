@@ -104,3 +104,10 @@ li.not_matching {
 	margin-right: 0.5em;
 	vertical-align:middle;
 }
+
+/** used to disable relative links on index page */
+a.disabled {
+   pointer-events: none;
+   cursor: default;
+   color: gray;
+}
