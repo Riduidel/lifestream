@@ -21,4 +21,13 @@ public interface OutputWriter {
 	 */
 	String link(Input from, Input to, String text);
 
+	/**
+	 * Lower level method than {@link #link(Input, Input, String)} : if link generates a full link, this one concentrates on 
+	 * generating the href linking the two inputs
+	 * @param post
+	 * @param p
+	 * @return
+	 */
+	String href(Input from, Input to);
+
 }

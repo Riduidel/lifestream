@@ -25,6 +25,7 @@ import freemarker.template.Template;
 public abstract class AbstractOutputter implements OutputWriter {
 
 	private static final String DEFAULT_TEMPLATE_NAME = "page.ftl";
+	protected static final String HTML = "html";
 	private Configuration configuration;
 	private String templateName;
 
@@ -133,6 +134,13 @@ public abstract class AbstractOutputter implements OutputWriter {
 			sOut.append("../");
 		}
 		return sOut.toString();
+	}
+
+	public String href(Input from, Input to, String extension) {
+		List<String> fromPath = toRealPath(from);
+		// remove last element of from path, as it's the file name
+		List<String> toPath = toRealPath(to);
+		return LinkUtils.relativePath(fromPath, toPath, extension);
 	}
 
 	protected String markdownLink(Input from, Input to, String text, String extension) {

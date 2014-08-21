@@ -42,8 +42,13 @@ public class JekyllOutputter extends AbstractOutputter implements OutputWriter {
 	}
 
 	@Override
+	public String href(Input from, Input to) {
+		return href(from, to, HTML);
+	}
+
+	@Override
 	public String link(Input from, Input to, String text) {
-		return markdownLink(from, to, text, "html");
+		return markdownLink(from, to, text, HTML);
 	}
 
 }

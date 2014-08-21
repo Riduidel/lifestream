@@ -13,10 +13,14 @@ public class JBakeOutputter extends AbstractOutputter implements OutputWriter {
 	private static ThreadSafeSimpleDateFormat jbakeFormat = new ThreadSafeSimpleDateFormat("yyyy-MM-dd");
 
 	@Override
-	public String link(Input from, Input to, String text) {
-		return markdownLink(from, to, text, "html");
+	public String href(Input from, Input to) {
+		return href(from, to, HTML);
 	}
 
+	@Override
+	public String link(Input from, Input to, String text) {
+		return markdownLink(from, to, text, HTML);
+	}
 
 	@Override
 	protected List<String> toRealPath(Input input) {

@@ -2,6 +2,8 @@ package org.ndx.lifestream.wordpress;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
+import java.io.Reader;
+import java.io.StringReader;
 import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -13,7 +15,10 @@ import java.util.logging.Logger;
 
 import org.apache.commons.vfs2.FileObject;
 import org.jdom.Element;
+import org.jdom2.Document;
+import org.jdom2.input.SAXBuilder;
 import org.ndx.lifestream.configuration.CacheLoader;
+import org.ndx.lifestream.plugin.GaedoEnvironmentProvider;
 import org.ndx.lifestream.plugin.exceptions.AuthenticationFailedException;
 import org.ndx.lifestream.plugin.exceptions.UnableToDownloadContentException;
 import org.ndx.lifestream.plugin.exceptions.UnableToReadStreamAsUTF8Exception;
@@ -22,6 +27,10 @@ import org.ndx.lifestream.rendering.OutputWriter;
 import org.ndx.lifestream.rendering.model.InputLoader;
 import org.ndx.lifestream.utils.Constants;
 
+import com.dooapp.gaedo.finders.FinderCrudService;
+import com.dooapp.gaedo.finders.QueryBuilder;
+import com.dooapp.gaedo.finders.QueryExpression;
+import com.dooapp.gaedo.utils.CollectionUtils;
 import com.gargoylesoftware.htmlunit.Page;
 import com.gargoylesoftware.htmlunit.WebClient;
 import com.gargoylesoftware.htmlunit.html.HtmlForm;
@@ -38,6 +47,7 @@ import com.sun.syndication.io.XmlReader;
 
 public class Wordpress implements InputLoader<Post, WordpressConfiguration> {
 	private static Logger logger = Logger.getLogger(Wordpress.class.getName());
+	private GaedoEnvironmentProvider wordpressEnvironment = new GaedoEnvironmentProvider();
 
 	@Override
 	public Collection<Post> load(WebClient client, WordpressConfiguration configuration) {
@@ -45,7 +55,7 @@ public class Wordpress implements InputLoader<Post, WordpressConfiguration> {
 		ByteArrayInputStream stream;
 		try {
 			stream = new ByteArrayInputStream(text.getBytes(Constants.UTF_8));
-			return buildPostCollection(stream);
+			return CollectionUtils.asList(buildPostCollection(stream).findAll());
 		} catch (UnsupportedEncodingException e) {
 			throw new UnableToReadStreamAsUTF8Exception(e);
 		}
@@ -57,7 +67,7 @@ public class Wordpress implements InputLoader<Post, WordpressConfiguration> {
 
 			@Override
 			public boolean apply(Post input) {
-				return Post.Type.post.equals(input.type);
+				return Post.Type.post.equals(input.getType());
 			}
 		});
 		OutputWriter writer = mode.getWriter();
@@ -123,15 +133,16 @@ public class Wordpress implements InputLoader<Post, WordpressConfiguration> {
 		}
 	}
 
-	Collection<Post> buildPostCollection(InputStream xmlSource) {
+	FinderCrudService<Post,PostInformer> buildPostCollection(InputStream xmlSource) {
+		FinderCrudService<Post, PostInformer> bookService = wordpressEnvironment.getServiceFor(Post.class, PostInformer.class);
 		try {
 			SyndFeedInput input = new SyndFeedInput();
 			SyndFeed feed = input.build(new XmlReader(xmlSource, true, "utf-8"));
-			List<Post> returned = new LinkedList<>();
 			for (SyndEntry entry : (Collection<SyndEntry>) feed.getEntries()) {
-				returned.add(createPostFromEntry(entry));
+				bookService.create(createPostFromEntry(entry));
 			}
-			return returned;
+			new InternalLinksResolver().resolveIn(bookService);
+			return bookService;
 		} catch (Exception e) {
 			throw new UnableToTransformStreamInPostCollectionException(e);
 		}
@@ -139,17 +150,18 @@ public class Wordpress implements InputLoader<Post, WordpressConfiguration> {
 
 	private Post createPostFromEntry(SyndEntry entry) {
 		Post post = new Post(); // TODO Use http://sujitpal.blogspot.fr/2008/08/parsing-custom-modules-with-rome.html to parse wp:comment
-		post.writeDate = entry.getPublishedDate()==null ? entry.getUpdatedDate() : entry.getPublishedDate();
-		post.title = entry.getTitle();
+		post.setWriteDate(entry.getPublishedDate()==null ? entry.getUpdatedDate() : entry.getPublishedDate());
+		post.setTitle(entry.getTitle());
 		post.tags = getEntryTags(entry);
-		post.text = getEntryText(entry);
-		post.uri = entry.getUri();
-		post.source = entry.getLink();
+		post.setText(getEntryText(entry));
+		post.setUri(entry.getUri());
+		post.setSource(entry.getLink());
 		try {
-			post.basename = new URL(entry.getLink()).getPath();
-			if(post.basename.endsWith("/")) {
-				post.basename = post.basename.substring(0, post.basename.lastIndexOf('/'));
+			String basename = new URL(entry.getLink()).getPath();
+			if(basename.endsWith("/")) {
+				basename = basename.substring(0, basename.lastIndexOf('/'));
 			}
+			post.setBasename(basename);
 		} catch (MalformedURLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -157,7 +169,7 @@ public class Wordpress implements InputLoader<Post, WordpressConfiguration> {
 		List<Element> elements = (List<Element>) entry.getForeignMarkup();
 		for(Element e : elements) {
 			switch(e.getName()) {
-			case "post_type": post.type = Post.Type.valueOf(e.getText()); break;
+			case "post_type": post.setType(Post.Type.valueOf(e.getText())); break;
 			case "comment": post.comments.add(new Comment(e)); break;
 			case "post_name": break;
 			case "post_parent": break;
