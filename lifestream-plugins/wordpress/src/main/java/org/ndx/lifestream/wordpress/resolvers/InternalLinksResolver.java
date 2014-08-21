@@ -1,6 +1,7 @@
-package org.ndx.lifestream.wordpress;
+package org.ndx.lifestream.wordpress.resolvers;
 
 import java.util.List;
+import java.util.concurrent.ExecutorService;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -9,6 +10,8 @@ import javax.xml.transform.TransformerException;
 
 import org.ndx.lifestream.rendering.output.LinkUtils;
 import org.ndx.lifestream.utils.transform.HtmlToMarkdown;
+import org.ndx.lifestream.wordpress.Post;
+import org.ndx.lifestream.wordpress.PostInformer;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -18,23 +21,8 @@ import com.dooapp.gaedo.finders.QueryBuilder;
 import com.dooapp.gaedo.finders.QueryExpression;
 import com.dooapp.gaedo.utils.CollectionUtils;
 
-public class InternalLinksResolver {
+public class InternalLinksResolver implements Resolver {
 	private static final Logger logger = Logger.getLogger(InternalLinksResolver.class.getName());
-
-	public void resolveIn(FinderCrudService<Post, PostInformer> bookService) {
-		// Now all posts have been loaded, please resolve internal links
-		Iterable<Post> withText = bookService.find().matching(new QueryBuilder<PostInformer>() {
-
-			@Override
-			public QueryExpression createMatchingExpression(PostInformer informer) {
-				return informer.getText().differentFrom("");
-			}
-
-		}).getAll();
-		for (Post p : withText) {
-			resolveInternalLinksIn(bookService, p);
-		}
-	}
 
 	/**
 	 * Resolve links from loaded Post to other loaded Posts. How ? well, that's
@@ -46,9 +34,11 @@ public class InternalLinksResolver {
 	 * 
 	 * @param p
 	 */
-	private void resolveInternalLinksIn(FinderCrudService<Post,PostInformer> bookService, Post p) {
+	public void resolve(FinderCrudService<Post,PostInformer> bookService, Post p) {
 		try {
 			Document d = HtmlToMarkdown.transformToValidXhtmlDocument(p.getText());
+			if(d==null)
+				return;
 			NodeList allLinks = d.getElementsByTagName("a");
 			// can't believe NodeList isn't even a fuckin iterable !
 			for(int index = 0 ; index < allLinks.getLength(); index++) {

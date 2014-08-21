@@ -43,13 +43,24 @@ public abstract class AbstractConfiguration implements Configuration {
 	 * @throws FileSystemException
 	 */
 	public String refreshCacheWith(CacheLoader cacheLaoder) throws FileSystemException, IOException {
+		return getFromCacheOrLoad(cacheLaoder, getCachedExport(), getCacheTimeout());
+	}
+
+	/**
+	 * Download data from the web or load it from the cache if it was already in cache
+	 * @param cacheLaoder
+	 * @param cachedPath
+	 * @param cacheTimeout
+	 * @return
+	 * @throws FileSystemException
+	 * @throws IOException
+	 */
+	public String getFromCacheOrLoad(CacheLoader cacheLaoder, FileObject cachedPath, long cacheTimeout) throws FileSystemException, IOException {
 		String content = null;
-		FileObject cachedExport = getCachedExport();
-		if(cachedExport.exists()) {
-			long lastModifiedTime = cachedExport.getContent().getLastModifiedTime();
-			// csv can be download each day (not many peop
-			if((System.currentTimeMillis()-lastModifiedTime)<getCacheTimeout()) {
-				try(InputStream fileContent = cachedExport.getContent().getInputStream()) {
+		if(cachedPath.exists()) {
+			long lastModifiedTime = cachedPath.getContent().getLastModifiedTime();
+			if(cacheTimeout<0 || (System.currentTimeMillis()-lastModifiedTime)<cacheTimeout) {
+				try(InputStream fileContent = cachedPath.getContent().getInputStream()) {
 					content = IOUtils.toString(fileContent, Constants.UTF_8);
 				}
 			}
@@ -57,7 +68,7 @@ public abstract class AbstractConfiguration implements Configuration {
 		if(content==null) {
 			try {
 				content = cacheLaoder.load();
-				try(OutputStream fileContent = cachedExport.getContent().getOutputStream()) {
+				try(OutputStream fileContent = cachedPath.getContent().getOutputStream()) {
 					IOUtils.write(content, fileContent, Constants.UTF_8);
 				}
 			} catch (LifestreamException e) {

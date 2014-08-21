@@ -2,21 +2,21 @@ package org.ndx.lifestream.wordpress;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
-import java.io.Reader;
-import java.io.StringReader;
 import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import org.apache.commons.vfs2.FileObject;
 import org.jdom.Element;
-import org.jdom2.Document;
-import org.jdom2.input.SAXBuilder;
 import org.ndx.lifestream.configuration.CacheLoader;
 import org.ndx.lifestream.plugin.GaedoEnvironmentProvider;
 import org.ndx.lifestream.plugin.exceptions.AuthenticationFailedException;
@@ -26,10 +26,9 @@ import org.ndx.lifestream.rendering.Mode;
 import org.ndx.lifestream.rendering.OutputWriter;
 import org.ndx.lifestream.rendering.model.InputLoader;
 import org.ndx.lifestream.utils.Constants;
+import org.ndx.lifestream.wordpress.resolvers.MultiResolver;
 
 import com.dooapp.gaedo.finders.FinderCrudService;
-import com.dooapp.gaedo.finders.QueryBuilder;
-import com.dooapp.gaedo.finders.QueryExpression;
 import com.dooapp.gaedo.utils.CollectionUtils;
 import com.gargoylesoftware.htmlunit.Page;
 import com.gargoylesoftware.htmlunit.WebClient;
@@ -55,7 +54,7 @@ public class Wordpress implements InputLoader<Post, WordpressConfiguration> {
 		ByteArrayInputStream stream;
 		try {
 			stream = new ByteArrayInputStream(text.getBytes(Constants.UTF_8));
-			return CollectionUtils.asList(buildPostCollection(stream).findAll());
+			return CollectionUtils.asList(buildPostCollection(client, stream, configuration).findAll());
 		} catch (UnsupportedEncodingException e) {
 			throw new UnableToReadStreamAsUTF8Exception(e);
 		}
@@ -133,7 +132,8 @@ public class Wordpress implements InputLoader<Post, WordpressConfiguration> {
 		}
 	}
 
-	FinderCrudService<Post,PostInformer> buildPostCollection(InputStream xmlSource) {
+	FinderCrudService<Post,PostInformer> buildPostCollection(WebClient client, InputStream xmlSource, WordpressConfiguration configuration) {
+		ExecutorService executor = Executors.newFixedThreadPool(configuration.getThreadCount());
 		FinderCrudService<Post, PostInformer> bookService = wordpressEnvironment.getServiceFor(Post.class, PostInformer.class);
 		try {
 			SyndFeedInput input = new SyndFeedInput();
@@ -141,7 +141,9 @@ public class Wordpress implements InputLoader<Post, WordpressConfiguration> {
 			for (SyndEntry entry : (Collection<SyndEntry>) feed.getEntries()) {
 				bookService.create(createPostFromEntry(entry));
 			}
-			new InternalLinksResolver().resolveIn(bookService);
+			new MultiResolver(client, configuration).resolveIn(executor, bookService);
+			executor.shutdown();
+			executor.awaitTermination(1, TimeUnit.DAYS);
 			return bookService;
 		} catch (Exception e) {
 			throw new UnableToTransformStreamInPostCollectionException(e);

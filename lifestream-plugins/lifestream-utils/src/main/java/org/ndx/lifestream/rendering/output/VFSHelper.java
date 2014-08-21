@@ -52,7 +52,7 @@ public class VFSHelper {
 	@Deprecated
 	public static FileObject getRunningDir_for_tests_only() {
 		try {
-			return getManager().resolveFile(System.getProperty("user.dir")+"/target/");
+			return getManager().resolveFile(System.getProperty("user.dir")+"/target/.cache/");
 		} catch (FileSystemException e) {
 			throw new UnableToLocateUserDirException(e);
 		}

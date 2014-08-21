@@ -41,7 +41,7 @@ public class HtmlToMarkdown {
 		return StringEscapeUtils.unescapeHtml4(markdown);
 	}
 
-	public static String transformToValidXhtml(String html) {
+	public synchronized static String transformToValidXhtml(String html) {
 		try {
 			Document output = transformToValidXhtmlDocument(html);
 
@@ -52,7 +52,7 @@ public class HtmlToMarkdown {
 		}
 	}
 
-	public static Document transformToValidXhtmlDocument(String html) throws ParserConfigurationException {
+	public synchronized static Document transformToValidXhtmlDocument(String html) throws ParserConfigurationException {
 		if(html==null)
 			return null;
 		if(html.trim().length()==0)
@@ -70,7 +70,7 @@ public class HtmlToMarkdown {
 		return output;
 	}
 
-	public static String transformXMLToString(Document input) throws TransformerException {
+	public synchronized static String transformXMLToString(Document input) throws TransformerException {
 		StringWriter sw = new StringWriter();
 		StreamResult result = new StreamResult(sw);
 		DOMSource source = new DOMSource(input);

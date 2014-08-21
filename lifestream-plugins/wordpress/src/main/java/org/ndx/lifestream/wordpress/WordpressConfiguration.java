@@ -1,20 +1,16 @@
 package org.ndx.lifestream.wordpress;
 
-import java.io.InputStream;
-import java.io.OutputStream;
-
-import org.apache.commons.io.IOUtils;
 import org.apache.commons.vfs2.FileObject;
 import org.apache.commons.vfs2.FileSystemException;
 import org.ndx.lifestream.configuration.AbstractConfiguration;
 import org.ndx.lifestream.configuration.Configuration;
-import org.ndx.lifestream.utils.Constants;
 
 public class WordpressConfiguration extends AbstractConfiguration implements Configuration {
 
 	private String login;
 	private String password;
 	private String site;
+	private int threadCount = 2;
 
 	public WordpressConfiguration(FileObject baseFolder) {
 		super(baseFolder, "wordpress/");
@@ -72,4 +68,21 @@ public class WordpressConfiguration extends AbstractConfiguration implements Con
 		return getCacheFolder().resolveFile("export.xml");
 	}
 
+	/**
+	 * @return the threadCount
+	 * @category getter
+	 * @category threadCount
+	 */
+	public int getThreadCount() {
+		return threadCount;
+	}
+
+	/**
+	 * @param threadCount the threadCount to set
+	 * @category setter
+	 * @category threadCount
+	 */
+	public void setThreadCount(int threadCount) {
+		this.threadCount = threadCount;
+	}
 }
