@@ -69,7 +69,7 @@ public abstract class BookInfos implements Input {
 	@Override
 	public Map<String, String> getAdditionalHeaders() {
 		Map<String, String> returned = new TreeMap<>();
-		returned.put(Headers.STYLE, "goodreads");
+		returned.put(Headers.STYLE, "goodreads goodreads-"+getClass().getSimpleName().toLowerCase());
 		return returned;
 	}
 

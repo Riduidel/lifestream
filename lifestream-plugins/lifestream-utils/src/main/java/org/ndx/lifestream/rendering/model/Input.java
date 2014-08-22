@@ -18,6 +18,14 @@ public interface Input {
 	 *
 	 */
 	public static interface Headers {
+		public static interface Styles {
+			/**
+			 * used for elements that shouldn't be displayed on index
+			 */
+			static final String NO_INDEX = "no-index";
+			static final String NO_ARCHIVE = "no-archive";
+			static final String NO_TAGS = "no-tags";
+		}
 		static final String SMALL_IMAGE = "smallImage";
 		static final String BIG_IMAGE = "bigImage";
 		static final String SOURCE = "source";

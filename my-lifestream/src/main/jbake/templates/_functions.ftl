@@ -74,7 +74,7 @@
 
 <#macro display_post content depth="">
 	<#if (content.title)??>
-  <div class="row-fluid">
+  <div class="row-fluid <#if (content.style)??>${content.style}</#if>">
     <div class="span10 offset2">
   		<a href="${fix_uri(content.uri)}"><h1>${content.title}</h1></a>
 	</div>

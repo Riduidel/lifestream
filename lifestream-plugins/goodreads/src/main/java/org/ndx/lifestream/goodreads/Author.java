@@ -111,8 +111,9 @@ public class Author extends BookInfos implements Comparable<Author>{
 
 	@Override
 	public Map<String, String> getAdditionalHeaders() {
-		Map<String, String> returned = new TreeMap<>();
+		Map<String, String> returned = super.getAdditionalHeaders();
 		returned.put(Headers.BIG_IMAGE, image);
+		returned.put(Headers.STYLE, returned.get(Headers.STYLE)+" "+Headers.Styles.NO_INDEX);
 		return returned;
 	}
 

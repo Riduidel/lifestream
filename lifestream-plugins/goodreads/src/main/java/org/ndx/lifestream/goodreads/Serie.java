@@ -12,6 +12,7 @@ import java.util.TreeMap;
 
 import org.ndx.lifestream.rendering.OutputWriter;
 import org.ndx.lifestream.rendering.model.Input;
+import org.ndx.lifestream.rendering.model.Input.Headers;
 import org.ndx.lifestream.rendering.output.Freemarker;
 
 import freemarker.template.Template;
@@ -126,6 +127,8 @@ public class Serie extends BookInfos implements Input, Comparable<Serie> {
 
 	@Override
 	public Map<String, String> getAdditionalHeaders() {
-		return Collections.emptyMap();
+		Map<String, String> returned = super.getAdditionalHeaders();
+		returned.put(Headers.STYLE, returned.get(Headers.STYLE)+" "+Headers.Styles.NO_INDEX);
+		return returned;
 	}
 }
