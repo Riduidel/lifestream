@@ -3,7 +3,7 @@ type=post
 status=published
 title=${input.title}
 <#if input.tags??>
-tags= <#list input.tags as t>${t}<#if t_has_next>,</#if></#list>
+tags=<#list input.tags as t>${t}<#if t_has_next>,</#if></#list>
 <#else>
 tags=
 </#if>	
