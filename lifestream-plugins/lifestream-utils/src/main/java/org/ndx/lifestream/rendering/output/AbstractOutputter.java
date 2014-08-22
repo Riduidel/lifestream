@@ -17,6 +17,8 @@ import org.ndx.lifestream.rendering.OutputWriter;
 import org.ndx.lifestream.rendering.model.Input;
 import org.ndx.lifestream.rendering.notifications.WriteEvent;
 import org.ndx.lifestream.rendering.notifications.WriteListener;
+import org.ndx.lifestream.rendering.path.PathNavigator;
+import org.ndx.lifestream.rendering.path.RelativePath;
 import org.ndx.lifestream.utils.Constants;
 import org.ndx.lifestream.utils.transform.HtmlToMarkdown;
 
@@ -85,28 +87,19 @@ public abstract class AbstractOutputter implements OutputWriter {
 	 * @return
 	 */
 	protected FileObject toRealFile(Input input, FileObject output) {
-		Collection<String> realPath = toRealPath(input);
-		try {
-			FileObject resultFile = output;
-			for(String pathElement : realPath) {
-				resultFile = resultFile.resolveFile(pathElement);
-			}
-			return resultFile;
-		} catch(FileSystemException e) {
-			throw new UnableToresolveOutputFileException("unable to create output file below "+output.getName().getPath()+" for "+Joiner.on('/').join(realPath));
-		}
+		return toRealPath(input).toRealFile(output);
 	}
 	/**
 	 * Get real path for that input.
 	 * @param input
 	 * @return path (from output root) to that file
 	 */
-	protected abstract List<String> toRealPath(Input input);
+	protected abstract PathNavigator toRealPath(Input input);
 
 	/**
 	 * Default implementation of {@link #toRealPath(Input)} adding an extension to last element
 	 */
-	protected  List<String> toRealPath(Input input, String extension) {
+	protected  PathNavigator toRealPath(Input input, String extension) {
 		List<String> returned = new ArrayList<>();
 		Collection<String> expectedPath = input.getExpectedPath();
 		Iterator<String> expectedPathIterator = expectedPath.iterator();
@@ -118,7 +111,7 @@ public abstract class AbstractOutputter implements OutputWriter {
 				returned.add(FileNameUtils.simplify(pathElement+extension));
 			}
 		}
-		return returned;
+		return new RelativePath(returned);
 	}
 
 	/**
@@ -126,7 +119,7 @@ public abstract class AbstractOutputter implements OutputWriter {
 	 * @return path converted to a URI : all File separator are hard-replaced with "/" character
 	 */
 	protected String getUriOf(Input input) {
-		return Joiner.on("/").join(toRealPath(input));
+		return toRealPath(input).toURI();
 	}
 
 	/**
@@ -137,25 +130,20 @@ public abstract class AbstractOutputter implements OutputWriter {
 	 * @see #toRealPath(Input)
 	 */
 	protected String getDepthOf(Input input) {
-		List<String> realPath = toRealPath(input);
-		StringBuilder sOut = new StringBuilder();
-		for (int i = 0; i < realPath.size()-1; i++) {
-			sOut.append("../");
-		}
-		return sOut.toString();
+		return toRealPath(input).depth();
 	}
 
 	public String href(Input from, Input to, String extension) {
-		List<String> fromPath = toRealPath(from);
+		PathNavigator fromPath = toRealPath(from);
 		// remove last element of from path, as it's the file name
-		List<String> toPath = toRealPath(to);
+		PathNavigator toPath = toRealPath(to);
 		return LinkUtils.relativePath(fromPath, toPath, extension);
 	}
 
 	protected String markdownLink(Input from, Input to, String text, String extension) {
-		List<String> fromPath = toRealPath(from);
+		PathNavigator fromPath = toRealPath(from);
 		// remove last element of from path, as it's the file name
-		List<String> toPath = toRealPath(to);
+		PathNavigator toPath = toRealPath(to);
 		return MarkdownUtils.link(fromPath, toPath, text, extension);
 	}
 

@@ -1,10 +1,9 @@
 package org.ndx.lifestream.rendering.output.opoopress;
 
-import java.util.List;
-
 import org.ndx.lifestream.rendering.OutputWriter;
 import org.ndx.lifestream.rendering.model.Input;
 import org.ndx.lifestream.rendering.output.AbstractOutputter;
+import org.ndx.lifestream.rendering.path.PathNavigator;
 
 public class OpooPressOutputter extends AbstractOutputter
 		implements OutputWriter {
@@ -20,7 +19,7 @@ public class OpooPressOutputter extends AbstractOutputter
 	}
 
 	@Override
-	protected List<String> toRealPath(Input input) {
+	protected PathNavigator toRealPath(Input input) {
 		return toRealPath(input, ".md");
 	}
 

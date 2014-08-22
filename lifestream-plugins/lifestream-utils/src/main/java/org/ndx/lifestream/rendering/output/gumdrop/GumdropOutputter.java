@@ -1,11 +1,10 @@
 package org.ndx.lifestream.rendering.output.gumdrop;
 
-import java.util.List;
-
 import org.apache.commons.vfs2.FileObject;
 import org.ndx.lifestream.rendering.OutputWriter;
 import org.ndx.lifestream.rendering.model.Input;
 import org.ndx.lifestream.rendering.output.AbstractOutputter;
+import org.ndx.lifestream.rendering.path.PathNavigator;
 
 public class GumdropOutputter extends AbstractOutputter implements OutputWriter {
 
@@ -26,7 +25,7 @@ public class GumdropOutputter extends AbstractOutputter implements OutputWriter 
 	}
 
 	@Override
-	protected List<String> toRealPath(Input input) {
+	protected PathNavigator toRealPath(Input input) {
 		return toRealPath(input, ".md");
 	}
 

@@ -9,6 +9,8 @@ import org.ndx.lifestream.rendering.OutputWriter;
 import org.ndx.lifestream.rendering.model.Input;
 import org.ndx.lifestream.rendering.output.AbstractOutputter;
 import org.ndx.lifestream.rendering.output.FileNameUtils;
+import org.ndx.lifestream.rendering.path.PathNavigator;
+import org.ndx.lifestream.rendering.path.RelativePath;
 import org.ndx.lifestream.utils.ThreadSafeSimpleDateFormat;
 
 /**
@@ -25,7 +27,7 @@ public class JekyllOutputter extends AbstractOutputter implements OutputWriter {
 	 * @param input
 	 * @return the real path used by this rendering engine
 	 */
-	protected List<String> toRealPath(Input input) {
+	protected PathNavigator toRealPath(Input input) {
 		Date writeDate = input.getWriteDate();
 		List<String> returned = new ArrayList<>();
 		Iterator<String> iterator = input.getExpectedPath().iterator();
@@ -38,7 +40,7 @@ public class JekyllOutputter extends AbstractOutputter implements OutputWriter {
 				returned.add(filename);
 			}
 		}
-		return returned;
+		return new RelativePath(returned);
 	}
 
 	@Override

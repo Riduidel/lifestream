@@ -1,12 +1,12 @@
 package org.ndx.lifestream.rendering.output.jbake;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import org.ndx.lifestream.rendering.OutputWriter;
 import org.ndx.lifestream.rendering.model.Input;
 import org.ndx.lifestream.rendering.output.AbstractOutputter;
+import org.ndx.lifestream.rendering.path.PathNavigator;
 import org.ndx.lifestream.utils.ThreadSafeSimpleDateFormat;
 
 public class JBakeOutputter extends AbstractOutputter implements OutputWriter {
@@ -23,7 +23,7 @@ public class JBakeOutputter extends AbstractOutputter implements OutputWriter {
 	}
 
 	@Override
-	protected List<String> toRealPath(Input input) {
+	protected PathNavigator toRealPath(Input input) {
 		return toRealPath(input, ".md");
 	}
 

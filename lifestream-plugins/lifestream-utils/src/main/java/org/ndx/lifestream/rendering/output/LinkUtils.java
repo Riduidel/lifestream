@@ -3,6 +3,8 @@ package org.ndx.lifestream.rendering.output;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.ndx.lifestream.rendering.path.PathNavigator;
+
 import com.google.common.base.Function;
 import com.google.common.base.Joiner;
 import com.google.common.collect.Collections2;
@@ -40,6 +42,14 @@ public class LinkUtils {
 			path += Joiner.on("/").join(toPath);
 		}
 		return path;
+	}
+
+	public static String relativePath(PathNavigator fromPath, PathNavigator toPath, String extension) {
+		try {
+			return relativePath(fromPath.toPathList(), fromPath.toPathList(), extension);
+		} catch(Exception e) {
+			return toPath.toURI();
+		}
 	}
 
 }

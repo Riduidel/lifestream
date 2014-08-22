@@ -1,7 +1,6 @@
 package org.ndx.lifestream.rendering.output.gollum;
 
 import java.util.Collection;
-import java.util.List;
 import java.util.logging.Logger;
 
 import org.apache.commons.vfs2.FileObject;
@@ -9,6 +8,7 @@ import org.ndx.lifestream.rendering.OutputWriter;
 import org.ndx.lifestream.rendering.model.Input;
 import org.ndx.lifestream.rendering.output.AbstractOutputter;
 import org.ndx.lifestream.rendering.output.FileNameUtils;
+import org.ndx.lifestream.rendering.path.PathNavigator;
 
 import com.google.common.base.Joiner;
 
@@ -25,17 +25,17 @@ public class GollumOutputter extends AbstractOutputter implements OutputWriter {
 	private static final Joiner PATH_JOINER = Joiner.on('/').skipNulls();
 
 	@Override
-	protected List<String> toRealPath(Input input) {
+	protected PathNavigator toRealPath(Input input) {
 		return super.toRealPath(input, ".md");
 	}
 
 	@Override
 	public void write(Input input, FileObject output) {
 		FileObject resultFile;
-		Collection<String> usedPath = toRealPath(input);
+		PathNavigator usedPath = toRealPath(input);
 		try {
 			resultFile = output.resolveFile(PATH_JOINER.join(
-					FileNameUtils.simplify(usedPath)));
+					FileNameUtils.simplify(usedPath.toPathList())));
 			input.accept(this);
 			writeFile(resultFile, render(input));
 			notify(input, resultFile, output);
