@@ -16,6 +16,13 @@
       <xsl:text>	</xsl:text>
    </xsl:variable>
    
+   <!-- used for those who prefer fenced code blocks over tabbed ones (it's easier when using XSLT) -->
+   <xsl:variable name="fenced_code_block">
+      <xsl:text>
+```
+</xsl:text>
+   </xsl:variable>
+
    <xsl:template match="/">
       <xsl:apply-templates select="html/body/node()">
          <xsl:with-param name="context" select="markdown"/>
@@ -264,9 +271,9 @@
          </xsl:when>
          <xsl:otherwise>
             <xsl:call-template name="newblock"/>
-            <xsl:value-of select="$tab"/>
+            <xsl:value-of select="$fenced_code_block"/>
             <xsl:apply-templates select="node()"/>
-            <xsl:value-of select="$newline"/>
+            <xsl:value-of select="$fenced_code_block"/>
          </xsl:otherwise>
       </xsl:choose>
    </xsl:template>
