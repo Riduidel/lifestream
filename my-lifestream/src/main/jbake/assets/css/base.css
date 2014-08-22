@@ -105,6 +105,11 @@ li.not_matching {
 	vertical-align:middle;
 }
 
+.shaarli h1 {
+	visibility:hidden;
+	display:none;
+}
+
 /** used to disable relative links on index page */
 a.disabled {
    pointer-events: none;
