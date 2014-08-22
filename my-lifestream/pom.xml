@@ -13,9 +13,9 @@
 		<output.mode>jbake</output.mode>
 		<!-- site.dir is configured in profiles -->
 		<site.basedir>${project.build.directory}/site/generated/</site.basedir>
-		<site.source>${site.basedir}/source/</site.source>
-		<site.dir>${site.source}/content/</site.dir>
-		<site.output>${site.basedir}/target/</site.output>
+		<site.input>${site.basedir}/input/</site.input>
+		<site.dir>${site.input}/content/</site.dir>
+		<site.output>${site.basedir}/output/</site.output>
 		<goodreads.dir>${site.dir}/</goodreads.dir>
 		<wordpress.dir>${site.dir}/</wordpress.dir>
 		<shaarli.dir>${site.dir}/</shaarli.dir>
@@ -183,7 +183,7 @@
 									<goal>copy-resources</goal>
 								</goals>
 								<configuration>
-									<outputDirectory>${site.source}</outputDirectory>
+									<outputDirectory>${site.input}</outputDirectory>
 									<resources>
 										<resource>
 											<directory>src/main/jbake</directory>
@@ -207,7 +207,7 @@
 									<goal>generate</goal>
 								</goals>
 								<configuration>
-									<inputDirectory>${site.source}</inputDirectory>
+									<inputDirectory>${site.input}</inputDirectory>
 									<outputDirectory>${site.jbake}</outputDirectory>
 								</configuration>
 							</execution>

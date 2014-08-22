@@ -1,9 +1,7 @@
 package org.ndx.lifestream.rendering.output.gollum;
 
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.logging.Logger;
 
 import org.apache.commons.vfs2.FileObject;
@@ -40,6 +38,7 @@ public class GollumOutputter extends AbstractOutputter implements OutputWriter {
 					FileNameUtils.simplify(usedPath)));
 			input.accept(this);
 			writeFile(resultFile, render(input));
+			notify(input, resultFile, output);
 		} catch (Exception e) {
 			throw new GollumException("unable to output render for input "+usedPath, e);
 		}

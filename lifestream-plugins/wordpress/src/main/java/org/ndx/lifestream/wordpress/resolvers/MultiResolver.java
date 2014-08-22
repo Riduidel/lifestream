@@ -45,7 +45,11 @@ public class MultiResolver {
 	}
 
 	private Collection<Resolver> getResolvers() {
-		return Arrays.asList(new InternalLinksResolver(), new ShortCodeResolver(client, configuration));
+		return Arrays.asList(
+						new InternalLinksResolver(), 
+						new ShortCodeResolver(client, configuration), 
+						new GoodreadsResolver(configuration)
+						);
 	}
 
 }

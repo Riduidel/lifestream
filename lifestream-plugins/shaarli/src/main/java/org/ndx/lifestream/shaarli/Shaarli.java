@@ -19,6 +19,7 @@ import org.jdom2.input.DOMBuilder;
 import org.jdom2.xpath.XPathExpression;
 import org.jdom2.xpath.XPathFactory;
 import org.ndx.lifestream.configuration.CacheLoader;
+import org.ndx.lifestream.configuration.LinkResolver;
 import org.ndx.lifestream.plugin.exceptions.AuthenticationFailedException;
 import org.ndx.lifestream.plugin.exceptions.UnableToDownloadContentException;
 import org.ndx.lifestream.rendering.Mode;
@@ -203,6 +204,8 @@ public class Shaarli implements InputLoader<MicroblogEntry, ShaarliConfiguration
 			}
 		});
 		OutputWriter writer = mode.getWriter();
+		LinkResolver linkResolver = configuration.getLinkResolver();
+		writer.addListener(linkResolver);
 		int index = 1;
 		int size = filtered.size();
 		for (MicroblogEntry entry : filtered) {
@@ -211,6 +214,7 @@ public class Shaarli implements InputLoader<MicroblogEntry, ShaarliConfiguration
 			}
 			writer.write(entry, outputRoot);
 		}
+		linkResolver.save();
 	}
 
 }

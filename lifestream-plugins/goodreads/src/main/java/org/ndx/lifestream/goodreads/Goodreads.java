@@ -22,6 +22,7 @@ import java.util.logging.Logger;
 
 import org.apache.commons.vfs2.FileObject;
 import org.ndx.lifestream.configuration.CacheLoader;
+import org.ndx.lifestream.configuration.LinkResolver;
 import org.ndx.lifestream.goodreads.references.Reference;
 import org.ndx.lifestream.goodreads.references.ReferencesMerger;
 import org.ndx.lifestream.goodreads.references.Resolvers;
@@ -254,6 +255,8 @@ public class Goodreads implements InputLoader<BookInfos, GoodreadsConfiguration>
 			}
 		});
 		OutputWriter writer = mode.getWriter();
+		LinkResolver linkResolver = configuration.getLinkResolver();
+		writer.addListener(linkResolver);
 		int index = 1;
 		int size = filtered.size();
 		for (BookInfos book : filtered) {
@@ -262,6 +265,7 @@ public class Goodreads implements InputLoader<BookInfos, GoodreadsConfiguration>
 			}
 			writer.write(book, output);
 		}
+		linkResolver.save();
 	}
 
 	@Override

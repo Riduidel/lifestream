@@ -15,6 +15,7 @@ public abstract class AbstractConfiguration implements Configuration {
 	private final FileObject baseFolder;
 	private FileObject cacheFolder;
 	private String cachePath;
+	private LinkResolver linkResolver;
 
 	public AbstractConfiguration(FileObject baseFolder, String cacheSpecificPath) {
 		super();
@@ -27,7 +28,7 @@ public abstract class AbstractConfiguration implements Configuration {
 			try {
 				cacheFolder = baseFolder.resolveFile(cachePath);
 			} catch (FileSystemException e) {
-				throw new UnableToConfigureCacheException(e);
+				throw new UnableToConfigureCacheException("Unable to load path for cache folder "+ cachePath, e);
 			}
 		}
 		return cacheFolder;
@@ -74,11 +75,27 @@ public abstract class AbstractConfiguration implements Configuration {
 			} catch (LifestreamException e) {
 				throw e;
 			} catch (Exception e) {
-				throw new UnableToRefreshCacheException(e);
+				throw new UnableToRefreshCacheException("Something strange happened while trying to refresh cache in "+cachePath, e);
 			}
 		}
 		return content;
 	}
 
 	public abstract FileObject getCachedExport() throws FileSystemException;
+
+	/**
+	 * @return the linkResolver
+	 * @category getter
+	 * @category linkResolver
+	 */
+	public LinkResolver getLinkResolver() {
+		if(linkResolver==null) {
+			try {
+				linkResolver = new LinkResolver(baseFolder.resolveFile("links/catalog.properties"));
+			} catch (FileSystemException e) {
+				throw new UnableToConfigureCacheException("unable to create path for links catalog", e);
+			}
+		}
+		return linkResolver;
+	}
 }

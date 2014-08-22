@@ -5,6 +5,7 @@ import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
@@ -14,6 +15,8 @@ import org.apache.commons.vfs2.FileObject;
 import org.apache.commons.vfs2.FileSystemException;
 import org.ndx.lifestream.rendering.OutputWriter;
 import org.ndx.lifestream.rendering.model.Input;
+import org.ndx.lifestream.rendering.notifications.WriteEvent;
+import org.ndx.lifestream.rendering.notifications.WriteListener;
 import org.ndx.lifestream.utils.Constants;
 import org.ndx.lifestream.utils.transform.HtmlToMarkdown;
 
@@ -28,6 +31,11 @@ public abstract class AbstractOutputter implements OutputWriter {
 	protected static final String HTML = "html";
 	private Configuration configuration;
 	private String templateName;
+	/**
+	 * Collection of objects notified when one file is written
+	 */
+	private Collection<WriteListener> listeners = new LinkedList<>();
+	
 
 	public AbstractOutputter() {
 		this(DEFAULT_TEMPLATE_NAME);
@@ -52,6 +60,7 @@ public abstract class AbstractOutputter implements OutputWriter {
 		try {
 			input.accept(this);
 			writeFile(resultFile, render(input));
+			notify(input, resultFile, output);
 		} catch (Exception e) {
 			throw new UnableToRenderException("unable to output render for input file "+resultFile.getName().getPath(), e);
 		}
@@ -163,5 +172,30 @@ public abstract class AbstractOutputter implements OutputWriter {
 		Map<String, Object> parameters = new TreeMap<String, Object>();
 		parameters.put("input", input);
 		return render(parameters);
+	}
+	/**
+	 * @param e
+	 * @return
+	 * @see java.util.Collection#add(java.lang.Object)
+	 * @category delegate
+	 */
+	public void addListener(WriteListener e) {
+		listeners.add(e);
+	}
+	/**
+	 * @param o
+	 * @return
+	 * @see java.util.Collection#remove(java.lang.Object)
+	 * @category delegate
+	 */
+	public void removeListener(WriteListener o) {
+		listeners.remove(o);
+	}
+	
+	protected void notify(Input written, FileObject path, FileObject output) {
+		WriteEvent event = new WriteEvent().withInput(written).withPath(path).withOutputBase(output);
+		for(WriteListener l : listeners) {
+			l.inputWritten(event);
+		}
 	}
 }

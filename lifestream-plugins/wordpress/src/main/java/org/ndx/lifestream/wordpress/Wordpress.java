@@ -18,6 +18,7 @@ import java.util.logging.Logger;
 import org.apache.commons.vfs2.FileObject;
 import org.jdom.Element;
 import org.ndx.lifestream.configuration.CacheLoader;
+import org.ndx.lifestream.configuration.LinkResolver;
 import org.ndx.lifestream.plugin.GaedoEnvironmentProvider;
 import org.ndx.lifestream.plugin.exceptions.AuthenticationFailedException;
 import org.ndx.lifestream.plugin.exceptions.UnableToDownloadContentException;
@@ -70,6 +71,8 @@ public class Wordpress implements InputLoader<Post, WordpressConfiguration> {
 			}
 		});
 		OutputWriter writer = mode.getWriter();
+		LinkResolver linkResolver = configuration.getLinkResolver();
+		writer.addListener(linkResolver);
 		int index = 1;
 		int size = filtered.size();
 		for (Post post : filtered) {
@@ -78,6 +81,7 @@ public class Wordpress implements InputLoader<Post, WordpressConfiguration> {
 			}
 			writer.write(post, outputRoot);
 		}
+		linkResolver.save();
 	}
 
 	public String loadXML(final WebClient client, final WordpressConfiguration configuration) {

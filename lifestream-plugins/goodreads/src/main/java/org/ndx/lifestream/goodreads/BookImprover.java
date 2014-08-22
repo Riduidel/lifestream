@@ -94,13 +94,22 @@ public class BookImprover implements Callable<Void> {
 			}
 			Element url = xpathForUrl.evaluateFirst(bookXmlData);
 			if(url!=null) {
-				returned.url = url.getText();
+				returned.url = simplify(url.getText());
 			}
 			List<Element> authors = xpathForAuthors.evaluate(bookXmlData);
 			for(Element author : authors) {
 				addBookToAuthor(destination, returned, author);
 			}
 			return workId.getText();
+		}
+
+		/**
+		 * Simplify book url by removing anything (inclusive) after last dot positon
+		 * @param text
+		 * @return
+		 */
+		private String simplify(String text) {
+			return text.substring(0, text.lastIndexOf('.'));
 		}
 
 		private void addBookToAuthor(
