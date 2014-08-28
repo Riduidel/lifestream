@@ -11,7 +11,7 @@ import org.ndx.lifestream.rendering.OutputWriter;
  * @author ndx
  *
  */
-public interface Input {
+public interface Input extends Linkable {
 	/**
 	 * List of known additional header keys 
 	 * @author ndx

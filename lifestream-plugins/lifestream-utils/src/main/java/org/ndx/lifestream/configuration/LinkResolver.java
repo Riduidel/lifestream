@@ -1,5 +1,6 @@
 package org.ndx.lifestream.configuration;
 
+import java.io.File;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.Date;
@@ -9,15 +10,20 @@ import java.util.TreeMap;
 
 import org.apache.commons.vfs2.FileObject;
 import org.ndx.lifestream.rendering.model.Input.Headers;
+import org.ndx.lifestream.rendering.model.Linkable;
 import org.ndx.lifestream.rendering.notifications.WriteEvent;
 import org.ndx.lifestream.rendering.notifications.WriteListener;
+import org.ndx.lifestream.rendering.path.ExternalLink;
+import org.ndx.lifestream.rendering.path.RelativeLink;
 
 public class LinkResolver implements WriteListener {
 	private final FileObject storePath;
 	private Map<String, String> resolvedLinks = new TreeMap<>();
+	private final AbstractConfiguration configuration;
 
-	public LinkResolver(FileObject storePath) {
+	public LinkResolver(AbstractConfiguration abstractConfiguration, FileObject storePath) {
 		super();
+		this.configuration = abstractConfiguration;
 		this.storePath = storePath;
 		try {
 			if (storePath.exists()) {
@@ -63,6 +69,24 @@ public class LinkResolver implements WriteListener {
 		String inputSourceUrl = event.getInput().getAdditionalHeaders().get(Headers.SOURCE);
 		if(inputSourceUrl!=null) {
 			resolvedLinks.put(inputSourceUrl, event.getRelativePath());
+		}
+	}
+
+	/**
+	 * Resolves an URL into a ... thingie 
+	 * @param fileObject 
+	 * @param url
+	 */
+	public Linkable resolve(FileObject fileObject, String url) {
+		if(resolvedLinks.containsKey(url)) {
+			String destination = resolvedLinks.get(url);
+			if(destination.endsWith(".md")) {
+				return new RelativeLink(url, destination);
+			} else {
+				return new ExternalLink(url, destination);
+			}
+		} else {
+			return new ExternalLink(url, url);
 		}
 	}
 

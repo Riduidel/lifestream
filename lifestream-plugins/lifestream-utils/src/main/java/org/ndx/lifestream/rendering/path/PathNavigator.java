@@ -17,7 +17,7 @@ public interface PathNavigator {
 	 * @param output
 	 * @return
 	 */
-	FileObject toRealFile(FileObject output) throws IpossibleOnRemoteFileException;
+	FileObject toRealFile(FileObject output) throws ImpossibleOnRemoteFileException;
 
 	String toURI();
 

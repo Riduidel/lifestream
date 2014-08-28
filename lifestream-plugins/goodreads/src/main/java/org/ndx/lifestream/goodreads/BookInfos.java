@@ -1,6 +1,9 @@
 package org.ndx.lifestream.goodreads;
 
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.Date;
 import java.util.Map;
 import java.util.TreeMap;
@@ -79,5 +82,15 @@ public abstract class BookInfos implements Input {
 		} catch (IOException e) {
 			throw new UnableToConfigureGoodreadsException(e);
 		}
+	}
+
+	/**
+	 * As a default, we don't store source url for Goodreads data, well, excepted books, of course
+	 * @return
+	 * @see org.ndx.lifestream.rendering.model.Linkable#getSourceLinks()
+	 */
+	@Override
+	public Collection<String> getSourceLinks() {
+		return Collections.emptyList();
 	}
 }

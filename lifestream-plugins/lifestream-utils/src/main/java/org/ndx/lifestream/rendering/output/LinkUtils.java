@@ -46,7 +46,7 @@ public class LinkUtils {
 
 	public static String relativePath(PathNavigator fromPath, PathNavigator toPath, String extension) {
 		try {
-			return relativePath(fromPath.toPathList(), fromPath.toPathList(), extension);
+			return relativePath(fromPath.toPathList(), toPath.toPathList(), extension);
 		} catch(Exception e) {
 			return toPath.toURI();
 		}

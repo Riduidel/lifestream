@@ -91,11 +91,20 @@ public abstract class AbstractConfiguration implements Configuration {
 	public LinkResolver getLinkResolver() {
 		if(linkResolver==null) {
 			try {
-				linkResolver = new LinkResolver(baseFolder.resolveFile("links/catalog.properties"));
+				linkResolver = new LinkResolver(this, baseFolder.resolveFile("links/catalog.properties"));
 			} catch (FileSystemException e) {
 				throw new UnableToConfigureCacheException("unable to create path for links catalog", e);
 			}
 		}
 		return linkResolver;
+	}
+
+	/**
+	 * @return the baseFolder
+	 * @category getter
+	 * @category baseFolder
+	 */
+	public FileObject getBaseFolder() {
+		return baseFolder;
 	}
 }

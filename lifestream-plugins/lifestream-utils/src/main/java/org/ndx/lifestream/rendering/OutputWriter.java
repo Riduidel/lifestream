@@ -2,6 +2,7 @@ package org.ndx.lifestream.rendering;
 
 import org.apache.commons.vfs2.FileObject;
 import org.ndx.lifestream.rendering.model.Input;
+import org.ndx.lifestream.rendering.model.Linkable;
 import org.ndx.lifestream.rendering.notifications.WriteListener;
 
 /**
@@ -20,16 +21,16 @@ public interface OutputWriter {
 	 * @param text link text
 	 * @return a text that can be freely added to rendered output
 	 */
-	String link(Input from, Input to, String text);
+	String link(Input from, Linkable to, String text);
 
 	/**
-	 * Lower level method than {@link #link(Input, Input, String)} : if link generates a full link, this one concentrates on 
+	 * Lower level method than {@link #link(Input, Linkable, String)} : if link generates a full link, this one concentrates on 
 	 * generating the href linking the two inputs
 	 * @param post
 	 * @param p
 	 * @return
 	 */
-	String href(Input from, Input to);
+	String href(Input from, Linkable to);
 
 	void addListener(WriteListener listener);
 	void removeListener(WriteListener listener);

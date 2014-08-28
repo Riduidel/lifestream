@@ -1,6 +1,7 @@
 package org.ndx.lifestream.goodreads;
 
 import java.text.ParseException;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.Date;
@@ -274,5 +275,10 @@ public class Book extends BookInfos implements Input {
 	}
 	public void setReferences(Collection<Reference> references) {
 		this.references = references;
+	}
+
+	@Override
+	public Collection<String> getSourceLinks() {
+		return Arrays.asList(url);
 	}
 }

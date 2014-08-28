@@ -7,10 +7,14 @@ import java.util.List;
 
 import org.ndx.lifestream.rendering.OutputWriter;
 import org.ndx.lifestream.rendering.model.Input;
+import org.ndx.lifestream.rendering.model.Linkable;
 import org.ndx.lifestream.rendering.output.AbstractOutputter;
 import org.ndx.lifestream.rendering.output.FileNameUtils;
+import org.ndx.lifestream.rendering.path.PathBuilder;
+import org.ndx.lifestream.rendering.path.PathBuilderFinder;
 import org.ndx.lifestream.rendering.path.PathNavigator;
 import org.ndx.lifestream.rendering.path.RelativePath;
+import org.ndx.lifestream.rendering.path.RelativePathBuilder;
 import org.ndx.lifestream.utils.ThreadSafeSimpleDateFormat;
 
 /**
@@ -21,36 +25,55 @@ import org.ndx.lifestream.utils.ThreadSafeSimpleDateFormat;
 public class JekyllOutputter extends AbstractOutputter implements OutputWriter {
 	private static final String DATE_FORMAT = "yyyy-MM-dd";
 	private static final ThreadSafeSimpleDateFormat FORMATTER = new ThreadSafeSimpleDateFormat(DATE_FORMAT);
-
-	/**
-	 * Create a real path from the expected path that {@link Input} can return
-	 * @param input
-	 * @return the real path used by this rendering engine
-	 */
-	protected PathNavigator toRealPath(Input input) {
-		Date writeDate = input.getWriteDate();
-		List<String> returned = new ArrayList<>();
-		Iterator<String> iterator = input.getExpectedPath().iterator();
-		while(iterator.hasNext()) {
-			String filename = FileNameUtils.simplify(iterator.next());
-			if(iterator.hasNext()) {
-				returned.add(filename);
-			} else {
-				filename = (writeDate==null ? "2001-01-01" : FORMATTER.format(writeDate))+"-"+filename.replace('/', '_')+".md";
-				returned.add(filename);
+	
+	public static class JekyllPathBuilderFinder extends PathBuilderFinder {
+		private static class JekyllRelativePathBuilder extends RelativePathBuilder {
+			public JekyllRelativePathBuilder(Input input) {
+				super(input);
 			}
+
+			@Override
+			public PathNavigator build(String extension) {
+				Date writeDate = input.getWriteDate();
+				List<String> returned = new ArrayList<>();
+				Iterator<String> iterator = input.getExpectedPath().iterator();
+				while(iterator.hasNext()) {
+					String filename = FileNameUtils.simplify(iterator.next());
+					if(iterator.hasNext()) {
+						returned.add(filename);
+					} else {
+						filename = (writeDate==null ? "2001-01-01" : FORMATTER.format(writeDate))+"-"+filename.replace('/', '_')+".md";
+						returned.add(filename);
+					}
+				}
+				return new RelativePath(returned);
+			}
+			
 		}
-		return new RelativePath(returned);
+
+		@Override
+		protected RelativePathBuilder newPathBuilderForInput(Input input) {
+			return new JekyllRelativePathBuilder(input);
+		}
+	}
+	
+	@Override
+	protected PathBuilderFinder getPathBuilderFinder() {
+		return new JekyllPathBuilderFinder();
 	}
 
 	@Override
-	public String href(Input from, Input to) {
+	public String href(Input from, Linkable to) {
 		return href(from, to, HTML);
 	}
 
 	@Override
-	public String link(Input from, Input to, String text) {
+	public String link(Input from, Linkable to, String text) {
 		return markdownLink(from, to, text, HTML);
 	}
 
+	@Override
+	protected PathNavigator toRealPath(Linkable input) {
+		return toRealPath(input, MARKDOWN);
+	}
 }

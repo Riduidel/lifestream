@@ -15,22 +15,24 @@ import org.apache.commons.vfs2.FileObject;
 import org.apache.commons.vfs2.FileSystemException;
 import org.ndx.lifestream.rendering.OutputWriter;
 import org.ndx.lifestream.rendering.model.Input;
+import org.ndx.lifestream.rendering.model.Linkable;
 import org.ndx.lifestream.rendering.notifications.WriteEvent;
 import org.ndx.lifestream.rendering.notifications.WriteListener;
+import org.ndx.lifestream.rendering.path.PathBuilderFinder;
 import org.ndx.lifestream.rendering.path.PathNavigator;
 import org.ndx.lifestream.rendering.path.RelativePath;
 import org.ndx.lifestream.utils.Constants;
 import org.ndx.lifestream.utils.transform.HtmlToMarkdown;
 
-import com.google.common.base.Joiner;
-
 import freemarker.template.Configuration;
 import freemarker.template.Template;
 
 public abstract class AbstractOutputter implements OutputWriter {
-
 	private static final String DEFAULT_TEMPLATE_NAME = "page.ftl";
 	protected static final String HTML = "html";
+
+	public static final String MARKDOWN = ".md";
+
 	private Configuration configuration;
 	private String templateName;
 	/**
@@ -94,26 +96,22 @@ public abstract class AbstractOutputter implements OutputWriter {
 	 * @param input
 	 * @return path (from output root) to that file
 	 */
-	protected abstract PathNavigator toRealPath(Input input);
+	protected abstract PathNavigator toRealPath(Linkable input);
 
 	/**
-	 * Default implementation of {@link #toRealPath(Input)} adding an extension to last element
+	 * Default implementation of {@link #toRealPath(Linkable)} adding an extension to last element
 	 */
-	protected  PathNavigator toRealPath(Input input, String extension) {
-		List<String> returned = new ArrayList<>();
-		Collection<String> expectedPath = input.getExpectedPath();
-		Iterator<String> expectedPathIterator = expectedPath.iterator();
-		while(expectedPathIterator.hasNext()) {
-			String pathElement = expectedPathIterator.next();
-			if(expectedPathIterator.hasNext()) {
-				returned.add(FileNameUtils.simplify(pathElement));
-			} else {
-				returned.add(FileNameUtils.simplify(pathElement+extension));
-			}
-		}
-		return new RelativePath(returned);
+	protected  PathNavigator toRealPath(Linkable input, String extension) {
+		return getPathBuilderFinder().get(input).build(extension);
 	}
 
+	/**
+	 * Overrides this method to change how the path builder are associated with inputs.
+	 * @return
+	 */
+	protected PathBuilderFinder getPathBuilderFinder() {
+		return new PathBuilderFinder();
+	}
 	/**
 	 * @param input
 	 * @return path converted to a URI : all File separator are hard-replaced with "/" character
@@ -127,20 +125,20 @@ public abstract class AbstractOutputter implements OutputWriter {
 	 * a file in a subfolder will have a depth of 1, and so on ..
 	 * @param input
 	 * @return a ["../"] sequence with one ".." for each folder
-	 * @see #toRealPath(Input)
+	 * @see #toRealPath(Linkable)
 	 */
 	protected String getDepthOf(Input input) {
 		return toRealPath(input).depth();
 	}
 
-	public String href(Input from, Input to, String extension) {
+	public String href(Input from, Linkable to, String extension) {
 		PathNavigator fromPath = toRealPath(from);
 		// remove last element of from path, as it's the file name
 		PathNavigator toPath = toRealPath(to);
 		return LinkUtils.relativePath(fromPath, toPath, extension);
 	}
 
-	protected String markdownLink(Input from, Input to, String text, String extension) {
+	protected String markdownLink(Input from, Linkable to, String text, String extension) {
 		PathNavigator fromPath = toRealPath(from);
 		// remove last element of from path, as it's the file name
 		PathNavigator toPath = toRealPath(to);

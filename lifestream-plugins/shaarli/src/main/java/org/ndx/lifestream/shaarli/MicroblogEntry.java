@@ -2,6 +2,7 @@ package org.ndx.lifestream.shaarli;
 
 import java.io.IOException;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -185,5 +186,14 @@ public class MicroblogEntry implements Input {
 
 	public void setSource(String sourceLink) {
 		this.source = sourceLink;
+	}
+	/**
+	 * {@link #source} unfortunatly only refers to Shaarli base URL, and not to specific entry URL.
+	 * @return
+	 * @see org.ndx.lifestream.rendering.model.Linkable#getSourceLinks()
+	 */
+	@Override
+	public Collection<String> getSourceLinks() {
+		return Collections.emptyList();
 	}
 }

@@ -1,6 +1,7 @@
 package org.ndx.lifestream.wordpress;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashSet;
@@ -10,9 +11,7 @@ import java.util.TreeMap;
 
 import org.ndx.lifestream.rendering.OutputWriter;
 import org.ndx.lifestream.rendering.model.Input;
-import org.ndx.lifestream.rendering.output.LinkUtils;
-
-import com.dooapp.gaedo.utils.CollectionUtils;
+import org.ndx.lifestream.rendering.model.Linkable;
 
 public class Post implements Input {
 	public static enum Type {
@@ -30,7 +29,7 @@ public class Post implements Input {
 	private Type type;
 	private String source;
 	public String excerpt;
-	private Collection<Post> internalLinks = new HashSet<>();
+	private Collection<Linkable> links = new HashSet<>();
 
 	@Override
 	public String getText() {
@@ -73,10 +72,11 @@ public class Post implements Input {
 	 */
 	@Override
 	public void accept(OutputWriter writer) {
-		for(Post p : internalLinks) {
+		for(Linkable p : links) {
 			String destination = writer.href(this, p);
-			text = text.replace(p.getUri(), destination);
-			text = text.replace(p.getSource(), destination);
+			for(String source : p.getSourceLinks()) {
+				text = text.replace(source, destination);
+			}
 		}
 	}
 
@@ -188,7 +188,12 @@ public class Post implements Input {
 		this.writeDate = writeDate;
 	}
 
-	public void addInternalLinkTo(Post post) {
-		this.internalLinks .add(post);
+	public void addInternalLinkTo(Linkable post) {
+		this.links .add(post);
+	}
+
+	@Override
+	public Collection<String> getSourceLinks() {
+		return Arrays.asList(getUri(), getSource());
 	}
 }
