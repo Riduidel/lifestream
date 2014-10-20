@@ -22,33 +22,34 @@ public class MultiResolver {
 
 	private final WordpressConfiguration configuration;
 
-	public void resolveIn(ExecutorService executor, FinderCrudService<Post, PostInformer> bookService) {
-		for (Post p : bookService.findAll()) {
-			resolveLazily(executor, bookService, p);
+	public void resolveIn(ExecutorService executor, FinderCrudService<Post, PostInformer> service) {
+		for (Post p : service.findAll()) {
+			resolveLazily(executor, service, p);
 		}
 	}
 
-	private void resolveLazily(ExecutorService executor, final FinderCrudService<Post, PostInformer> bookService, final Post p) {
+	private void resolveLazily(final ExecutorService executor, final FinderCrudService<Post, PostInformer> service, final Post p) {
 		executor.execute(new Runnable() {
 			
 			@Override
 			public void run() {
-				resolve(bookService, p);
+				resolve(executor, service, p);
 			}
 		});
 	}
 
-	protected void resolve(FinderCrudService<Post, PostInformer> bookService, Post p) {
+	protected void resolve(ExecutorService executor, FinderCrudService<Post, PostInformer> bookService, Post p) {
 		for(Resolver r : getResolvers()) {
-			r.resolve(bookService, p);
+			r.resolve(executor, bookService, p);
 		}
 	}
 
 	private Collection<Resolver> getResolvers() {
 		return Arrays.asList(
-						new InternalLinksResolver(), 
-						new ShortCodeResolver(client, configuration), 
-						new GoodreadsResolver(configuration)
+						new InternalLinksResolver() 
+						, new ShortCodeResolver(client, configuration) 
+						, new GoodreadsResolver(configuration)
+//						, new WaybackMachineResolver(client, configuration)
 						);
 	}
 

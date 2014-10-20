@@ -1,5 +1,7 @@
 package org.ndx.lifestream.wordpress.resolvers;
 
+import java.util.concurrent.ExecutorService;
+
 import org.ndx.lifestream.utils.transform.HtmlToMarkdown;
 import org.ndx.lifestream.wordpress.Post;
 import org.ndx.lifestream.wordpress.PostInformer;
@@ -22,7 +24,7 @@ public class GoodreadsResolver extends AbstractLinkResolver implements Resolver 
 	}
 
 	@Override
-	protected void resolve(FinderCrudService<Post, PostInformer> bookService, Post p, String url) {
+	protected void resolve(ExecutorService executor, FinderCrudService<Post, PostInformer> bookService, Post p, String url) {
 		if(url.contains("goodreads.com/book")) {
 			int lastSlash = url.lastIndexOf('/');
 			int lastDot = url.lastIndexOf('.');
@@ -31,7 +33,7 @@ public class GoodreadsResolver extends AbstractLinkResolver implements Resolver 
 				url = url.substring(0, lastDot);
 			}
 			// now lookup in resolved links
-			p.addInternalLinkTo(configuration.getLinkResolver().resolve(configuration.getBaseFolder(), url));
+			p.addLinkTo(configuration.getLinkResolver().resolve(configuration.getBaseFolder(), url));
 		}
 	}
 

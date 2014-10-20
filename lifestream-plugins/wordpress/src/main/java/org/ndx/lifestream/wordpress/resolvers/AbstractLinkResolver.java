@@ -1,5 +1,6 @@
 package org.ndx.lifestream.wordpress.resolvers;
 
+import java.util.concurrent.ExecutorService;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -17,7 +18,7 @@ import com.dooapp.gaedo.finders.FinderCrudService;
 public abstract class AbstractLinkResolver {
 	private static final Logger logger = Logger.getLogger(AbstractLinkResolver.class.getName());
 
-	public void resolve(FinderCrudService<Post,PostInformer> bookService, Post p) {
+	public void resolve(ExecutorService executor, FinderCrudService<Post,PostInformer> bookService, Post p) {
 		try {
 			Document d = HtmlToMarkdown.transformToValidXhtmlDocument(p.getText());
 			if(d==null)
@@ -31,7 +32,7 @@ public abstract class AbstractLinkResolver {
 					// All right, node has a destination (hopefully)
 					// Now check if this destination is any other link 
 					final String url = destination.getNodeValue();
-					resolve(bookService, p, url);
+					resolve(executor, bookService, p, url);
 				}
 			}
 		} catch (ParserConfigurationException e) {
@@ -41,6 +42,6 @@ public abstract class AbstractLinkResolver {
 		}
 	}
 
-	protected abstract void resolve(FinderCrudService<Post, PostInformer> bookService, Post p, String url);
+	protected abstract void resolve(ExecutorService executor, FinderCrudService<Post, PostInformer> bookService, Post p, String url);
 
 }

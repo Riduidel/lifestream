@@ -188,7 +188,7 @@ public class Post implements Input {
 		this.writeDate = writeDate;
 	}
 
-	public void addInternalLinkTo(Linkable post) {
+	public void addLinkTo(Linkable post) {
 		this.links .add(post);
 	}
 

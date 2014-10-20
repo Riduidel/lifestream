@@ -2,6 +2,7 @@ package org.ndx.lifestream.wordpress.resolvers;
 
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.concurrent.ExecutorService;
 import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -71,7 +72,7 @@ public class ShortCodeResolver implements Resolver {
 	}
 
 	@Override
-	public void resolve(FinderCrudService<Post, PostInformer> bookService, Post p) {
+	public void resolve(ExecutorService executor, FinderCrudService<Post, PostInformer> bookService, Post p) {
 		String text = p.getText();
 		if(text==null||text.trim().length()==0)
 			return;
