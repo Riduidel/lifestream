@@ -85,4 +85,9 @@ public class WordpressConfiguration extends AbstractConfiguration implements Con
 	public void setThreadCount(int threadCount) {
 		this.threadCount = threadCount;
 	}
+
+	public WordpressConfiguration withTwitterConfiguration(twitter4j.conf.Configuration configuration) {
+		setTwitterConfiguration(configuration);
+		return this;
+	}
 }

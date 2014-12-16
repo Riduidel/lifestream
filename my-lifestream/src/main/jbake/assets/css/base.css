@@ -116,3 +116,33 @@ a.disabled {
    cursor: default;
    color: gray;
 }
+
+/** Specific for twittter messages */
+.twitter_status {
+	display : block
+}
+
+.twitter_status .name {
+	display : none;
+}
+
+.twitter_status .author {
+}
+
+.twitter_status .content:before {
+	content : " > "
+}
+
+.twitter_status .content {
+}
+
+.twitter_status .medias {
+	display : block;
+	margin : 1em;
+}
+
+.twitter_status .date {
+	display : block;
+	float : right;
+	font-style: italic;
+}

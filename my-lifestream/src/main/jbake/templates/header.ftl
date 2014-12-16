@@ -6,6 +6,9 @@
     <!--<link href="<#nested/>css/asciidoctor.css" rel="stylesheet">-->
     <link href="<#nested/>css/base.css" rel="stylesheet">
     <link href="<#nested/>css/bootstrap-responsive.min.css" rel="stylesheet">
+    
+    <link href="<#nested/>css/highlight/styles/solarized_light.css" rel="stylesheet">
+    
 </#macro>
 
 <#if (content.title)??>

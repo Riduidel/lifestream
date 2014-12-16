@@ -16,6 +16,7 @@ public abstract class AbstractConfiguration implements Configuration {
 	private FileObject cacheFolder;
 	private String cachePath;
 	private LinkResolver linkResolver;
+	private twitter4j.conf.Configuration twitterConfiguration;
 
 	public AbstractConfiguration(FileObject baseFolder, String cacheSpecificPath) {
 		super();
@@ -106,5 +107,23 @@ public abstract class AbstractConfiguration implements Configuration {
 	 */
 	public FileObject getBaseFolder() {
 		return baseFolder;
+	}
+
+	/**
+	 * @return the twitterConfiguration
+	 * @category getter
+	 * @category twitterConfiguration
+	 */
+	public twitter4j.conf.Configuration getTwitterConfiguration() {
+		return twitterConfiguration;
+	}
+
+	/**
+	 * @param twitterConfiguration the twitterConfiguration to set
+	 * @category setter
+	 * @category twitterConfiguration
+	 */
+	public void setTwitterConfiguration(twitter4j.conf.Configuration twitterConfiguration) {
+		this.twitterConfiguration = twitterConfiguration;
 	}
 }

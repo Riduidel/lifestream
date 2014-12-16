@@ -63,20 +63,24 @@ public abstract class AbstractOutputter implements OutputWriter {
 		FileObject resultFile = toRealFile(input, output);
 		try {
 			input.accept(this);
-			writeFile(resultFile, render(input));
+			writeHTMLAsMarkdown(resultFile, render(input));
 			notify(input, resultFile, output);
 		} catch (Exception e) {
 			throw new UnableToRenderException("unable to output render for input file "+resultFile.getName().getPath(), e);
 		}
 	}
 
-	protected void writeFile(FileObject resultFile, String resultText)
-			throws IOException, FileSystemException {
+	protected void writeHTMLAsMarkdown(FileObject resultFile, String resultText)
+			throws IOException {
+		writeFile(resultFile, HtmlToMarkdown.transformHtml(resultText));
+	}
+	
+	protected void writeFile(FileObject resultFile, String resultText) throws IOException {
 		if(!resultFile.exists())
 			resultFile.createFile();
 		try (OutputStream outputStream = resultFile.getContent()
 				.getOutputStream()) {
-			IOUtils.write(HtmlToMarkdown.transformHtml(resultText),
+			IOUtils.write(resultText,
 					outputStream, Constants.UTF_8);
 		}
 	}

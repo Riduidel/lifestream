@@ -122,6 +122,8 @@
 									<username>${wordpress.login}</username>
 									<password>${wordpress.password}</password>
 									<site>${wordpress.address}</site>
+					    			<twitterAccessToken>${twitter4j.oauth.accessToken}</twitterAccessToken>
+					    			<twitterAccessTokenSecret>${twitter4j.oauth.accessTokenSecret}</twitterAccessTokenSecret>
 								</configuration>
 							</execution>
 						</executions>

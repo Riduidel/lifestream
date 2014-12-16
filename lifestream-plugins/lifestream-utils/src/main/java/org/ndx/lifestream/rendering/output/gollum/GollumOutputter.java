@@ -38,7 +38,7 @@ public class GollumOutputter extends AbstractOutputter implements OutputWriter {
 			resultFile = output.resolveFile(PATH_JOINER.join(
 					FileNameUtils.simplify(usedPath.toPathList())));
 			input.accept(this);
-			writeFile(resultFile, render(input));
+			writeHTMLAsMarkdown(resultFile, render(input));
 			notify(input, resultFile, output);
 		} catch (Exception e) {
 			throw new GollumException("unable to output render for input "+usedPath, e);

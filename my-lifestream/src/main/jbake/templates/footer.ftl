@@ -3,6 +3,9 @@
     <script language="javascript" type="text/javascript" src="<#nested>js/bootstrap.min.js"></script>
 <!--    <script src="<#nested>js/run_prettify.js"></script>-->
     <script language="javascript" type="text/javascript" src="<#nested>js/lifestream.js"></script>
+
+    <script language="javascript" type="text/javascript" src="<#nested>js/highlight/highlight.pack.js"></script>
+    <script>hljs.initHighlightingOnLoad();</script>
 </#macro>
 
 		</div>
