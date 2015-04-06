@@ -12,7 +12,7 @@ public class GoodreadsConfiguration extends AbstractConfiguration implements Con
 	private int threadCount = 2;
 
 	public GoodreadsConfiguration(FileObject baseFolder) {
-		super(baseFolder, CACHE_BASE_PATH + "goodreads");
+		super(baseFolder, "goodreads");
 	}
 
 	public FileObject getCachedExport() throws FileSystemException {

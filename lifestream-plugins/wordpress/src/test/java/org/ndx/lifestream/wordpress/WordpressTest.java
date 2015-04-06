@@ -15,6 +15,9 @@ import org.junit.Test;
 import org.ndx.lifestream.rendering.output.VFSHelper;
 import org.ndx.lifestream.utils.web.WebClientFactory;
 
+import com.dooapp.gaedo.finders.FinderCrudService;
+import com.dooapp.gaedo.utils.CollectionUtils;
+
 public class WordpressTest {
 	private String site;
 	private String login;
@@ -31,7 +34,7 @@ public class WordpressTest {
 		site = System.getProperty("wordpress.address");
 		assertThat(site, IsNull.notNullValue());
 
-		configuration = new WordpressConfiguration(VFSHelper.getRunningDir()).withLogin(login).withPassword(password).withSite(site);
+		configuration = new WordpressConfiguration(VFSHelper.getRunningDir_for_tests_only()).withLogin(login).withPassword(password).withSite(site);
 
 		tested = new Wordpress();
 	}
@@ -45,7 +48,7 @@ public class WordpressTest {
 	@Test
 	public void canTransformStringInPostCollection() throws IOException {
 		InputStream testXmlFile = getClass().getResourceAsStream("/riduidel039swordpress.wordpress.2013-12-04.xml");
-		Collection<Post> posts = tested.buildPostCollection(testXmlFile);
-		assertThat(posts.size(), IsNot.not(0));
+		FinderCrudService<Post, PostInformer> posts = tested.buildPostCollection(WebClientFactory.getWebClient(), testXmlFile, configuration);
+		assertThat(CollectionUtils.asList(posts.findAll()).size(), IsNot.not(0));
 	}
 }

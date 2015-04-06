@@ -10,8 +10,8 @@ public class FileNameUtils {
 	/**
 	 * Simplify a file name to make it easier to write (removing line returns
 	 * and other non OS friendly characters)
-	 * @param name
-	 * @return
+	 * @param name source file name to simplify
+	 * @return name with lots of characters replaced by "_"
 	 */
 	public static String simplify(String name) {
 		if(name==null)

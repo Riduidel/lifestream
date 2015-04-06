@@ -48,7 +48,7 @@ public class GoodreadsTest {
 
 	@Before
 	public void loadCredentials() {
-		configuration = new GoodreadsConfiguration(VFSHelper.getRunningDir()).withUsername(mail).withPassword(password);
+		configuration = new GoodreadsConfiguration(VFSHelper.getRunningDir_for_tests_only()).withUsername(mail).withPassword(password);
 		tested = new Goodreads();
 	}
 

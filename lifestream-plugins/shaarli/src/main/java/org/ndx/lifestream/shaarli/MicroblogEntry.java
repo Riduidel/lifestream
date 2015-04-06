@@ -1,6 +1,8 @@
 package org.ndx.lifestream.shaarli;
 
+import java.io.IOException;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -10,15 +12,21 @@ import java.util.TreeMap;
 import org.ndx.lifestream.rendering.OutputWriter;
 import org.ndx.lifestream.rendering.model.Input;
 import org.ndx.lifestream.rendering.model.Input.Headers;
-import org.ndx.lifestream.rendering.output.StringTemplateUtils;
-import org.stringtemplate.v4.ST;
-import org.stringtemplate.v4.STRawGroupDir;
+import org.ndx.lifestream.rendering.output.Freemarker;
+
+import freemarker.template.Configuration;
+import freemarker.template.Template;
 
 public class MicroblogEntry implements Input {
-	private static ST template;
+	private static Template template;
 	static {
-		STRawGroupDir shaarliGroup = new STRawGroupDir("templates");
-		template = shaarliGroup.getInstanceOf("link");
+		Configuration shaarliGroup = Freemarker.getConfiguration();
+		shaarliGroup.setClassForTemplateLoading(MicroblogEntry.class, "/templates");
+		try {
+			template = shaarliGroup.getTemplate("link.ftl");
+		} catch (IOException e) {
+			throw new UnableToConfigureShaarliException(e);
+		}
 
 	}
 
@@ -142,16 +150,13 @@ public class MicroblogEntry implements Input {
 	public void accept(OutputWriter writer) {
 		Map<String, Object> parameters = new HashMap<>();
 		parameters.put("link", this);
-		text = StringTemplateUtils.applyParametersToTemplate(template, parameters);
+		text = Freemarker.render(template, parameters);
 	}
 	@Override
 	public String getText() {
 		return text;
 	}
-	/**
-	 * @return
-	 * @see java.lang.Object#toString()
-	 */
+
 	@Override
 	public String toString() {
 		StringBuilder builder = new StringBuilder();
@@ -168,21 +173,23 @@ public class MicroblogEntry implements Input {
 		builder.append("]");
 		return builder.toString();
 	}
-
-	@Override
-	public String getStyle() {
-		return "shaarli";
-	}
-	@Override
-	public String getSource() {
-		return source;
-	}
 	@Override
 	public Map<String, String> getAdditionalHeaders() {
 		Map<String, String> returned = new TreeMap<>();
+		returned.put(Headers.STYLE, "shaarli");
+		returned.put(Headers.SOURCE, source);
 		return returned;
 	}
+
 	public void setSource(String sourceLink) {
 		this.source = sourceLink;
+	}
+	/**
+	 * {@link #source} unfortunatly only refers to Shaarli base URL, and not to specific entry URL.
+	 * @see org.ndx.lifestream.rendering.model.Linkable#getSourceLinks()
+	 */
+	@Override
+	public Collection<String> getSourceLinks() {
+		return Collections.emptyList();
 	}
 }

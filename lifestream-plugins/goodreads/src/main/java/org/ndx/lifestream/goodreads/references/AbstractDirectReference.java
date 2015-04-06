@@ -47,7 +47,6 @@ public abstract class AbstractDirectReference implements Reference {
 	}
 
 	/**
-	 * @return
 	 * @see java.lang.Object#toString()
 	 */
 	@Override

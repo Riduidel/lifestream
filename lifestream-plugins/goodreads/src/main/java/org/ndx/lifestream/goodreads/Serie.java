@@ -12,14 +12,16 @@ import java.util.TreeMap;
 
 import org.ndx.lifestream.rendering.OutputWriter;
 import org.ndx.lifestream.rendering.model.Input;
-import org.ndx.lifestream.rendering.output.StringTemplateUtils;
-import org.stringtemplate.v4.ST;
+import org.ndx.lifestream.rendering.model.Input.Headers;
+import org.ndx.lifestream.rendering.output.Freemarker;
+
+import freemarker.template.Template;
 
 public class Serie extends BookInfos implements Input, Comparable<Serie> {
-	private static ST serie;
+	private static Template serie;
 
 	static {
-		serie = goodreadsGroup.getInstanceOf("serie");
+		serie = BookInfos.loadTemplate("serie.ftl");
 	}
 
 	/**
@@ -61,8 +63,6 @@ public class Serie extends BookInfos implements Input, Comparable<Serie> {
 	/**
 	 * Add book to serie.
 	 * If book read date is anterior to serie date, book read date will be used instead
-	 * @param number
-	 * @param source
 	 */
 	public void setBook(String number, Book source) {
 		books.put(source, number);
@@ -86,7 +86,7 @@ public class Serie extends BookInfos implements Input, Comparable<Serie> {
 		Map<String, Object> parameters = new HashMap<>();
 		parameters.put("serie", this);
 		parameters.put("books", createBooksList(writer));
-		text = StringTemplateUtils.applyParametersToTemplate(serie, parameters);
+		text = Freemarker.render(serie, parameters);
 	}
 
 	/**
@@ -125,6 +125,8 @@ public class Serie extends BookInfos implements Input, Comparable<Serie> {
 
 	@Override
 	public Map<String, String> getAdditionalHeaders() {
-		return Collections.emptyMap();
+		Map<String, String> returned = super.getAdditionalHeaders();
+		returned.put(Headers.STYLE, returned.get(Headers.STYLE)+" "+Headers.Styles.NO_INDEX);
+		return returned;
 	}
 }

@@ -39,9 +39,6 @@ public enum Mode {
 
 	/**
 	 * Get writer for the given output file
-	 *
-	 * @param output
-	 * @return
 	 */
 	public OutputWriter getWriter() {
 		switch(this) {

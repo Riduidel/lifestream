@@ -11,19 +11,23 @@
 	<div class="tag_posts">
 	<!--<ul>-->
 		<#list tag_posts as post>
-		<#if (last_month)??>
-			<#if post.date?string("MMMM yyyy") != last_month>
-				</ul>
+  			<#if (post.style?contains("no-tags"))>
+  			<!-- don't render "${post.title}" styled as "${post.style}" in index -->
+  			<#else>
+			<#if (last_month)??>
+				<#if post.date?string("MMMM yyyy") != last_month>
+					</ul>
+					<h4>${post.date?string("MMMM yyyy")}</h4>
+					<ul>
+				</#if>
+			<#else>
 				<h4>${post.date?string("MMMM yyyy")}</h4>
 				<ul>
 			</#if>
-		<#else>
-			<h4>${post.date?string("MMMM yyyy")}</h4>
-			<ul>
-		</#if>
-
-		<@link_to_post_in_list post=post path=path excludedTag=tag/>
-		<#assign last_month = post.date?string("MMMM yyyy")>
+	
+			<@link_to_post_in_list post=post path=path excludedTag=tag/>
+			<#assign last_month = post.date?string("MMMM yyyy")>
+			</#if>
 		</#list>
 	</ul>
 	</div>

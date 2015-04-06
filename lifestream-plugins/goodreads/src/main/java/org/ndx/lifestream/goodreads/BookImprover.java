@@ -56,16 +56,8 @@ public class BookImprover implements Callable<Void> {
 
 		/**
 		 * Improve book by setting image and title, and also return work id for serie identification
-		 * @param client TODO
-		 * @param query
-		 * @param returned
-		 * @param configuration
 		 * @param destination destination servide for storing all output objects. It is used to locate/create authors
 		 * @return first work id, which will be used to grab serie
-		 * @throws FileSystemException
-		 * @throws IOException
-		 * @throws JDOMException
-		 * @throws UnsupportedEncodingException
 		 */
 		public String improveBook(WebClient client, String query,
 				Book returned,
@@ -94,13 +86,22 @@ public class BookImprover implements Callable<Void> {
 			}
 			Element url = xpathForUrl.evaluateFirst(bookXmlData);
 			if(url!=null) {
-				returned.url = url.getText();
+				returned.url = simplify(url.getText());
 			}
 			List<Element> authors = xpathForAuthors.evaluate(bookXmlData);
 			for(Element author : authors) {
 				addBookToAuthor(destination, returned, author);
 			}
 			return workId.getText();
+		}
+
+		/**
+		 * Simplify book url by removing anything (inclusive) after last dot positon
+		 * @param text
+		 * @return
+		 */
+		private String simplify(String text) {
+			return text.substring(0, text.lastIndexOf('.'));
 		}
 
 		private void addBookToAuthor(
@@ -131,16 +132,7 @@ public class BookImprover implements Callable<Void> {
 		/**
 		 * Get containing serie.
 		 * May fail (XPath exception) if none found
-		 * @param client
-		 * @param destination
-		 * @param workId
-		 * @param source
-		 * @param configuration
 		 * @return collection of series this book associates to
-		 * @throws MalformedURLException
-		 * @throws UnsupportedEncodingException
-		 * @throws IOException
-		 * @throws JDOMException
 		 */
 		public Collection<Serie> improveBook(WebClient client,
 				FinderCrudService<BookInfos, BookInfosInformer> destination,

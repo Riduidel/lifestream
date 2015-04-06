@@ -11,7 +11,7 @@ public class ShaarliConfiguration extends AbstractConfiguration {
 	private String site;
 
 	public ShaarliConfiguration(FileObject baseFolder) {
-		super(baseFolder, CACHE_BASE_PATH+"shaarli/");
+		super(baseFolder, "shaarli/");
 	}
 
 	public String getLogin() {

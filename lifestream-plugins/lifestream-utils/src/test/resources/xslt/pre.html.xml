@@ -1,0 +1,16 @@
+<html>
+<body>
+<h1>Monoline preformarted</h1>
+<pre>texte</pre>
+<h1>On his own line</h1>
+<pre>
+texte
+</pre>
+<h1>Two lines long</h1>
+<pre>
+first line
+second line
+</pre>
+
+</body>
+</html>

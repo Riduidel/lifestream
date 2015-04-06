@@ -41,7 +41,7 @@ public class ShaarliTest {
 		site = System.getProperty("shaarli.address");
 		assertThat(site, IsNull.notNullValue());
 
-		configuration = new ShaarliConfiguration(VFSHelper.getRunningDir()).withLogin(login).withPassword(password).withSite(site);
+		configuration = new ShaarliConfiguration(VFSHelper.getRunningDir_for_tests_only()).withLogin(login).withPassword(password).withSite(site);
 
 		tested = new Shaarli();
 	}

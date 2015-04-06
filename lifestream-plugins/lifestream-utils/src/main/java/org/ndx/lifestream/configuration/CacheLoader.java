@@ -4,7 +4,7 @@ public interface CacheLoader {
 
 	/**
 	 * Load cache content with data coming from source service
-	 * @return
+	 * @return text content to cache
 	 */
 	String load() throws Exception;
 

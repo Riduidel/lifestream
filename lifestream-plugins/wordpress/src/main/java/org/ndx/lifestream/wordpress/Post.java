@@ -4,30 +4,32 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.Map;
 import java.util.TreeMap;
 
 import org.ndx.lifestream.rendering.OutputWriter;
 import org.ndx.lifestream.rendering.model.Input;
-import org.ndx.lifestream.rendering.model.Input.Headers;
+import org.ndx.lifestream.rendering.model.Linkable;
 
 public class Post implements Input {
 	public static enum Type {
 		post, attachment, page, link;
 	}
 
-	String title;
-	String uri;
+	private String title;
+	private String uri;
 	Collection<String> tags;
-	String text;
-	Date writeDate;
+	private String text;
+	private Date writeDate;
 	Collection<Comment> comments = new ArrayList<>();
 
-	String basename;
-	Type type;
-	public String source;
+	private String basename;
+	private Type type;
+	private String source;
 	public String excerpt;
+	private Collection<Linkable> links = new HashSet<>();
 
 	@Override
 	public String getText() {
@@ -70,23 +72,128 @@ public class Post implements Input {
 	 */
 	@Override
 	public void accept(OutputWriter writer) {
-		// TODO Auto-generated method stub
-
+		for(Linkable p : links) {
+			String destination = writer.href(this, p);
+			for(String source : p.getSourceLinks()) {
+				text = text.replace(source, destination);
+			}
+		}
 	}
 
-	@Override
-	public String getStyle() {
-		return "wordpress";
-	}
-
-	@Override
-	public String getSource() {
-		return source;
-	}
 	@Override
 	public Map<String, String> getAdditionalHeaders() {
 		Map<String, String> returned = new TreeMap<>();
-		returned.put("excerpt", excerpt);
+		returned.put(Headers.EXCERPT, excerpt);
+		returned.put(Headers.STYLE, "wordpress");
+		returned.put(Headers.SOURCE, source);
 		return returned;
+	}
+
+	/**
+	 * @return the uri
+	 * @category getter
+	 * @category uri
+	 */
+	public String getUri() {
+		return uri;
+	}
+
+	/**
+	 * @param uri the uri to set
+	 * @category setter
+	 * @category uri
+	 */
+	public void setUri(String uri) {
+		this.uri = uri;
+	}
+
+	/**
+	 * @return the basename
+	 * @category getter
+	 * @category basename
+	 */
+	public String getBasename() {
+		return basename;
+	}
+
+	/**
+	 * @param basename the basename to set
+	 * @category setter
+	 * @category basename
+	 */
+	public void setBasename(String basename) {
+		this.basename = basename;
+	}
+
+	/**
+	 * @return the type
+	 * @category getter
+	 * @category type
+	 */
+	public Type getType() {
+		return type;
+	}
+
+	/**
+	 * @param type the type to set
+	 * @category setter
+	 * @category type
+	 */
+	public void setType(Type type) {
+		this.type = type;
+	}
+
+	/**
+	 * @return the source
+	 * @category getter
+	 * @category source
+	 */
+	public String getSource() {
+		return source;
+	}
+
+	/**
+	 * @param source the source to set
+	 * @category setter
+	 * @category source
+	 */
+	public void setSource(String source) {
+		this.source = source;
+	}
+
+	/**
+	 * @param title the title to set
+	 * @category setter
+	 * @category title
+	 */
+	public void setTitle(String title) {
+		this.title = title;
+	}
+
+	/**
+	 * @param text the text to set
+	 * @category setter
+	 * @category text
+	 */
+	public void setText(String text) {
+		this.text = text;
+	}
+
+	/**
+	 * @param writeDate the writeDate to set
+	 * @category setter
+	 * @category writeDate
+	 */
+	public void setWriteDate(Date writeDate) {
+		this.writeDate = writeDate;
+	}
+
+	public void addLinkTo(Linkable post) {
+		this.links .add(post);
+	}
+
+	@Override
+	public Collection<String> getSourceLinks() {
+		return Arrays.asList(getUri(), getSource());
 	}
 }

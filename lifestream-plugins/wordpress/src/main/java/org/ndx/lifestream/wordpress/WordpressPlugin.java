@@ -2,12 +2,11 @@ package org.ndx.lifestream.wordpress;
 
 import java.io.File;
 
-import org.apache.maven.plugin.AbstractMojo;
-import org.apache.maven.plugin.MojoExecutionException;
-import org.apache.maven.plugin.MojoFailureException;
+import org.ndx.lifestream.configuration.Configuration;
 import org.ndx.lifestream.plugin.AbstractLifestreamPlugin;
 import org.ndx.lifestream.rendering.model.InputLoader;
-import org.ndx.lifestream.rendering.output.VFSHelper;
+
+import twitter4j.conf.ConfigurationBuilder;
 
 /**
  *
@@ -17,8 +16,15 @@ import org.ndx.lifestream.rendering.output.VFSHelper;
  * @requiresDependencyResolution runtime
  */
 public class WordpressPlugin extends AbstractLifestreamPlugin<Post, WordpressConfiguration> {
+	
 	/**
-	 * username on goodreads site
+	 * Path for caching any kind of data, be it data downloaded from the web, or built by plugin
+	 * @parameter
+	 *            default-value="${project.basedir}/.cache/"
+	 */
+	protected File cache;
+	/**
+	 * username on Wordpress site
 	 *
 	 * @parameter alias="username"
 	 * @required
@@ -27,7 +33,7 @@ public class WordpressPlugin extends AbstractLifestreamPlugin<Post, WordpressCon
 
 
 	/**
-	 * password on goodreads site
+	 * password on Wordpress site
 	 *
 	 * @parameter alias="password"
 	 * @required
@@ -56,6 +62,18 @@ public class WordpressPlugin extends AbstractLifestreamPlugin<Post, WordpressCon
 	 *            default-value="${project.basedir}/src/main/site/markdown/"
 	 */
 	protected File output;
+	
+	/**
+	 * Twitter access token for Riduidel's lifestream twitter application
+	 * @parameter 
+	 */
+	protected String twitterAccessToken;
+	
+	/**
+	 * Twitter access token secret for Riduidel's lifestream twitter application
+	 * @parameter 
+	 */
+	protected String twitterAccessTokenSecret;
 
 	protected final File getOutput() {
 		return output;
@@ -72,7 +90,39 @@ public class WordpressPlugin extends AbstractLifestreamPlugin<Post, WordpressCon
 
 	@Override
 	protected WordpressConfiguration createConfiguration() {
-		return new WordpressConfiguration(VFSHelper.getRunningDir()).withLogin(username).withPassword(password).withSite(site);
+		return new WordpressConfiguration(getCacheObject()).withLogin(username).withPassword(password).withSite(site).withTwitterConfiguration(createTwitterConfiguration());
+	}
+
+	protected twitter4j.conf.Configuration createTwitterConfiguration() {
+		ConfigurationBuilder builder =  new ConfigurationBuilder();
+		builder.setOAuthConsumerKey(Configuration.Twitter.CONSUMER_KEY);
+		builder.setOAuthConsumerSecret(Configuration.Twitter.CONSUMER_SECRET);
+		builder.setOAuthAccessToken(getTwitterAccessToken());
+		builder.setOAuthAccessTokenSecret(getTwitterAccessTokenSecret());
+		return builder.build();
+	}
+
+	@Override
+	protected File getCache() {
+		return cache;
+	}
+
+	/**
+	 * @return the twitterAccessToken
+	 * @category getter
+	 * @category twitterAccessToken
+	 */
+	public String getTwitterAccessToken() {
+		return twitterAccessToken;
+	}
+
+	/**
+	 * @return the twitterAccessTokenSecret
+	 * @category getter
+	 * @category twitterAccessTokenSecret
+	 */
+	public String getTwitterAccessTokenSecret() {
+		return twitterAccessTokenSecret;
 	}
 
 }

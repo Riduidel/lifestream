@@ -42,10 +42,7 @@ public abstract class AbstractFuzzyReference implements Reference {
 	public String getText() {
 		return getSearchedText();
 	}
-	/**
-	 * @return
-	 * @see java.lang.Object#toString()
-	 */
+
 	@Override
 	public String toString() {
 		StringBuilder builder = new StringBuilder();
@@ -71,7 +68,15 @@ public abstract class AbstractFuzzyReference implements Reference {
 	public String getLink(OutputWriter writer, Book source) {
 		String link = getText();
 		if(getDestination()!=null) {
-			link = writer.link(source, getDestination(), String.format("<strike>%s</strike> %s", link, getDestination().getTitle()));
+			String searchedText = link;
+			String foundText = getDestination().getTitle();
+			if(searchedText.equalsIgnoreCase(foundText)) {
+				link = writer.link(source, getDestination(), foundText);
+			} else {
+				link = writer.link(source, getDestination(), 
+								String.format("<strike>%s</strike> %s", 
+												searchedText, foundText));
+			}
 		}
 		return link;
 	}

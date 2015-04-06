@@ -32,7 +32,7 @@ public class GaedoEnvironmentProvider {
 	/**
 	 * Notice that created service repository won't have any service loaded in.
 	 * To load services, one will have to add it by himself
-	 * @return
+	 * @return a valid gaedo service repository
 	 */
 	public ServiceRepository getRepository() {
 		if(repository==null) {

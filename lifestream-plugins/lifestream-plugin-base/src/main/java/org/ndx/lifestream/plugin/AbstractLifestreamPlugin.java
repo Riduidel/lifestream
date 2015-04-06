@@ -7,10 +7,12 @@ import java.util.logging.LogManager;
 import java.util.logging.Logger;
 
 import org.apache.commons.vfs2.FileObject;
+import org.apache.commons.vfs2.FileSystemException;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.ndx.lifestream.configuration.Configuration;
+import org.ndx.lifestream.plugin.exceptions.UnableToResolveCacheFolderException;
 import org.ndx.lifestream.rendering.Mode;
 import org.ndx.lifestream.rendering.model.Input;
 import org.ndx.lifestream.rendering.model.InputLoader;
@@ -61,4 +63,19 @@ public abstract class AbstractLifestreamPlugin<Type extends Input, Configuration
 	}
 
 	protected abstract ConfigurationType createConfiguration();
+
+	protected FileObject getCacheObject() {
+		try {
+			return VFSHelper.getManager().resolveFile(getCache().getAbsolutePath());
+		} catch (FileSystemException e) {
+			throw new UnableToResolveCacheFolderException("Unable to build file object for path "+getCache().getAbsolutePath(), e);
+		}
+	}
+
+	/**
+	 * @return the cache
+	 * @category getter
+	 * @category cache
+	 */
+	protected abstract File getCache();
 }

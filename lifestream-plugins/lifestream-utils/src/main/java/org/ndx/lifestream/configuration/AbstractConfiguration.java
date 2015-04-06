@@ -12,10 +12,11 @@ import org.ndx.lifestream.utils.exception.LifestreamException;
 
 public abstract class AbstractConfiguration implements Configuration {
 
-	protected static final String CACHE_BASE_PATH = "target/cache/";
 	private final FileObject baseFolder;
 	private FileObject cacheFolder;
 	private String cachePath;
+	private LinkResolver linkResolver;
+	private twitter4j.conf.Configuration twitterConfiguration;
 
 	public AbstractConfiguration(FileObject baseFolder, String cacheSpecificPath) {
 		super();
@@ -28,7 +29,7 @@ public abstract class AbstractConfiguration implements Configuration {
 			try {
 				cacheFolder = baseFolder.resolveFile(cachePath);
 			} catch (FileSystemException e) {
-				throw new UnableToConfigureCacheException(e);
+				throw new UnableToConfigureCacheException("Unable to load path for cache folder "+ cachePath, e);
 			}
 		}
 		return cacheFolder;
@@ -40,17 +41,28 @@ public abstract class AbstractConfiguration implements Configuration {
 
 	/**
 	 * Refresh cached file with given cache laoder and output the content of that cached file	 * @return
-	 * @throws IOException
-	 * @throws FileSystemException
+	 * @throws IOException I/O exceptions
+	 * @throws FileSystemException Commons VFS exceptions
 	 */
 	public String refreshCacheWith(CacheLoader cacheLaoder) throws FileSystemException, IOException {
+		return getFromCacheOrLoad(cacheLaoder, getCachedExport(), getCacheTimeout());
+	}
+
+	/**
+	 * Download data from the web or load it from the cache if it was already in cache
+	 * @param cacheLaoder object used to load object from web if needed
+	 * @param cachedPath path under which it will be cached
+	 * @param cacheTimeout time out for cache
+	 * @return the content of file, has it been loaded from web, or from cache
+	 * @throws IOException I/O exceptions
+	 * @throws FileSystemException Commons VFS exceptions
+	 */
+	public String getFromCacheOrLoad(CacheLoader cacheLaoder, FileObject cachedPath, long cacheTimeout) throws FileSystemException, IOException {
 		String content = null;
-		FileObject cachedExport = getCachedExport();
-		if(cachedExport.exists()) {
-			long lastModifiedTime = cachedExport.getContent().getLastModifiedTime();
-			// csv can be download each day (not many peop
-			if((System.currentTimeMillis()-lastModifiedTime)<getCacheTimeout()) {
-				try(InputStream fileContent = cachedExport.getContent().getInputStream()) {
+		if(cachedPath.exists()) {
+			long lastModifiedTime = cachedPath.getContent().getLastModifiedTime();
+			if(cacheTimeout<0 || (System.currentTimeMillis()-lastModifiedTime)<cacheTimeout) {
+				try(InputStream fileContent = cachedPath.getContent().getInputStream()) {
 					content = IOUtils.toString(fileContent, Constants.UTF_8);
 				}
 			}
@@ -58,17 +70,60 @@ public abstract class AbstractConfiguration implements Configuration {
 		if(content==null) {
 			try {
 				content = cacheLaoder.load();
-				try(OutputStream fileContent = cachedExport.getContent().getOutputStream()) {
+				try(OutputStream fileContent = cachedPath.getContent().getOutputStream()) {
 					IOUtils.write(content, fileContent, Constants.UTF_8);
 				}
 			} catch (LifestreamException e) {
 				throw e;
 			} catch (Exception e) {
-				throw new UnableToRefreshCacheException(e);
+				throw new UnableToRefreshCacheException("Something strange happened while trying to refresh cache in "+cachePath, e);
 			}
 		}
 		return content;
 	}
 
 	public abstract FileObject getCachedExport() throws FileSystemException;
+
+	/**
+	 * @return the linkResolver
+	 * @category getter
+	 * @category linkResolver
+	 */
+	public LinkResolver getLinkResolver() {
+		if(linkResolver==null) {
+			try {
+				linkResolver = new LinkResolver(this, baseFolder.resolveFile("links/catalog.properties"));
+			} catch (FileSystemException e) {
+				throw new UnableToConfigureCacheException("unable to create path for links catalog", e);
+			}
+		}
+		return linkResolver;
+	}
+
+	/**
+	 * @return the baseFolder
+	 * @category getter
+	 * @category baseFolder
+	 */
+	public FileObject getBaseFolder() {
+		return baseFolder;
+	}
+
+	/**
+	 * @return the twitterConfiguration
+	 * @category getter
+	 * @category twitterConfiguration
+	 */
+	public twitter4j.conf.Configuration getTwitterConfiguration() {
+		return twitterConfiguration;
+	}
+
+	/**
+	 * @param twitterConfiguration the twitterConfiguration to set
+	 * @category setter
+	 * @category twitterConfiguration
+	 */
+	public void setTwitterConfiguration(twitter4j.conf.Configuration twitterConfiguration) {
+		this.twitterConfiguration = twitterConfiguration;
+	}
 }

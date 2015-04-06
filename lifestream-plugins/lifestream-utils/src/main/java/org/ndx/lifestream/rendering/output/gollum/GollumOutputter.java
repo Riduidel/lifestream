@@ -1,23 +1,15 @@
 package org.ndx.lifestream.rendering.output.gollum;
 
-import java.io.OutputStream;
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import org.apache.commons.io.IOUtils;
 import org.apache.commons.vfs2.FileObject;
 import org.ndx.lifestream.rendering.OutputWriter;
 import org.ndx.lifestream.rendering.model.Input;
+import org.ndx.lifestream.rendering.model.Linkable;
 import org.ndx.lifestream.rendering.output.AbstractOutputter;
 import org.ndx.lifestream.rendering.output.FileNameUtils;
-import org.ndx.lifestream.rendering.output.StringTemplateUtils;
-import org.ndx.lifestream.utils.transform.HtmlToMarkdown;
-import org.stringtemplate.v4.ST;
+import org.ndx.lifestream.rendering.path.PathNavigator;
 
 import com.google.common.base.Joiner;
 
@@ -28,42 +20,38 @@ import com.google.common.base.Joiner;
  *
  */
 public class GollumOutputter extends AbstractOutputter implements OutputWriter {
+
 	private static final Logger logger = Logger.getLogger(GollumOutputter.class.getName());
 
 	private static final Joiner PATH_JOINER = Joiner.on('/').skipNulls();
 
-	/**
-	 * Gollum template is simple, non ?
-	 */
-	private ST gollum= new ST("<text>");
-
 	@Override
-	protected List<String> toRealPath(Input input) {
-		return super.toRealPath(input, ".md");
+	protected PathNavigator toRealPath(Linkable input) {
+		return super.toRealPath(input, MARKDOWN);
 	}
 
 	@Override
 	public void write(Input input, FileObject output) {
 		FileObject resultFile;
-		Collection<String> usedPath = toRealPath(input);
+		PathNavigator usedPath = toRealPath(input);
 		try {
 			resultFile = output.resolveFile(PATH_JOINER.join(
-					FileNameUtils.simplify(usedPath)));
+					FileNameUtils.simplify(usedPath.toPathList())));
 			input.accept(this);
-			writeFile(resultFile, render(input));
+			writeHTMLAsMarkdown(resultFile, render(input));
+			notify(input, resultFile, output);
 		} catch (Exception e) {
 			throw new GollumException("unable to output render for input "+usedPath, e);
 		}
 	}
 
-	protected String render(Input input) {
-		Map<String, Object> parameters = new HashMap<>();
-		parameters.put("text", input);
-		return StringTemplateUtils.applyParametersToTemplate(gollum, parameters);
+	@Override
+	public String href(Input from, Linkable to) {
+		return href(from, to, HTML);
 	}
 
 	@Override
-	public String link(Input from, Input to, String text) {
-		return markdownLink(from, to, text, "html");
+	public String link(Input from, Linkable to, String text) {
+		return markdownLink(from, to, text, HTML);
 	}
 }

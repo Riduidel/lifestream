@@ -1,9 +1,6 @@
 package org.ndx.lifestream.goodreads.references;
 
 import org.ndx.lifestream.goodreads.Author;
-import org.ndx.lifestream.goodreads.Book;
-import org.ndx.lifestream.goodreads.BookInfos;
-import org.ndx.lifestream.rendering.OutputWriter;
 
 public class DirectAuthorReference extends AbstractDirectReference implements Reference {
 
@@ -20,7 +17,6 @@ public class DirectAuthorReference extends AbstractDirectReference implements Re
 	}
 
 	/**
-	 * @return
 	 * @see org.ndx.lifestream.goodreads.references.AbstractDirectReference#getDestination()
 	 */
 	@Override

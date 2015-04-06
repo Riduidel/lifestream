@@ -37,7 +37,7 @@ public class GoodreadsReferencesTest {
 
 	@Before
 	public void loadAndAssembleData() throws Exception {
-		configuration = new GoodreadsConfiguration(VFSHelper.getRunningDir());
+		configuration = new GoodreadsConfiguration(VFSHelper.getRunningDir_for_tests_only());
 		tested = new Goodreads();
 		InputStream testCsvFile = getClass().getResourceAsStream("/goodreads_export_Riduidel_20310812.csv");
 		String testedString = IOUtils.toString(testCsvFile);

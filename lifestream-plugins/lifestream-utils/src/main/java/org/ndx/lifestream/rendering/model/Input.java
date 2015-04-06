@@ -11,10 +11,26 @@ import org.ndx.lifestream.rendering.OutputWriter;
  * @author ndx
  *
  */
-public interface Input {
+public interface Input extends Linkable {
+	/**
+	 * List of known additional header keys 
+	 * @author ndx
+	 *
+	 */
 	public static interface Headers {
+		public static interface Styles {
+			/**
+			 * used for elements that shouldn't be displayed on index
+			 */
+			static final String NO_INDEX = "no-index";
+			static final String NO_ARCHIVE = "no-archive";
+			static final String NO_TAGS = "no-tags";
+		}
 		static final String SMALL_IMAGE = "smallImage";
 		static final String BIG_IMAGE = "bigImage";
+		static final String SOURCE = "source";
+		static final String STYLE = "style";
+		static final String EXCERPT = "excerpt";
 	}
 
 	/**
@@ -32,7 +48,6 @@ public interface Input {
 
 	/**
 	 * Get write date of entry. When null, this date is considered to be the 01/01/2001
-	 * @return
 	 */
 	Date getWriteDate();
 
@@ -44,18 +59,6 @@ public interface Input {
 	 * @param writer writer used to finally write file
 	 */
 	void accept(OutputWriter writer);
-
-	/**
-	 * Get style to use to render that entry
-	 * @return
-	 */
-	String getStyle();
-
-	/**
-	 * Get a source url for that entry
-	 * @return
-	 */
-	String getSource();
 	/**
 	 * Allow input to provide additional header entries. 
 	 * @return a non null map, please

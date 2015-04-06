@@ -53,7 +53,10 @@
 
 <#macro link_to_post_with_tags post=post path=path excludedTag="">
 		<span
-			data-tags="${merge_tags_for_hiding(post.tags)}">${post.date?string("dd")} - <@link_to_post post=post path=path/><br/>
+			<#if post.tags??>
+			data-tags="${merge_tags_for_hiding(post.tags)}"
+			</#if>
+			>${post.date?string("dd")} - <@link_to_post post=post path=path/><br/>
 			<#if (post.tags)??>
 			<@tag_list tagList=post.tags depth=path+"tags/" excludedTag=tag/>
 			</#if>
@@ -61,13 +64,17 @@
 </#macro>
 
 <#macro link_to_post_in_list post=post path=path excludedTag="">
-		<li class="post-link" data-tags="${merge_tags_for_hiding(post.tags)}">
+		<li class="post-link" 
+		<#if post.tags??>
+			data-tags="${merge_tags_for_hiding(post.tags)}"
+		</#if>
+		>
 			<@link_to_post_with_tags post=post path=path excludedTag=excludedTag/></li>
 </#macro>
 
 <#macro display_post content depth="">
 	<#if (content.title)??>
-  <div class="row-fluid">
+  <div class="row-fluid <#if (content.style)??>${content.style}</#if>">
     <div class="span10 offset2">
   		<a href="${fix_uri(content.uri)}"><h1>${content.title}</h1></a>
 	</div>
@@ -82,7 +89,7 @@
 		</#if>
 		<#if (content.source)??><a href="${content.source}" class="source">source</a></#if>
     </div>
-    <div class="span10">
+    <div class="span10 content">
 		${content.body}
 	</div>
   </div>

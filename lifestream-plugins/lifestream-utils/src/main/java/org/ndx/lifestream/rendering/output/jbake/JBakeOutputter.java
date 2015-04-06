@@ -1,32 +1,31 @@
 package org.ndx.lifestream.rendering.output.jbake;
 
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import org.ndx.lifestream.rendering.OutputWriter;
 import org.ndx.lifestream.rendering.model.Input;
-import org.ndx.lifestream.rendering.output.AbstractStringTemplateBackedOutputter;
-import org.ndx.lifestream.rendering.output.StringTemplateUtils;
+import org.ndx.lifestream.rendering.model.Linkable;
+import org.ndx.lifestream.rendering.output.AbstractOutputter;
+import org.ndx.lifestream.rendering.path.PathNavigator;
+import org.ndx.lifestream.utils.ThreadSafeSimpleDateFormat;
 
-public class JBakeOutputter extends AbstractStringTemplateBackedOutputter implements OutputWriter {
-	private static DateFormat jbakeFormat = new SimpleDateFormat("yyyy-MM-dd");
+public class JBakeOutputter extends AbstractOutputter implements OutputWriter {
+	private static ThreadSafeSimpleDateFormat jbakeFormat = new ThreadSafeSimpleDateFormat("yyyy-MM-dd");
 
-	public JBakeOutputter() {
-		super("jbake", "page");
+	@Override
+	public String href(Input from, Linkable to) {
+		return href(from, to, HTML);
 	}
 
 	@Override
-	public String link(Input from, Input to, String text) {
-		return markdownLink(from, to, text, "html");
+	public String link(Input from, Linkable to, String text) {
+		return markdownLink(from, to, text, HTML);
 	}
 
-
 	@Override
-	protected List<String> toRealPath(Input input) {
-		return toRealPath(input, ".md");
+	protected PathNavigator toRealPath(Linkable input) {
+		return toRealPath(input, MARKDOWN);
 	}
 
 	protected String render(Input input) {
@@ -35,6 +34,6 @@ public class JBakeOutputter extends AbstractStringTemplateBackedOutputter implem
 		parameters.put("uri", getUriOf(input));
 		parameters.put("input", input);
 		parameters.put("writeDate", jbakeFormat.format(input.getWriteDate()));
-		return StringTemplateUtils.applyParametersToTemplate(page, parameters);
+		return render(parameters);
 	}
 }

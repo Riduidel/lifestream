@@ -104,3 +104,45 @@ li.not_matching {
 	margin-right: 0.5em;
 	vertical-align:middle;
 }
+
+.shaarli h1 {
+	visibility:hidden;
+	display:none;
+}
+
+/** used to disable relative links on index page */
+a.disabled {
+   pointer-events: none;
+   cursor: default;
+   color: gray;
+}
+
+/** Specific for twittter messages */
+.twitter_status {
+	display : block
+}
+
+.twitter_status .name {
+	display : none;
+}
+
+.twitter_status .author {
+}
+
+.twitter_status .content:before {
+	content : " > "
+}
+
+.twitter_status .content {
+}
+
+.twitter_status .medias {
+	display : block;
+	margin : 1em;
+}
+
+.twitter_status .date {
+	display : block;
+	float : right;
+	font-style: italic;
+}

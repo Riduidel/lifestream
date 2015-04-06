@@ -1,11 +1,11 @@
 package org.ndx.lifestream.goodreads;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -13,15 +13,15 @@ import java.util.TreeMap;
 import java.util.TreeSet;
 
 import org.ndx.lifestream.rendering.OutputWriter;
-import org.ndx.lifestream.rendering.model.Input.Headers;
-import org.ndx.lifestream.rendering.output.StringTemplateUtils;
-import org.stringtemplate.v4.ST;
+import org.ndx.lifestream.rendering.output.Freemarker;
+
+import freemarker.template.Template;
 
 public class Author extends BookInfos implements Comparable<Author>{
-	private static ST author;
+	private static Template author;
 
 	static {
-		author = goodreadsGroup.getInstanceOf("author");
+		author = BookInfos.loadTemplate("author.ftl");
 	}
 
 
@@ -67,7 +67,7 @@ public class Author extends BookInfos implements Comparable<Author>{
 		Map<String, Object> parameters = new HashMap<>();
 		parameters.put("author", this);
 		parameters.put("books", createBooksList(writer));
-		text = StringTemplateUtils.applyParametersToTemplate(author, parameters);
+		text = Freemarker.render(author, parameters);
 	}
 
 	/**
@@ -111,8 +111,9 @@ public class Author extends BookInfos implements Comparable<Author>{
 
 	@Override
 	public Map<String, String> getAdditionalHeaders() {
-		Map<String, String> returned = new TreeMap<>();
+		Map<String, String> returned = super.getAdditionalHeaders();
 		returned.put(Headers.BIG_IMAGE, image);
+		returned.put(Headers.STYLE, returned.get(Headers.STYLE)+" "+Headers.Styles.NO_INDEX);
 		return returned;
 	}
 

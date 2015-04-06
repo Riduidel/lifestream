@@ -1,12 +1,10 @@
 package org.ndx.lifestream.goodreads;
 
-import static org.hamcrest.core.Is.is;
-import static org.junit.Assert.assertThat;
-
 import java.util.Collection;
 import java.util.TreeMap;
 
 import org.apache.commons.vfs2.FileSystemException;
+import org.hamcrest.CoreMatchers;
 import org.hamcrest.core.Is;
 import org.hamcrest.core.IsInstanceOf;
 import org.junit.Before;
@@ -22,6 +20,10 @@ import com.dooapp.gaedo.finders.FinderCrudService;
 import com.dooapp.gaedo.utils.CollectionUtils;
 import com.gargoylesoftware.htmlunit.WebClient;
 
+import static org.hamcrest.core.Is.is;
+
+import static org.junit.Assert.assertThat;
+
 public class BookImproverTest {
 	private static WebClient webClient;
 	private static AbstractConfiguration configuration;
@@ -30,7 +32,7 @@ public class BookImproverTest {
 
 	@BeforeClass public static void loadWebClient() throws FileSystemException {
 		webClient = WebClientFactory.getWebClient();
-		configuration = new GoodreadsConfiguration(VFSHelper.getRunningDir());
+		configuration = new GoodreadsConfiguration(VFSHelper.getRunningDir_for_tests_only());
 	}
 
 	@Before public void loadGaedo() throws FileSystemException {
@@ -52,7 +54,7 @@ public class BookImproverTest {
 		BookInfos book = returned.iterator().next();
 		assertThat(book, IsInstanceOf.instanceOf(Book.class));
 		Book improved = (Book) book;
-		assertThat(improved.bigImage, Is.is("http://d202m5krfqbpi5.cloudfront.net/books/1369382445m/17973574.jpg"));
+		assertThat(improved.bigImage, CoreMatchers.endsWith("17973574.jpg"));
 		assertThat(improved.getTitle(), Is.is("Le chasseur et son ombre"));
 	}
 
@@ -86,7 +88,7 @@ public class BookImproverTest {
 		BookInfos book = returned.iterator().next();
 		assertThat(book, IsInstanceOf.instanceOf(Book.class));
 		Book improved = (Book) book;
-		assertThat(improved.getTitle(), Is.is("Battle Angel - Alita Last Order: Angel of Protest (Vol. 4)"));
+		assertThat(improved.getTitle(), Is.is("Battle Angel Alita - Last Order : Angel of Protest, Vol. 04"));
 		assertThat(improved.getSeries().size(), Is.is(1));
 	}
 

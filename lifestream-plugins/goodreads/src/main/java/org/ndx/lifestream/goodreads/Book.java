@@ -1,8 +1,7 @@
 package org.ndx.lifestream.goodreads;
 
-import java.text.DateFormat;
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.Date;
@@ -11,17 +10,17 @@ import java.util.LinkedList;
 import java.util.Map;
 import java.util.Set;
 import java.util.SortedSet;
-import java.util.TreeMap;
 import java.util.TreeSet;
 import java.util.UUID;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import org.ndx.lifestream.goodreads.references.Reference;
 import org.ndx.lifestream.rendering.OutputWriter;
 import org.ndx.lifestream.rendering.model.Input;
-import org.ndx.lifestream.rendering.output.StringTemplateUtils;
-import org.stringtemplate.v4.ST;
+import org.ndx.lifestream.rendering.output.Freemarker;
+import org.ndx.lifestream.utils.ThreadSafeSimpleDateFormat;
+
+import freemarker.template.Template;
 
 /**
  * A class extracting content from the infamous Expando to a more "object" notion
@@ -43,23 +42,13 @@ public class Book extends BookInfos implements Input {
 		}
 
 	}
-	private static ST book;
+	private static Template book;
 	private static final Logger logger = Logger.getLogger(Book.class.getName());
-	private static final String MONTH_DATE_FORMAT = "MMM";
-	private static final DateFormat MONTH_FORMATTER = new SimpleDateFormat(MONTH_DATE_FORMAT);
-	private static DateFormat READ_FORMATTER = new SimpleDateFormat("yyyy/MM/dd");
-	private static final String YEAR_DATE_FORMAT = "yyyy";
-	private static final DateFormat YEAR_FORMATTER = new SimpleDateFormat(YEAR_DATE_FORMAT);
+	private static final ThreadSafeSimpleDateFormat MONTH_FORMATTER = new ThreadSafeSimpleDateFormat("MMM");
+	private static final ThreadSafeSimpleDateFormat YEAR_FORMATTER = new ThreadSafeSimpleDateFormat("yyyy");
 
 	static {
-		try {
-			book = goodreadsGroup.getInstanceOf("book");
-		} catch(RuntimeException e) {
-			if (logger.isLoggable(Level.SEVERE)) {
-				logger.log(Level.SEVERE, "unable to load standard book template", e);
-			}
-			throw e;
-		}
+		book = BookInfos.loadTemplate("book.ftl");
 	}
 	public static String ratingAsTag(Number rating) {
 		return "rated_"+rating;
@@ -122,7 +111,7 @@ public class Book extends BookInfos implements Input {
 		parameters.put("series", generateLinks(series, writer));
 		parameters.put("authors", generateLinks(authors, writer));
 		parameters.put("book", this);
-		text = StringTemplateUtils.applyParametersToTemplate(book, parameters);
+		text = Freemarker.render(book, parameters);
 	}
 	String resolveReferences(String review, Collection<Reference> references, OutputWriter writer) {
 		// before to write entry, replace refrences by their values - if any
@@ -206,11 +195,6 @@ public class Book extends BookInfos implements Input {
 	}
 
 	@Override
-	public String getSource() {
-		return url;
-	}
-
-	@Override
 	public Collection<String> getTags() {
 		return tags;
 	}
@@ -264,9 +248,10 @@ public class Book extends BookInfos implements Input {
 	}
 	@Override
 	public Map<String, String> getAdditionalHeaders() {
-		Map<String, String> returned = new TreeMap<>();
+		Map<String, String> returned = super.getAdditionalHeaders();
 		returned.put(Headers.BIG_IMAGE, bigImage);
 		returned.put(Headers.SMALL_IMAGE, smallImage);
+		returned.put(Headers.SOURCE, url);
 		return returned;
 	}
 	public String getReview() {
@@ -274,7 +259,6 @@ public class Book extends BookInfos implements Input {
 	}
 	/**
 	 * Set review (yup, crazy, I know). When doing so, #references map is populated with required references
-	 * @param review
 	 */
 	public void setReview(String review) {
 		this.review = review;
@@ -290,5 +274,10 @@ public class Book extends BookInfos implements Input {
 	}
 	public void setReferences(Collection<Reference> references) {
 		this.references = references;
+	}
+
+	@Override
+	public Collection<String> getSourceLinks() {
+		return Arrays.asList(url);
 	}
 }
