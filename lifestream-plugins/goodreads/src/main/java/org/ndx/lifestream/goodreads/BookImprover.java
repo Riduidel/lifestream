@@ -17,6 +17,7 @@ import java.util.logging.Logger;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.vfs2.FileObject;
 import org.apache.commons.vfs2.FileSystemException;
+import org.apache.maven.model.Developer;
 import org.jdom2.Document;
 import org.jdom2.Element;
 import org.jdom2.JDOMException;
@@ -44,7 +45,7 @@ public class BookImprover implements Callable<Void> {
 	 *
 	 */
 	public static class FindWork {
-		private static final String QUERY = Goodreads.GOODREADS_BASE+"book/isbn?key="+DEVELOPPER_KEY+"&isbn=";
+		public static final String QUERY = Goodreads.GOODREADS_BASE + "book/isbn/%s?key=" + DEVELOPPER_KEY;
 
 		private XPathExpression<Element> xpathForImageUrl = XPathFactory.instance().compile("//image_url", Filters.element());
 		private XPathExpression<Element> xpathForTitle = XPathFactory.instance().compile("//title", Filters.element());
@@ -59,11 +60,12 @@ public class BookImprover implements Callable<Void> {
 		 * @param destination destination servide for storing all output objects. It is used to locate/create authors
 		 * @return first work id, which will be used to grab serie
 		 */
-		public String improveBook(WebClient client, String query,
+		public String improveBook(WebClient client, String isbn,
 				Book returned,
 				AbstractConfiguration configuration,
 				FinderCrudService<BookInfos,BookInfosInformer> destination) throws FileSystemException {
-			Document bookXmlData = queryToJDOM(client, QUERY+query, configuration, "books", query);
+			Document bookXmlData = queryToJDOM(client, 
+					String.format(QUERY, isbn), configuration, "books", isbn);
 			Element imageUrlText = xpathForImageUrl.evaluateFirst(bookXmlData);
 			if(imageUrlText!=null)
 				returned.bigImage = imageUrlText.getText();
@@ -75,7 +77,7 @@ public class BookImprover implements Callable<Void> {
 			}
 			Element workId = xpathForWorkId.evaluateFirst(bookXmlData);
 			if(workId==null)
-				throw new UnableToLocateWorkIdException("we were unable to find work id for query "+query+"\nA cache file should be available at "+getCachedFileForKey(configuration, "books", query));
+				throw new UnableToLocateWorkIdException("we were unable to find work id for query "+isbn+"\nA cache file should be available at "+getCachedFileForKey(configuration, "books", isbn));
 			Element description = xpathForDescription.evaluateFirst(bookXmlData);
 			if(description!=null) {
 				returned.description = HtmlToMarkdown.transformHtml(description.getText());
@@ -122,7 +124,6 @@ public class BookImprover implements Callable<Void> {
 
 	public static class FindSerie {
 
-		private static final String QUERY = Goodreads.GOODREADS_BASE+"series/work.xml?key="+DEVELOPPER_KEY+"&id=";
 		private XPathExpression<Element> xpathForSerie = XPathFactory.instance().compile("//series_work", Filters.element());
 		private XPathExpression<Element> xpathForSerieId = XPathFactory.instance().compile("series/id", Filters.element());
 		private XPathExpression<Element> xpathForSerieTitle = XPathFactory.instance().compile("series/title", Filters.element());
@@ -138,7 +139,10 @@ public class BookImprover implements Callable<Void> {
 				FinderCrudService<BookInfos, BookInfosInformer> destination,
 				String workId,
 				Book source, AbstractConfiguration configuration) {
-			Document bookXmlData = queryToJDOM(client, QUERY+workId, configuration, "series", workId);
+			Document bookXmlData = queryToJDOM(client, 
+					// https://www.goodreads.com/series/40321-drina?format=xml&key=vzlZHr69We4utsOyP508tg
+					String.format("%sseries/work/%s?format=xml&key=%s", Goodreads.GOODREADS_BASE, workId, DEVELOPPER_KEY), 
+					configuration, "series", workId);
 			Collection<Serie> returned = new ArrayList<>();
 
 			List<Element> series = xpathForSerie.evaluate(bookXmlData);
@@ -176,6 +180,7 @@ public class BookImprover implements Callable<Void> {
 					content = IOUtils.toString(input, Constants.UTF_8);
 				}
 			} else {
+				Authenticator.authenticateInGoodreads(client, (GoodreadsConfiguration) configuration);
 				logger.info("download goodreads infos for "+cacheFolder+"/"+cacheKey);
 				Page bookXml = client.getPage(query);
 				content = bookXml.getWebResponse().getContentAsString(Constants.UTF_8);
