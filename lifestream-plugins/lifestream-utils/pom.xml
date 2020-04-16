@@ -29,7 +29,7 @@
 		<dependency>
 			<groupId>commons-io</groupId>
 			<artifactId>commons-io</artifactId>
-			<version>2.1</version>
+			<version>2.6</version>
 		</dependency>
 		<!-- jdom dependencies are optional, but I want to do some xpath search, 
 		so I need  jaxen -->

@@ -5,6 +5,7 @@ import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.nio.charset.Charset;
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
@@ -33,6 +34,7 @@ import com.dooapp.gaedo.finders.FinderCrudService;
 import com.dooapp.gaedo.utils.CollectionUtils;
 import com.gargoylesoftware.htmlunit.Page;
 import com.gargoylesoftware.htmlunit.WebClient;
+import com.gargoylesoftware.htmlunit.html.HtmlButton;
 import com.gargoylesoftware.htmlunit.html.HtmlForm;
 import com.gargoylesoftware.htmlunit.html.HtmlInput;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
@@ -97,13 +99,13 @@ public class Wordpress implements InputLoader<Post, WordpressConfiguration> {
 		try {
 			String siteLogin = configuration.getSiteLoginPage();
 			HtmlPage signIn = client.getPage(siteLogin);
-			HtmlForm signInForm = signIn.getFormByName("loginform");
+			HtmlForm signInForm = signIn.getForms().get(0);
 			logger.log(Level.INFO, "logging in wordpress as " + configuration.getLogin());
-			((HtmlInput) signInForm.getElementById("user_login"))
+			((HtmlInput) signInForm.getElementsByAttribute("input", "id", "usernameOrEmail").get(0))
 					.setValueAttribute(configuration.getLogin());
-			((HtmlInput) signInForm.getElementById("user_pass"))
+			((HtmlInput) signInForm.getElementsByAttribute("input", "id", "password").get(0))
 					.setValueAttribute(configuration.getPassword());
-			HtmlPage signedIn = signInForm.getElementById("wp-submit").click();
+			HtmlPage signedIn = ((HtmlButton) signInForm.getElementsByAttribute("button", "type", "submit").get(0)).click();
 			String authenticationFailedMessage = "unable to sign in Wordpress using mail "
 					+ configuration.getLogin()
 					+ " and password "
@@ -120,7 +122,7 @@ public class Wordpress implements InputLoader<Post, WordpressConfiguration> {
 				Page xml = ((HtmlInput) xmlExportPage.getElementById("submit"))
 						.click();
 				// May cause memory error, but later ...
-				String xmlContent = xml.getWebResponse().getContentAsString(Constants.UTF_8);
+				String xmlContent = xml.getWebResponse().getContentAsString(Constants.UTF_8_CHARSET);
 				return xmlContent;
 			} else {
 				throw new AuthenticationFailedException(

@@ -6,6 +6,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -183,7 +184,7 @@ public class BookImprover implements Callable<Void> {
 				Authenticator.authenticateInGoodreads(client, (GoodreadsConfiguration) configuration);
 				logger.info("download goodreads infos for "+cacheFolder+"/"+cacheKey);
 				Page bookXml = client.getPage(query);
-				content = bookXml.getWebResponse().getContentAsString(Constants.UTF_8);
+				content = bookXml.getWebResponse().getContentAsString(Constants.UTF_8_CHARSET);
 				try(OutputStream output = cacheFile.getContent().getOutputStream()) {
 					IOUtils.write(content, output, Constants.UTF_8);
 				}

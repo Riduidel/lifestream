@@ -71,13 +71,12 @@
 	</build>
 	<profiles>
 		<profile>
-			<activation>
+<!-- 			<activation>
 				<property>
 					<name>goodreads.mail</name>
 				</property>
 			</activation>
-			<!-- Download content and transform it -->
-			<id>download-goodreads</id>
+ -->			<id>download-goodreads</id>
 			<build>
 				<plugins>
 					<plugin>
