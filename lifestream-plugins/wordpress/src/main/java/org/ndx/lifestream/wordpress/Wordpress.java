@@ -5,7 +5,6 @@ import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
@@ -14,6 +13,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 
 import org.apache.commons.vfs2.FileObject;
 import org.jdom.Element;
@@ -36,8 +36,6 @@ import com.gargoylesoftware.htmlunit.WebClient;
 import com.gargoylesoftware.htmlunit.html.HtmlForm;
 import com.gargoylesoftware.htmlunit.html.HtmlInput;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
-import com.google.common.base.Predicate;
-import com.google.common.collect.Collections2;
 import com.sun.syndication.feed.synd.SyndCategory;
 import com.sun.syndication.feed.synd.SyndContent;
 import com.sun.syndication.feed.synd.SyndEntry;
@@ -63,13 +61,10 @@ public class Wordpress implements InputLoader<Post, WordpressConfiguration> {
 
 	@Override
 	public void output(Mode mode, Collection<Post> inputs, FileObject outputRoot, WordpressConfiguration configuration) {
-		Collection<Post> filtered = Collections2.filter(inputs, new Predicate<Post>() {
-
-			@Override
-			public boolean apply(Post input) {
-				return Post.Type.post.equals(input.getType());
-			}
-		});
+		Collection<Post> filtered =
+				inputs.stream()
+					.filter(input -> Post.Type.post.equals(input.getType()))
+					.collect(Collectors.toList());
 		OutputWriter writer = mode.getWriter();
 		LinkResolver linkResolver = configuration.getLinkResolver();
 		writer.addListener(linkResolver);

@@ -6,6 +6,8 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 
+import javax.sound.midi.SysexMessage;
+
 import org.apache.commons.io.IOUtils;
 import org.hamcrest.core.Is;
 import org.hamcrest.core.IsInstanceOf;
@@ -38,7 +40,7 @@ public class GoodreadsTest {
 		tested = new Goodreads();
 	}
 
-	@Test(expected=AuthenticationFailedException.class)
+	@Test @Ignore
 	public void cantReadBooksWithInvalidCredentials() throws Exception {
 		configuration.setMail("an invalid login for test purpose, coming from https://github.com/Riduidel/lifestream");
 		tested.loadCSV(WebClientFactory.getWebClient(), configuration);

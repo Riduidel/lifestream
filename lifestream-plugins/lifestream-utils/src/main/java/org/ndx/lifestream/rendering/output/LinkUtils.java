@@ -2,16 +2,14 @@ package org.ndx.lifestream.rendering.output;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.ndx.lifestream.rendering.path.PathNavigator;
-
-import com.google.common.base.Function;
-import com.google.common.base.Joiner;
-import com.google.common.collect.Collections2;
 
 public class LinkUtils {
 
 	public static String relativePath(List<String> fromPath, List<String> toPath, String extension) {
+		fromPath = new ArrayList<>(fromPath);
 		// copy-protect path list
 		toPath = new ArrayList<>(toPath);
 		// and now, check if last element contains a dot
@@ -30,16 +28,12 @@ public class LinkUtils {
 		}
 		String path = "";
 		if(fromPath.size()>0) {
-			path += Joiner.on("/").join(Collections2.transform(fromPath, new Function<String, String>() {
-	
-				@Override
-				public String apply(String input) {
-					return "..";
-				}}));
-			path+="/";
+			path += fromPath.stream()
+					.map(s -> "..")
+					.collect(Collectors.joining("/", "", "/"));
 		}
 		if(toPath.size()>0) {
-			path += Joiner.on("/").join(toPath);
+			path += toPath.stream().collect(Collectors.joining("/"));
 		}
 		return path;
 	}

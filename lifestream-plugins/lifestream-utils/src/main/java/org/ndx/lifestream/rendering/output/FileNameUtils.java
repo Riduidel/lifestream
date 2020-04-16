@@ -2,9 +2,7 @@ package org.ndx.lifestream.rendering.output;
 
 import java.text.Normalizer;
 import java.util.Collection;
-
-import com.google.common.base.Function;
-import com.google.common.collect.Iterables;
+import java.util.stream.Collectors;
 
 public class FileNameUtils {
 	/**
@@ -26,13 +24,9 @@ public class FileNameUtils {
 		return name;
 	}
 
-	public static Iterable<String> simplify(Collection<String> expectedPath) {
-		return Iterables.transform(expectedPath, new Function<String, String>() {
-
-			@Override
-			public String apply(String input) {
-				return simplify(input);
-			}
-		});
+	public static Collection<String> simplify(Collection<String> expectedPath) {
+		return expectedPath.stream()
+				.map(FileNameUtils::simplify)
+				.collect(Collectors.toList());
 	}
 }

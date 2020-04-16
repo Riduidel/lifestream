@@ -2,11 +2,9 @@ package org.ndx.lifestream.wordpress.resolvers;
 
 import java.util.concurrent.ExecutorService;
 
-import org.ndx.lifestream.utils.transform.HtmlToMarkdown;
 import org.ndx.lifestream.wordpress.Post;
 import org.ndx.lifestream.wordpress.PostInformer;
 import org.ndx.lifestream.wordpress.WordpressConfiguration;
-import org.w3c.dom.Document;
 
 import com.dooapp.gaedo.finders.FinderCrudService;
 

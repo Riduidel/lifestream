@@ -1,12 +1,11 @@
 package org.ndx.lifestream.rendering.path;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.apache.commons.vfs2.FileObject;
 import org.apache.commons.vfs2.FileSystemException;
 import org.ndx.lifestream.rendering.output.UnableToresolveOutputFileException;
-
-import com.google.common.base.Joiner;
 
 public class RelativePath implements PathNavigator {
 	private final List<String> realPath;
@@ -26,13 +25,13 @@ public class RelativePath implements PathNavigator {
 			return resultFile;
 		} catch (FileSystemException e) {
 			throw new UnableToresolveOutputFileException("unable to create output file below " + output.getName().getPath() + " for "
-							+ Joiner.on('/').join(realPath));
+							+ realPath.stream().collect(Collectors.joining("/")));
 		}
 	}
 
 	@Override
 	public String toURI() {
-		return Joiner.on("/").join(realPath);
+		return realPath.stream().collect(Collectors.joining("/"));
 	}
 
 	@Override

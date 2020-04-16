@@ -6,6 +6,7 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 
 import javax.xml.parsers.ParserConfigurationException;
 
@@ -32,8 +33,6 @@ import com.gargoylesoftware.htmlunit.html.HtmlForm;
 import com.gargoylesoftware.htmlunit.html.HtmlInput;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
 import com.gargoylesoftware.htmlunit.html.HtmlSubmitInput;
-import com.google.common.base.Predicate;
-import com.google.common.collect.Collections2;
 import com.google.inject.internal.Nullable;
 
 public class Shaarli implements InputLoader<MicroblogEntry, ShaarliConfiguration> {
@@ -169,13 +168,10 @@ public class Shaarli implements InputLoader<MicroblogEntry, ShaarliConfiguration
 
 	@Override
 	public void output(Mode mode, Collection<MicroblogEntry> inputs, FileObject outputRoot, ShaarliConfiguration configuration) {
-		Collection<MicroblogEntry> filtered = Collections2.filter(inputs, new Predicate<MicroblogEntry>() {
-
-			@Override
-			public boolean apply(MicroblogEntry input) {
-				return input.isVisible();
-			}
-		});
+		Collection<MicroblogEntry> filtered =
+				inputs.stream()
+					.filter(input -> input.isVisible())
+					.collect(Collectors.toList());
 		OutputWriter writer = mode.getWriter();
 		LinkResolver linkResolver = configuration.getLinkResolver();
 		writer.addListener(linkResolver);

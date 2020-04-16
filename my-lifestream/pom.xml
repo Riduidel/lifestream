@@ -72,7 +72,9 @@
 	<profiles>
 		<profile>
 			<activation>
-				<activeByDefault>false</activeByDefault>
+				<property>
+					<name>goodreads.mail</name>
+				</property>
 			</activation>
 			<!-- Download content and transform it -->
 			<id>download-goodreads</id>
@@ -101,7 +103,9 @@
 		</profile>
 		<profile>
 			<activation>
-				<activeByDefault>false</activeByDefault>
+				<property>
+					<name>wordpress.login</name>
+				</property>
 			</activation>
 			<!-- Download content and transform it -->
 			<id>download-wordpress</id>
@@ -133,7 +137,9 @@
 		</profile>
 		<profile>
 			<activation>
-				<activeByDefault>false</activeByDefault>
+				<property>
+					<name>shaarli.login</name>
+				</property>
 			</activation>
 			<!-- Download content and transform it -->
 			<id>download-shaarli</id>

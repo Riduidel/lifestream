@@ -2,7 +2,6 @@ package org.ndx.lifestream.goodreads;
 
 import java.io.CharArrayReader;
 import java.io.IOException;
-import java.text.DateFormat;
 import java.text.ParseException;
 import java.util.Arrays;
 import java.util.Collection;
@@ -16,8 +15,10 @@ import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
+import java.util.function.Predicate;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 
 import org.apache.commons.vfs2.FileObject;
 import org.ndx.lifestream.configuration.CacheLoader;
@@ -34,14 +35,12 @@ import org.ndx.lifestream.rendering.model.InputLoader;
 import org.ndx.lifestream.utils.ThreadSafeSimpleDateFormat;
 import org.ndx.lifestream.utils.transform.HtmlToMarkdown;
 
-import au.com.bytecode.opencsv.CSVReader;
-
 import com.dooapp.gaedo.finders.FinderCrudService;
 import com.dooapp.gaedo.utils.CollectionUtils;
 import com.gargoylesoftware.htmlunit.Page;
 import com.gargoylesoftware.htmlunit.WebClient;
-import com.google.common.base.Predicate;
-import com.google.common.collect.Collections2;
+
+import au.com.bytecode.opencsv.CSVReader;
 
 public class Goodreads implements InputLoader<BookInfos, GoodreadsConfiguration> {
 	static final Logger logger = Logger.getLogger(Goodreads.class.getName());
@@ -224,17 +223,18 @@ public class Goodreads implements InputLoader<BookInfos, GoodreadsConfiguration>
 	 * @param output output folder
 	 */
 	public void output(Mode mode, Collection<BookInfos> books, FileObject output, GoodreadsConfiguration configuration) {
-		Collection<BookInfos> filtered = Collections2.filter(books, new Predicate<BookInfos>() {
-
-			@Override
-			public boolean apply(BookInfos input) {
-				if(input instanceof Book) {
-					return input.getTags().contains("read");
-				}
-				// only output elements thar are in the past
-				return input.getWriteDate().compareTo(BookInfos.TODAY)<0;
-			}
-		});
+		Collection<BookInfos> filtered =
+				books.stream().parallel()
+				.filter(new Predicate<BookInfos>() {
+					@Override
+					public boolean test(BookInfos input) {
+						if(input instanceof Book) {
+							return input.getTags().contains("read");
+						}
+						// only output elements thar are in the past
+						return input.getWriteDate().compareTo(BookInfos.TODAY)<0;
+					}
+				}).collect(Collectors.toList());
 		OutputWriter writer = mode.getWriter();
 		LinkResolver linkResolver = configuration.getLinkResolver();
 		writer.addListener(linkResolver);

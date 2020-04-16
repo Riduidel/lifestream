@@ -1,7 +1,10 @@
 package org.ndx.lifestream.rendering.output.gollum;
 
-import java.util.Collection;
+import java.util.Arrays;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+import java.util.stream.StreamSupport;
 
 import org.apache.commons.vfs2.FileObject;
 import org.ndx.lifestream.rendering.OutputWriter;
@@ -10,8 +13,6 @@ import org.ndx.lifestream.rendering.model.Linkable;
 import org.ndx.lifestream.rendering.output.AbstractOutputter;
 import org.ndx.lifestream.rendering.output.FileNameUtils;
 import org.ndx.lifestream.rendering.path.PathNavigator;
-
-import com.google.common.base.Joiner;
 
 /**
  * Simple output of raw content to file
@@ -23,8 +24,6 @@ public class GollumOutputter extends AbstractOutputter implements OutputWriter {
 
 	private static final Logger logger = Logger.getLogger(GollumOutputter.class.getName());
 
-	private static final Joiner PATH_JOINER = Joiner.on('/').skipNulls();
-
 	@Override
 	protected PathNavigator toRealPath(Linkable input) {
 		return super.toRealPath(input, MARKDOWN);
@@ -35,8 +34,9 @@ public class GollumOutputter extends AbstractOutputter implements OutputWriter {
 		FileObject resultFile;
 		PathNavigator usedPath = toRealPath(input);
 		try {
-			resultFile = output.resolveFile(PATH_JOINER.join(
-					FileNameUtils.simplify(usedPath.toPathList())));
+			resultFile = output.resolveFile(
+					FileNameUtils.simplify(usedPath.toPathList()).stream().collect(Collectors.joining("/"))
+					);
 			input.accept(this);
 			writeHTMLAsMarkdown(resultFile, render(input));
 			notify(input, resultFile, output);

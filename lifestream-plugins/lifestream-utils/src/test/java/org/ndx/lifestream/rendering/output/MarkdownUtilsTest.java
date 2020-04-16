@@ -1,17 +1,17 @@
 package org.ndx.lifestream.rendering.output;
 
+import static org.junit.Assert.assertThat;
+
+import java.util.Arrays;
+
 import org.hamcrest.core.Is;
 import org.junit.Test;
-
-import com.google.common.collect.Lists;
-
-import static org.junit.Assert.*;
 
 public class MarkdownUtilsTest {
 
 	@Test
 	public void ensureLinkWorkWithSimpleNames() {
-		assertThat(MarkdownUtils.link(Lists.newArrayList("a"), Lists.newArrayList("b"), "text", "html"), Is.is("[text](b)"));
+		assertThat(MarkdownUtils.link(Arrays.asList("a"), Arrays.asList("b"), "text", "html"), Is.is("[text](b)"));
 	}
 
 	/**
@@ -19,7 +19,7 @@ public class MarkdownUtilsTest {
 	 */
 	@Test
 	public void ensureLinkWorkWithOneDifferentLevelOnEachSideNames() {
-		assertThat(MarkdownUtils.link(Lists.newArrayList("a", "a"), Lists.newArrayList("b", "b.c"), "text", "html"), Is.is("[text](../b/b.html)"));
+		assertThat(MarkdownUtils.link(Arrays.asList("a", "a"), Arrays.asList("b", "b.c"), "text", "html"), Is.is("[text](../b/b.html)"));
 	}
 
 	/**
@@ -27,7 +27,7 @@ public class MarkdownUtilsTest {
 	 */
 	@Test
 	public void ensureLinkWorkWithOneSameLevelOnEachSideNames() {
-		assertThat(MarkdownUtils.link(Lists.newArrayList("a", "a"), Lists.newArrayList("a", "b"), "text", "html"), Is.is("[text](b)"));
+		assertThat(MarkdownUtils.link(Arrays.asList("a", "a"), Arrays.asList("a", "b"), "text", "html"), Is.is("[text](b)"));
 	}
 
 	/**
@@ -35,7 +35,7 @@ public class MarkdownUtilsTest {
 	 */
 	@Test
 	public void ensureLinkWorkWithTwoLevelsOnLeftAndOneLevelOnRight() {
-		assertThat(MarkdownUtils.link(Lists.newArrayList("a", "a", "a"), Lists.newArrayList("b", "b"), "text", "html"), Is.is("[text](../../b/b)"));
+		assertThat(MarkdownUtils.link(Arrays.asList("a", "a", "a"), Arrays.asList("b", "b"), "text", "html"), Is.is("[text](../../b/b)"));
 	}
 
 	/**
@@ -43,7 +43,7 @@ public class MarkdownUtilsTest {
 	 */
 	@Test
 	public void ensureLinkWorkWithOneLevelOnLeftAndTwoLevelsOnRight() {
-		assertThat(MarkdownUtils.link(Lists.newArrayList("a", "a"), Lists.newArrayList("b", "b", "b"), "text", "html"), Is.is("[text](../b/b/b)"));
+		assertThat(MarkdownUtils.link(Arrays.asList("a", "a"), Arrays.asList("b", "b", "b"), "text", "html"), Is.is("[text](../b/b/b)"));
 	}
 
 	/**
@@ -51,6 +51,6 @@ public class MarkdownUtilsTest {
 	 */
 	@Test
 	public void ensureLinkWorkWithIdenticalSubHierarchyButDifferentBase() {
-		assertThat(MarkdownUtils.link(Lists.newArrayList("a", "b", "b"), Lists.newArrayList("b", "b", "b"), "text", "html"), Is.is("[text](../../b/b/b)"));
+		assertThat(MarkdownUtils.link(Arrays.asList("a", "b", "b"), Arrays.asList("b", "b", "b"), "text", "html"), Is.is("[text](../../b/b/b)"));
 	}
 }
