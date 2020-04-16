@@ -32,7 +32,7 @@ public class BookImproverTest {
 
 	@BeforeClass public static void loadWebClient() throws FileSystemException {
 		webClient = WebClientFactory.getWebClient();
-		configuration = new GoodreadsConfiguration(VFSHelper.getRunningDir_for_tests_only());
+		configuration = ConnectionUtils.createConfiguration();
 	}
 
 	@Before public void loadGaedo() throws FileSystemException {
@@ -54,7 +54,7 @@ public class BookImproverTest {
 		BookInfos book = returned.iterator().next();
 		assertThat(book, IsInstanceOf.instanceOf(Book.class));
 		Book improved = (Book) book;
-		assertThat(improved.bigImage, CoreMatchers.endsWith("17973574.jpg"));
+		assertThat(improved.bigImage, CoreMatchers.endsWith(".jpg"));
 		assertThat(improved.getTitle(), Is.is("Le chasseur et son ombre"));
 	}
 
@@ -71,7 +71,7 @@ public class BookImproverTest {
 		BookInfos book = returned.iterator().next();
 		assertThat(book, IsInstanceOf.instanceOf(Book.class));
 		Book improved = (Book) book;
-		assertThat(improved.getTitle(), Is.is("Le Dernier héros (Les Annales du Disque-monde, #27)"));
+		assertThat(improved.getTitle(), Is.is("Le dernier Héros"));
 		assertThat(improved.getSeries().size(), Is.is(2));
 	}
 
