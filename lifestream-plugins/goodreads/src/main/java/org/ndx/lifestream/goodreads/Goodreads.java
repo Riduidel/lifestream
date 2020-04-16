@@ -2,7 +2,6 @@ package org.ndx.lifestream.goodreads;
 
 import java.io.CharArrayReader;
 import java.io.IOException;
-import java.net.MalformedURLException;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.util.Arrays;
@@ -41,13 +40,11 @@ import com.dooapp.gaedo.finders.FinderCrudService;
 import com.dooapp.gaedo.utils.CollectionUtils;
 import com.gargoylesoftware.htmlunit.Page;
 import com.gargoylesoftware.htmlunit.WebClient;
-import com.gargoylesoftware.htmlunit.html.HtmlForm;
-import com.gargoylesoftware.htmlunit.html.HtmlPage;
 import com.google.common.base.Predicate;
 import com.google.common.collect.Collections2;
 
 public class Goodreads implements InputLoader<BookInfos, GoodreadsConfiguration> {
-	private static final Logger logger = Logger.getLogger(Goodreads.class.getName());
+	static final Logger logger = Logger.getLogger(Goodreads.class.getName());
 
 	private static final String INPUT_DATE_FORMAT = "yyyy/MM/dd";
 	private static final ThreadSafeSimpleDateFormat INPUT_FORMATTER = new ThreadSafeSimpleDateFormat(INPUT_DATE_FORMAT);
@@ -58,7 +55,7 @@ public class Goodreads implements InputLoader<BookInfos, GoodreadsConfiguration>
 
 	public String xsl = null;
 
-	public static final String GOODREADS_BASE = "http://www.goodreads.com/";
+	public static final String GOODREADS_BASE = "https://www.goodreads.com/";
 
 	/**
 	 * Collection loading is partially synchronous (reading the CSV),
@@ -164,7 +161,7 @@ public class Goodreads implements InputLoader<BookInfos, GoodreadsConfiguration>
 
 	private String filterIsbn(String string) {
 		if(string!=null && string.length()>2)
-			return string.substring(2,string.length());
+			return string.substring(2,string.length()-1);
 		return null;
 	}
 
@@ -197,7 +194,8 @@ public class Goodreads implements InputLoader<BookInfos, GoodreadsConfiguration>
 				public String load() throws Exception {
 					Authenticator.authenticateInGoodreads(client, configuration.getMail(), configuration.getPassword());
 					logger.log(Level.INFO, "logged in ... downloading csv now ...");
-					Page csv = client.getPage(GOODREADS_BASE+"review_porter/goodreads_export.csv");
+					// TODO ask for export through API
+					Page csv = client.getPage(GOODREADS_BASE+"review_porter/export/1156136/goodreads_export.csv");
 					// May cause memory error, but later ...
 					return csv.getWebResponse().getContentAsString();
 				}
