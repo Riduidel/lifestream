@@ -195,7 +195,7 @@ public class Goodreads implements InputLoader<BookInfos, GoodreadsConfiguration>
 
 				@Override
 				public String load() throws Exception {
-					authenticateInGoodreads(client, configuration.getMail(), configuration.getPassword());
+					Authenticator.authenticateInGoodreads(client, configuration.getMail(), configuration.getPassword());
 					logger.log(Level.INFO, "logged in ... downloading csv now ...");
 					Page csv = client.getPage(GOODREADS_BASE+"review_porter/goodreads_export.csv");
 					// May cause memory error, but later ...
@@ -207,23 +207,6 @@ public class Goodreads implements InputLoader<BookInfos, GoodreadsConfiguration>
 			throw e;
 		} catch(Exception e) {
 			throw new UnableToDownloadContentException("unable to download CSV from Goodreads", e);
-		}
-	}
-
-	public static void authenticateInGoodreads(WebClient client, String username, String password)
-			throws IOException, MalformedURLException {
-		HtmlPage signIn = client.getPage(GOODREADS_BASE+"user/sign_in");
-		HtmlForm signInForm = signIn.getFormByName("sign_in");
-		logger.log(Level.INFO, "logging in goodreads as "+username);
-		signInForm.getInputByName("user[email]").setValueAttribute(username);
-		signInForm.getInputByName("user[password]").setValueAttribute(password);
-		HtmlPage signedIn = signInForm.getInputByName("next").click();
-		String authenticationFailedMessage = "unable to sign in Goodreads using mail "+username+" and password "+password+". can you check it by opening a browser at http://www.goodreads.com/user/sign_in ?";
-		if(200==signedIn.getWebResponse().getStatusCode()) {
-			if(signedIn.getUrl().equals(signIn.getUrl()))
-				throw new AuthenticationFailedException(authenticationFailedMessage);
-		} else {
-			throw new AuthenticationFailedException(authenticationFailedMessage);
 		}
 	}
 
