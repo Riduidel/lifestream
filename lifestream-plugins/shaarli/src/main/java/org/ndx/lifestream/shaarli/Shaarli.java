@@ -8,17 +8,9 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
-import javax.xml.parsers.ParserConfigurationException;
-
 import org.apache.commons.vfs2.FileObject;
-import org.jdom2.Content;
-import org.jdom2.Document;
-import org.jdom2.Element;
-import org.jdom2.Parent;
-import org.jdom2.filter.Filters;
-import org.jdom2.input.DOMBuilder;
-import org.jdom2.xpath.XPathExpression;
-import org.jdom2.xpath.XPathFactory;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Element;
 import org.ndx.lifestream.configuration.CacheLoader;
 import org.ndx.lifestream.configuration.LinkResolver;
 import org.ndx.lifestream.plugin.exceptions.AuthenticationFailedException;
@@ -38,18 +30,10 @@ import com.google.inject.internal.Nullable;
 public class Shaarli implements InputLoader<MicroblogEntry, ShaarliConfiguration> {
 	private static final Logger logger = Logger.getLogger(Shaarli.class.getName());
 
-	private XPathExpression<Element> xpath = XPathFactory.instance().compile("//dt", Filters.element());
-
 	@Override
 	public Collection<MicroblogEntry> load(WebClient client, ShaarliConfiguration configuration) {
 		String text =  loadXML(client, configuration);
-		DOMBuilder builder = new DOMBuilder();
-		Document document;
-		try {
-			document = builder.build(HtmlToMarkdown.transformToValidXhtmlDocument(text));
-		} catch (ParserConfigurationException e) {
-			throw new UnableToProduceXMLException(e);
-		}
+		org.jsoup.nodes.Document document = Jsoup.parse(text);
 		return buildEntriesCollection(configuration, document);
 	}
 
@@ -75,34 +59,27 @@ public class Shaarli implements InputLoader<MicroblogEntry, ShaarliConfiguration
 	 * As one may see, each bookmark is defined as a "dt" tag, possibly followed by a "dd" tag containing additional text.
 	 * The "dt" contains one "a" tag, which contains all infos about the submitted link with non-standard HTML tags.
 	 * 
-	 * To parse that structure, we use two method.
-	 * This one uses XPath navigation to locate all "dt" tags, then navigates in document looking for next dd tag.
-	 * Notice navigation is done by iterating over next XML element, which may be an empty text (for the line return)
-	 * 
+	 * We will use Jsoup to parse that, since the bookmarks.html file may become rather big over time
 	 */
-	public Collection<MicroblogEntry> buildEntriesCollection(ShaarliConfiguration configuration, Document entries) {
+	public Collection<MicroblogEntry> buildEntriesCollection(ShaarliConfiguration configuration, org.jsoup.nodes.Document document) {
 		Collection<MicroblogEntry> returned = new ArrayList<>();
-		for(Element entry : xpath.evaluate(entries)) {
+		
+		for(Element entry : document.getElementsByTag("dt")) {
 			// Notice we need both the DT and the immediatly following DD
-			Parent entryParent = entry.getParent();
-			int index = entryParent.indexOf(entry);
-			index++;
 			MicroblogEntry created = null;
 			while(created==null) {
-				Content next = entryParent.getContent(index);
-				if(next instanceof Element) {
-					Element nextElement = (Element) next;
-					// Hey, there is some text to add, cool !
-					if(nextElement.getName().equalsIgnoreCase("DD")) {
-						created = createEntryFrom(configuration, entry, nextElement);
-					}
+				Element nextElement = entry.nextElementSibling();
+				created = new MicroblogEntry();
+				// Hey, there is some text to add, cool !
+				if(nextElement==null) {
+					// If we found nothing, that's because we're at the end of the document
+				} else if(nextElement.tagName().equalsIgnoreCase("DD")) {
+					created = createEntryFrom(configuration, entry, nextElement);
 					// Damn, no text ? Then create entry with no text.
-					if(nextElement.getName().equalsIgnoreCase("dt")) {
-						// there is no text for this entry ... weird
-						created = createEntryFrom(configuration, entry, null);
-					}
+				} else if(nextElement.tagName().equalsIgnoreCase("dt")) {
+					// there is no text for this entry ... weird
+					created = createEntryFrom(configuration, entry, null);
 				}
-				index++;
 			}
 			returned.add(created);
 		}
@@ -112,14 +89,14 @@ public class Shaarli implements InputLoader<MicroblogEntry, ShaarliConfiguration
 	private MicroblogEntry createEntryFrom(ShaarliConfiguration configuration, Element dt, @Nullable Element dd) {
 		MicroblogEntry returned = new MicroblogEntry();
 		returned.setSource(configuration.getSite());
-		Element link = dt.getChild("a");
-		returned.setLink(link.getAttributeValue("href"));
-		returned.setTitle(HtmlToMarkdown.transformHtml(link.getText()).trim());
-		long parsedLong = Long.parseLong(link.getAttributeValue("add_date"));
+		Element link = dt.selectFirst("a");
+		returned.setLink(link.attr("href"));
+		returned.setTitle(HtmlToMarkdown.transformHtml(link.text()).trim());
+		long parsedLong = Long.parseLong(link.attr("add_date"));
 		Date writeDate = new Date();
 		writeDate.setTime(parsedLong*1000); // epoch time is given in seconds !
 		returned.setWriteDdate(writeDate);
-		String tagsText = link.getAttributeValue("tags");
+		String tagsText = link.attr("tags");
 		if(tagsText==null) {
 			if (logger.isLoggable(Level.FINE)) {
 				logger.log(Level.FINE, returned+" has no tags ?");
@@ -127,9 +104,9 @@ public class Shaarli implements InputLoader<MicroblogEntry, ShaarliConfiguration
 		} else {
 			returned.setTags(Arrays.asList(tagsText.split(",")));
 		}
-		returned.setVisible(link.getAttributeValue("private").equals("0"));
+		returned.setVisible(link.attr("private").equals("0"));
 		if(dd!=null) {
-			returned.setComment(HtmlToMarkdown.transformHtml(dd.getText().trim()));
+			returned.setComment(HtmlToMarkdown.transformHtml(dd.text().trim()));
 		}
 		return returned;
 	}
