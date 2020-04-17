@@ -1,36 +1,27 @@
-<#assign path=""/>
-
 <#include "header.ftl">
 
 	<#include "menu.ftl">
-
+	
 	<div class="page-header">
 		<h1>Blog Archive</h1>
-		<h2 id="filtering-tags"></h2>
 	</div>
-
-	<div class=""archive_posts">
+	
 	<!--<ul>-->
 		<#list published_posts as post>
-  			<#if (post.style?contains("no-archive"))>
-  			<!-- don't render "${post.title}" styled as "${post.style}" in index -->
-  			<#else>
-			<#if (last_month)??>
-				<#if post.date?string("MMMM yyyy") != last_month>
-					</ul>
-					<h4>${post.date?string("MMMM yyyy")}</h4>
-					<ul>
-				</#if>
-			<#else>
+		<#if (last_month)??>
+			<#if post.date?string("MMMM yyyy") != last_month>
+				</ul>
 				<h4>${post.date?string("MMMM yyyy")}</h4>
 				<ul>
 			</#if>
-	
-			<@link_to_post_in_list post=post path=path/>
-			<#assign last_month = post.date?string("MMMM yyyy")>
-			</#if>
+		<#else>
+			<h4>${post.date?string("MMMM yyyy")}</h4>
+			<ul>
+		</#if>
+		
+		<li>${post.date?string("dd")} - <a href="${content.rootpath}${post.uri}"><#escape x as x?xml>${post.title}</#escape></a></li>
+		<#assign last_month = post.date?string("MMMM yyyy")>
 		</#list>
 	</ul>
-	</div>
-
+	
 <#include "footer.ftl">

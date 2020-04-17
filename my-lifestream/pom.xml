@@ -71,12 +71,12 @@
 	</build>
 	<profiles>
 		<profile>
-<!-- 			<activation>
+ 			<activation>
 				<property>
 					<name>goodreads.mail</name>
 				</property>
 			</activation>
- -->			<id>download-goodreads</id>
+			<id>download-goodreads</id>
 			<build>
 				<plugins>
 					<plugin>
@@ -101,12 +101,12 @@
 			</build>
 		</profile>
 		<profile>
-			<activation>
+<!-- 			<activation>
 				<property>
 					<name>wordpress.login</name>
 				</property>
 			</activation>
-			<!-- Download content and transform it -->
+ -->			<!-- Download content and transform it -->
 			<id>download-wordpress</id>
 			<build>
 				<plugins>
@@ -201,44 +201,78 @@
 							</execution>
 						</executions>
 					</plugin>
-					<plugin>
-						<groupId>br.com.ingenieux</groupId>
-						<artifactId>jbake-maven-plugin</artifactId>
-						<version>0.0.7</version>
-						<executions>
-							<execution>
-								<id>generate_jbake</id>
-								<!-- moved into compile phase to make sure files are generated before -->
-								<phase>compile</phase>
-								<goals>
-									<goal>generate</goal>
-								</goals>
-								<configuration>
-									<inputDirectory>${site.input}</inputDirectory>
-									<outputDirectory>${site.jbake}</outputDirectory>
-								</configuration>
-							</execution>
-						</executions>
-						<dependencies>
-							<dependency>
-								<groupId>org.jbake</groupId>
-								<artifactId>jbake-core</artifactId>
-								<version>2.6.4</version>
-							</dependency>
-							<dependency>
-								<groupId>org.freemarker</groupId>
-								<artifactId>freemarker</artifactId>
-								<version>${freemarker.version}</version>
-							</dependency>
-							<dependency>
-								<groupId>org.pegdown</groupId>
-								<artifactId>pegdown</artifactId>
-								<version>${pegdown.version}</version>
-								<optional>true</optional>
-							</dependency>
-						</dependencies>
-					</plugin>
-					<plugin>
+			<plugin>
+				<groupId>org.jbake</groupId>
+				<artifactId>jbake-maven-plugin</artifactId>
+				<version>0.3.2</version>
+				<configuration>
+					<inputDirectory>${site.input}</inputDirectory>
+					<outputDirectory>${site.jbake}</outputDirectory>
+				</configuration>
+				<executions>
+					<execution>
+						<id>generate_jbake</id>
+						<!-- moved into compile phase to make sure files are generated before -->
+						<phase>compile</phase>
+						<goals>
+							<goal>generate</goal>
+						</goals>
+					</execution>
+				</executions>
+				<dependencies>
+					<!-- AsciiDoc content support -->
+					<dependency>
+			            <groupId>org.asciidoctor</groupId>
+			            <artifactId>asciidoctorj</artifactId>
+			            <version>1.5.8.1</version>
+			        </dependency>
+			        
+			        <!-- Markdown content support -->
+					<dependency>
+						<groupId>com.vladsch.flexmark</groupId>
+						<artifactId>flexmark</artifactId>
+						<version>0.40.8</version>
+					</dependency>
+					<dependency>
+						<groupId>com.vladsch.flexmark</groupId>
+						<artifactId>flexmark-profile-pegdown</artifactId>
+						<version>0.40.8</version>
+					</dependency>
+			        
+			        <!-- Freemarker template support -->
+			        <dependency>
+            			<groupId>org.freemarker</groupId>
+            			<artifactId>freemarker</artifactId>
+            			<version>2.3.28</version>
+        			</dependency>
+        			
+        			<!-- Groovy template support -->
+        			<!--<dependency>
+					    <groupId>org.codehaus.groovy</groupId>
+					    <artifactId>groovy</artifactId>
+					    <version>2.5.5</version>
+					</dependency>
+					<dependency>
+					    <groupId>org.codehaus.groovy</groupId>
+					    <artifactId>groovy-templates</artifactId>
+					    <version>2.5.5</version>
+					</dependency>-->
+					
+					<!-- Thymeleaf template support -->
+					<!--<dependency>
+						<groupId>org.thymeleaf</groupId>
+						<artifactId>thymeleaf</artifactId>
+						<version>3.0.11.RELEASE</version>
+					</dependency>-->
+					
+					<!-- Jade4J template support -->
+					<!--<dependency>
+						<groupId>de.neuland-bfi</groupId>
+						<artifactId>jade4j</artifactId>
+						<version>1.2.7</version>
+					</dependency>-->
+				</dependencies>
+			</plugin>					<plugin>
 						<groupId>org.apache.maven.plugins</groupId>
 						<artifactId>maven-assembly-plugin</artifactId>
 						<configuration>

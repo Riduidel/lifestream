@@ -5,7 +5,6 @@ html,
 body {
   height: 100%;
   /* The html and body elements cannot have any padding or margin. */
-  text-align: justify;
 }
 
 /* Wrapper for page content to push down footer */
@@ -51,98 +50,3 @@ body {
 /*code {
   font-size: 80%;
 }*/
-
-/* NDX personal CSS elements ! */
-.tags ul {
-	margin: 0px;
-	padding: 0px;
-	display: block;
-}
-
-.tags li {
-	display: inline;
-}
-.remove-filter {
-	display:none;
-}
-.add-filter {
-	display:none;
-}
-/** used to hide the excluded tag, but have it in the page for filtering */
-div.tags li.excluded {
-	display:none;
-}
-
-/** used to hide filtering tag */
-div.tags li.filtering {
-	display:none;
-}
-
-/** used to hide tag elements that don't match set of required tags */
-li.not_matching {
-	display:none;
-}
-
-.post-link .add-filter {
-	display:inline;
-}
-#filtering-tags .remove-filter {
-	display:inline;
-}
-.goodreads a.source:before {
-	content: url("../img/goodreads.png");
-	margin-right: 0.5em;
-}
-
-.wordpress a.source:before {
-	content: url("../img/wordpress.png");
-	margin-right: 0.5em;
-}
-
-.shaarli a.source:before {
-	content: url("../img/shaarli.png");
-	margin-right: 0.5em;
-	vertical-align:middle;
-}
-
-.shaarli h1 {
-	visibility:hidden;
-	display:none;
-}
-
-/** used to disable relative links on index page */
-a.disabled {
-   pointer-events: none;
-   cursor: default;
-   color: gray;
-}
-
-/** Specific for twittter messages */
-.twitter_status {
-	display : block
-}
-
-.twitter_status .name {
-	display : none;
-}
-
-.twitter_status .author {
-}
-
-.twitter_status .content:before {
-	content : " > "
-}
-
-.twitter_status .content {
-}
-
-.twitter_status .medias {
-	display : block;
-	margin : 1em;
-}
-
-.twitter_status .date {
-	display : block;
-	float : right;
-	font-style: italic;
-}

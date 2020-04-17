@@ -1,16 +1,17 @@
 <#include "header.ftl">
-
+	
 	<#include "menu.ftl">
 
-	<div class="container-fluid post">
-	<@display_post content=content depth=content.depth>
-		<#if (content.bigImage)??>
-		<div class="image">
-			<img src="${content.bigImage}"/>
-		</div>
-		</#if>
-	</@display_post>
+	<#if (content.title)??>
+	<div class="page-header">
+		<h1><#escape x as x?xml>${content.title}</#escape></h1>
 	</div>
-	<hr>
+	<#else></#if>
 
+	<p><em>${content.date?string("dd MMMM yyyy")}</em></p>
+
+	<p>${content.body}</p>
+
+	<hr />
+	
 <#include "footer.ftl">
