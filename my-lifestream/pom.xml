@@ -21,7 +21,7 @@
 		<shaarli.dir>${site.dir}/</shaarli.dir>
 		<site.upload.dir>lifestream/</site.upload.dir>
 		<site.upload.url>ftp://ftpperso.free.fr</site.upload.url>
-		<pegdown.version>1.4.2</pegdown.version>
+		<pegdown.version>1.6.0</pegdown.version>
 	</properties>
 	<distributionManagement>
 		<repository>
@@ -223,7 +223,7 @@
 							<dependency>
 								<groupId>org.jbake</groupId>
 								<artifactId>jbake-core</artifactId>
-								<version>2.3.2</version>
+								<version>2.6.4</version>
 							</dependency>
 							<dependency>
 								<groupId>org.freemarker</groupId>
