@@ -32,6 +32,7 @@ import org.ndx.lifestream.plugin.exceptions.UnableToDownloadContentException;
 import org.ndx.lifestream.rendering.Mode;
 import org.ndx.lifestream.rendering.OutputWriter;
 import org.ndx.lifestream.rendering.model.InputLoader;
+import org.ndx.lifestream.utils.Constants;
 import org.ndx.lifestream.utils.ThreadSafeSimpleDateFormat;
 import org.ndx.lifestream.utils.transform.HtmlToMarkdown;
 
@@ -194,9 +195,14 @@ public class Goodreads implements InputLoader<BookInfos, GoodreadsConfiguration>
 					Authenticator.authenticateInGoodreads(client, configuration.getMail(), configuration.getPassword());
 					logger.log(Level.INFO, "logged in ... downloading csv now ...");
 					// TODO ask for export through API
+					// Open export page
+//					Page importExport = client.getPage(GOODREADS_BASE + "review/import");
+					// If there is no export, create one and wait for it
+//					importExport.getWebResponse().
+					// If there is an export, download!
 					Page csv = client.getPage(GOODREADS_BASE+"review_porter/export/1156136/goodreads_export.csv");
 					// May cause memory error, but later ...
-					return csv.getWebResponse().getContentAsString();
+					return csv.getWebResponse().getContentAsString(Constants.UTF_8_CHARSET);
 				}
 			});
 			return splitIntoRows(csvContent);
