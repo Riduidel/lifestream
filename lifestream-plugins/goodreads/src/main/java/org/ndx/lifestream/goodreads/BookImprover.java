@@ -65,6 +65,7 @@ public class BookImprover implements Callable<Void> {
 				Book returned,
 				AbstractConfiguration configuration,
 				FinderCrudService<BookInfos,BookInfosInformer> destination) throws FileSystemException {
+			
 			Document bookXmlData = queryToJDOM(client, 
 					String.format(QUERY, isbn), configuration, "books", isbn);
 			Element imageUrlText = xpathForImageUrl.evaluateFirst(bookXmlData);

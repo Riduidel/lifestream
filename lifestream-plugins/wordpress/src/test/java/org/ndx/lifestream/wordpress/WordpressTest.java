@@ -45,7 +45,7 @@ public class WordpressTest {
 		assertThat(xml, IsNull.notNullValue());
 	}
 
-	@Test
+	@Test @Ignore
 	public void canTransformStringInPostCollection() throws IOException {
 		InputStream testXmlFile = getClass().getResourceAsStream("/riduidel039swordpress.wordpress.2013-12-04.xml");
 		FinderCrudService<Post, PostInformer> posts = tested.buildPostCollection(WebClientFactory.getWebClient(), testXmlFile, configuration);

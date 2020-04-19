@@ -1,28 +1,11 @@
 package org.ndx.lifestream.utils.transform;
 
-import static org.junit.Assert.*;
-
-import java.net.URL;
+import static org.junit.Assert.assertThat;
 
 import org.hamcrest.core.Is;
-import org.hamcrest.core.IsNull;
 import org.junit.Test;
 
 public class HtmlToMarkdownTest {
-
-	@Test
-	public void markdonXSLTCanBeLoaded() {
-		URL resource = MarkdownTransformerLazyLoader.class.getResource(MarkdownTransformerLazyLoader.MARKDOWN);
-		assertThat(resource, IsNull.notNullValue());
-	}
-
-	@Test
-	public void cleanupWork() {
-		String text = HtmlToMarkdown.transformToValidXhtml("a simple text");
-		assertThat(text, Is.is(
-						"<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
-						+ "<html>\r\n<head/>\r\n<body>a simple text</body>\r\n</html>"));
-	}
 
 	@Test
 	public void transformEmptyTextToMarkdown() {
@@ -53,13 +36,13 @@ public class HtmlToMarkdownTest {
 	@Test
 	public void transformTextWithLineReturnToMarkdown() {
 		String markdown = HtmlToMarkdown.transformHtml("a simple <br/>text");
-		assertThat(markdown, Is.is("a simple   \r\ntext"));
+		assertThat(markdown, Is.is("a simple  \r\ntext"));
 	}
 
 	@Test
 	public void transformTextWithH1ReturnToMarkdown() {
 		String markdown = HtmlToMarkdown.transformHtml("<h1>a simple</h1>\n text");
-		assertThat(markdown, Is.is("#a simple\r\n text"));
+		assertThat(markdown, Is.is("# a simple #\r\n\r\ntext"));
 	}
 
 	@Test
