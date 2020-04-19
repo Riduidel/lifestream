@@ -38,7 +38,12 @@ public class HtmlToMarkdown {
 			return html.trim();
 		String validXhtml = transformToValidXhtml(html);
 		String markdown =  transformValidXhtml(validXhtml);
-		return StringEscapeUtils.unescapeHtml4(markdown);
+		String returned = StringEscapeUtils.unescapeHtml4(markdown);
+		if(returned.trim().isEmpty()) {
+			return html;
+		} else {
+			return returned;
+		}
 	}
 
 	public synchronized static String transformToValidXhtml(String html) {
