@@ -10,6 +10,11 @@ public class GoodreadsConfiguration extends AbstractConfiguration implements Con
 	private String mail;
 	private String password;
 	private int threadCount = 2;
+	public static final String GOODREADS_BASE = "https://www.goodreads.com/";
+	/**
+	 * Yeah this is my dev key. Use it with care
+	 */
+	public static final String DEVELOPPER_KEY = "vzlZHr69We4utsOyP508tg";
 
 	public GoodreadsConfiguration(FileObject baseFolder) {
 		super(baseFolder, "goodreads");

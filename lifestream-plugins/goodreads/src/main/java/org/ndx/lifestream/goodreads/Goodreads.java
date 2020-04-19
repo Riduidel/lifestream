@@ -1,5 +1,7 @@
 package org.ndx.lifestream.goodreads;
 
+import static org.ndx.lifestream.goodreads.GoodreadsConfiguration.GOODREADS_BASE;
+
 import java.io.CharArrayReader;
 import java.io.IOException;
 import java.text.ParseException;
@@ -54,8 +56,6 @@ public class Goodreads implements InputLoader<BookInfos, GoodreadsConfiguration>
 	private GaedoEnvironmentProvider goodreadsEnvironment = new GaedoEnvironmentProvider();
 
 	public String xsl = null;
-
-	public static final String GOODREADS_BASE = "https://www.goodreads.com/";
 
 	/**
 	 * Collection loading is partially synchronous (reading the CSV),
@@ -192,15 +192,14 @@ public class Goodreads implements InputLoader<BookInfos, GoodreadsConfiguration>
 
 				@Override
 				public String load() throws Exception {
-					Authenticator.authenticateInGoodreads(client, configuration.getMail(), configuration.getPassword());
+					String userId = Authenticator.authenticateInGoodreads(client, configuration.getMail(), configuration.getPassword());
 					logger.log(Level.INFO, "logged in ... downloading csv now ...");
 					// TODO ask for export through API
 					// Open export page
-//					Page importExport = client.getPage(GOODREADS_BASE + "review/import");
-					// If there is no export, create one and wait for it
-//					importExport.getWebResponse().
-					// If there is an export, download!
-					Page csv = client.getPage(GOODREADS_BASE+"review_porter/export/1156136/goodreads_export.csv");
+					Page csv = client.getPage(
+							String.format("%sreview_porter/export/%s/goodreads_export.csv",
+									GOODREADS_BASE,
+									userId));
 					// May cause memory error, but later ...
 					return csv.getWebResponse().getContentAsString(Constants.UTF_8_CHARSET);
 				}

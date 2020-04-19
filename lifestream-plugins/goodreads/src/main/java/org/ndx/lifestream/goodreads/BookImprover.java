@@ -46,7 +46,7 @@ public class BookImprover implements Callable<Void> {
 	 *
 	 */
 	public static class FindWork {
-		public static final String QUERY = Goodreads.GOODREADS_BASE + "book/isbn/%s?key=" + DEVELOPPER_KEY;
+		public static final String QUERY = GoodreadsConfiguration.GOODREADS_BASE + "book/isbn/%s?key=" + GoodreadsConfiguration.DEVELOPPER_KEY;
 
 		private XPathExpression<Element> xpathForImageUrl = XPathFactory.instance().compile("//image_url", Filters.element());
 		private XPathExpression<Element> xpathForTitle = XPathFactory.instance().compile("//title", Filters.element());
@@ -142,7 +142,7 @@ public class BookImprover implements Callable<Void> {
 				Book source, AbstractConfiguration configuration) {
 			Document bookXmlData = queryToJDOM(client, 
 					// https://www.goodreads.com/series/40321-drina?format=xml&key=vzlZHr69We4utsOyP508tg
-					String.format("%sseries/work/%s?format=xml&key=%s", Goodreads.GOODREADS_BASE, workId, DEVELOPPER_KEY), 
+					String.format("%sseries/work/%s?format=xml&key=%s", GoodreadsConfiguration.GOODREADS_BASE, workId, GoodreadsConfiguration.DEVELOPPER_KEY), 
 					configuration, "series", workId);
 			Collection<Serie> returned = new ArrayList<>();
 
@@ -233,12 +233,6 @@ public class BookImprover implements Callable<Void> {
 
 	private FindWork workFinder = new FindWork();
 	private FindSerie serieFinder = new FindSerie();
-
-	/**
-	 * Yeah this is my dev key. Use it with care
-	 */
-	private static final String DEVELOPPER_KEY = "vzlZHr69We4utsOyP508tg";
-
 
 	private Book book;
 	private WebClient client;
