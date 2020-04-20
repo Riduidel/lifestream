@@ -62,7 +62,8 @@ public abstract class AbstractOutputter implements OutputWriter {
 		FileObject resultFile = toRealFile(input, output);
 		try {
 			input.accept(this);
-			writeHTMLAsMarkdown(resultFile, render(input));
+			String rendered = render(input);
+			writeFile(resultFile, rendered);
 			notify(input, resultFile, output);
 		} catch (Exception e) {
 			throw new UnableToRenderException("unable to output render for input file "+resultFile.getName().getPath(), e);
