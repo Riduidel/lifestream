@@ -26,6 +26,9 @@
     <link rel="apple-touch-icon-precomposed" sizes="72x72" href="../assets/ico/apple-touch-icon-72-precomposed.png">
     <link rel="apple-touch-icon-precomposed" href="../assets/ico/apple-touch-icon-57-precomposed.png">-->
     <link rel="shortcut icon" href="<#if (content.rootpath)??>${content.rootpath}<#else></#if>favicon.ico">
+    
+    <!-- RSS Feed! -->
+	<link rel="alternate" type="application/rss+xml" title="RSS Feed" href="<#if (content.rootpath)??>${content.rootpath}<#else></#if>${config.feed_file}" />
   </head>
   <body onload="prettyPrint()">
     <div id="wrap">
