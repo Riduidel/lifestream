@@ -102,8 +102,12 @@
 			</build>
 		</profile>
 		<profile>
-			<!-- <activation> <property> <name>wordpress.login</name> </property> 
-				</activation> -->			<!-- Download content and transform it -->
+			<activation>
+				<property>
+					<name>wordpress.login</name>
+				</property>
+			</activation>
+			<!-- Download content and transform it -->
 			<id>download-wordpress</id>
 			<build>
 				<plugins>
