@@ -7,7 +7,7 @@
                 <header>
                     <h1>Tags</h1>
                 </header>
-                <#list tags as tag>
+                <#list tags?sort_by("name") as tag>
                 	<h2><a href="${content.rootpath}${tag.uri}">${tag.name}</a> [${tag.tagged_posts?size}]</h2>
 
 				</#list>
