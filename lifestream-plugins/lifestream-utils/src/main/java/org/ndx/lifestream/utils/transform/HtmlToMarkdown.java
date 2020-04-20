@@ -3,6 +3,7 @@ package org.ndx.lifestream.utils.transform;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 
+import com.overzealous.remark.Options;
 import com.overzealous.remark.Remark;
 
 public class HtmlToMarkdown {
@@ -11,7 +12,7 @@ public class HtmlToMarkdown {
 		if(remark==null) {
 			synchronized(HtmlToMarkdown.class) {
 				if(remark==null) {
-					remark = new Remark();
+					remark = new Remark(Options.multiMarkdown());
 				}
 			}
 		}
