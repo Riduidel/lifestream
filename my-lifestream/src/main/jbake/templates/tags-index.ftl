@@ -3,15 +3,19 @@
 	<#include "menu.ftl">
 
     <div id="main">
-    	<ul class="posts">
-                <header>
-                    <h1>Tags</h1>
-                </header>
-                <#list tags?sort_by("name") as tag>
-                	<h2><a href="${content.rootpath}${tag.uri}">${tag.name}</a> [${tag.tagged_posts?size}]</h2>
-
-				</#list>
-            </ul>
+        <header>
+            <h1>Tags</h1>
+        </header>
+        <div class="tags">
+        <#list tags?sort_by("name") as tag>
+        	<#if tag.name?trim?length gt 0>
+        	<span class="tag">
+        		<a href="${content.rootpath}${tag.uri}">${tag.name}</a>
+        		<span class="badge">${tag.tagged_posts?size}</span>
+        	</span>
+			</#if>
+		</#list>
+		</div>
     </div>
 
 <#include "footer.ftl"> 
