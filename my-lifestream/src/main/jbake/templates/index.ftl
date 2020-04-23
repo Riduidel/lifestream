@@ -25,6 +25,7 @@
 	<div class="page-header">
 		<h1>Blog</h1>
 	</div>
+	<div class="posts">
 	<#list posts_indices as post_index>
 	<!--including post ${post_index}-->
 		<#assign post=posts[post_index]>
@@ -32,6 +33,7 @@
 			<#include "post-content.ftl" >
   		</#if>
   	</#list>
+  	</div>
   	
   	<#if config.index_paginate>
 		<nav aria-label="Page navigation">

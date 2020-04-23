@@ -50,3 +50,32 @@ body {
 /*code {
   font-size: 80%;
 }*/
+
+/* my own customizations */
+.shaarli h1 {
+  font-size: 100%;
+}
+.shaarli .content a {
+  display:none;
+  visibility: hidden;
+}
+
+.goodreads a.source:before {
+	content: url("../img/goodreads.png");
+	margin-right: 0.5em;
+}
+
+.wordpress a.source:before {
+	content: url("../img/wordpress.png");
+	margin-right: 0.5em;
+}
+
+.shaarli a.source:before {
+	content: url("../img/shaarli.png");
+	margin-right: 0.5em;
+	vertical-align:middle;
+}
+
+.content {
+	text-align: justify;
+}
