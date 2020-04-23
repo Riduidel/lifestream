@@ -31,6 +31,7 @@
 		<#assign post=posts[post_index]>
   		<#if (post.status == "published")>
 			<#include "post-content.ftl" >
+			<hr/>
   		</#if>
   	</#list>
   	</div>

@@ -55,7 +55,7 @@ body {
 .shaarli h1 {
   font-size: 100%;
 }
-.shaarli .content a {
+.shaarli .content p:first-child {
   display:none;
   visibility: hidden;
 }
