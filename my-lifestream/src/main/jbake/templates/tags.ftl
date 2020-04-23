@@ -9,28 +9,6 @@
 	</div>
 	
 	<#assign all_linked_tags =  []>
-	<#list tag_posts as post>
-	<#list post.tags?sort as tag>
-	<#if all_linked_tags?seq_contains(tag)>
-	<#else>
-	<#assign all_linked_tags = all_linked_tags + [tag]>
-	</#if>
-	</#list>
-	</#list>
-	
-	<div>
-	<#list all_linked_tags as tag>
-	<a class="reference_tag linked_tag linked_tag_<@safe_tag tag/>" 
-		id="linked_tag_<@safe_tag tag/>"
-		data-safe-tag="${tag}"
-		data-selected="false"
-		onclick="toggleTag('linked_tag_<@safe_tag tag/>');"
-		href="#">
-		<span class="label label-default">${tag}</span>
-	</a>
-	</#list>
-	</div>
-	
 	<ul>
 		<#list tag_posts as post>
 		<#if (last_month)??>
@@ -54,12 +32,29 @@
 						onclick="toggleTag('linked_tag_<@safe_tag tag/>');"
 						href="#">
 						<span class="label label-default">${tag}</span>
-						</a>
+					</a>
+					<#if all_linked_tags?seq_contains(tag)>
+					<#else>
+					<#assign all_linked_tags = all_linked_tags + [tag]>
+					</#if>
 				</#list>
 			</span>
 		</li>
 		<#assign last_month = post.date?string("MMMM yyyy")>
 		</#list>
 	</ul>
+	
+	<div>
+	<#list all_linked_tags as tag>
+	<a class="reference_tag linked_tag linked_tag_<@safe_tag tag/>" 
+		id="linked_tag_<@safe_tag tag/>"
+		data-safe-tag="${tag}"
+		data-selected="false"
+		onclick="toggleTag('linked_tag_<@safe_tag tag/>');"
+		href="#">
+		<span class="label label-default">${tag}</span>
+	</a>
+	</#list>
+	</div>
 	
 <#include "footer.ftl">
