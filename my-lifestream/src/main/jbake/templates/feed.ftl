@@ -9,7 +9,10 @@
     <pubDate>${published_date?string("EEE, d MMM yyyy HH:mm:ss Z")}</pubDate>
     <lastBuildDate>${published_date?string("EEE, d MMM yyyy HH:mm:ss Z")}</lastBuildDate>
 
-    <#list published_posts as post>
+	<#assign count=[published_posts?size-1, config.render_feed_size?number!200]?min>
+	<#assign post_indices = 0..count>
+    <#list post_indices as index>
+    <#assign post = published_posts[index]>
     <item>
       <title><#escape x as x?xml>${post.title}</#escape></title>
       <link>${config.site_host}/${post.uri}</link>
@@ -22,6 +25,5 @@
 	</description>
     </item>
     </#list>
-
   </channel> 
 </rss>
