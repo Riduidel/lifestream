@@ -9,8 +9,7 @@
 
 <p class="tags">
 <#list post.tags?sort as tag>
-<#list tags?filter(t -> t.name==tag) as matching>
-<a class="tag" href="${content.rootpath}${matching.uri}">${matching.name}</a></#list>
+<a class="tag" href="${content.rootpath}${config.tag_path}/${tag}.html">${tag}</a>
 </#list>
 </p>
 </div>
