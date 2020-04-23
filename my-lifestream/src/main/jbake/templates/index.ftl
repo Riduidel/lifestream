@@ -11,11 +11,6 @@
 	<#assign post_first_index=(currentPageInt-1)*posts_per_page>
 	<#assign post_last_index=[currentPageInt*posts_per_page-1, posts?size-1]?min>
 	<#assign posts_indices=post_first_index..post_last_index>
-	<#if currentPageNumber==1>
-    <#assign path="">
-	<#else>
-    <#assign path="../">
-    </#if>
 	
 	<!--
 	current page = ${currentPageInt}
@@ -43,11 +38,11 @@
 		  <ul class="pagination">
 		  	<#macro link_to path page_index="#" aria_label="#">
 		    	<#if page_index?number == 1>
-		    	<a href="${path}index.html" aria-label="${aria_label}">
+		    	<a href="${content.rootpath}index.html" aria-label="${aria_label}">
 		    		<#nested>
 		    	</a>
 		    	<#else>
-		    	<a href="${path}${page_index}/index.html">
+		    	<a href="${content.rootpath}${page_index}/index.html">
 		    		<#nested>
 		    	</a>
 		    	</#if>
@@ -55,7 +50,7 @@
 		  
 		    <#if currentPageInt gt 1>
 		    <li>
-			    <@link_to path "${currentPageInt-1}" "Previous">
+			    <@link_to content.rootpath "${currentPageInt-1}" "Previous">
 			        <span aria-hidden="true">&laquo;</span>
 			    </@link_to>
 		    </li>
@@ -69,12 +64,12 @@
 		    </li>
 		    <#list posts_pages as page_index>
 		    	<#if page_index==currentPageNumber><li class="disabled"><#else><li></#if>
-			    <@link_to path page_index page_index>${page_index}</@link_to>
+			    <@link_to content.rootpath page_index page_index>${page_index}</@link_to>
 		    	</li>
 		    </#list>
 		    <#if currentPageInt lt numberOfPages-1>
 		    <li>
-			    <@link_to path "${currentPageInt+1}" "Next">
+			    <@link_to content.rootpath "${currentPageInt+1}" "Next">
 			        <span aria-hidden="true">&raquo;</span>
 			    </@link_to>
 		    </li>
