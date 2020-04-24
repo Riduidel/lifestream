@@ -1,14 +1,22 @@
-function toggleSelectedStatus(selected) {
-	return function(element) {
-		var span = element.firstElementChild
-		if(selected) {
-			span.classList.add("label-success")
-			span.classList.remove("label-default")
-		} else {
-			span.classList.add("label-default")
-			span.classList.remove("label-success")
-		}
-	}
+
+function toggleHighlightedTagDisplay(tagId, active) {
+	var tagAHref = document.getElementById(tagId)
+	var selected = (tagAHref.getAttribute("data-selected")=="true")
+	Array.prototype.forEach.call(document.getElementsByClassName(tagId), 
+			element => {
+				var span = element.firstElementChild;
+				["label-info", "label-default", "label-danger", "label-success"].forEach(
+						label => span.classList.remove(label)
+						)
+			})
+	var newLabelType = selected ?
+			(active ? "label-danger" : "label-info") :
+				(active ? "label-success" : "label-default")
+	Array.prototype.forEach.call(document.getElementsByClassName(tagId), 
+			element => {
+				var span = element.firstElementChild
+				span.classList.add(newLabelType)
+			})
 }
 
 /**
@@ -28,7 +36,7 @@ function toggleTag(tagId) {
 	var selected = !previouslySelected
 	tagAHref.setAttribute("data-selected", selected.toString())
 	// Highlight matching tags
-	Array.prototype.forEach.call(document.getElementsByClassName(tagId), toggleSelectedStatus(selected))
+	toggleHighlightedTagDisplay(tagId, true)
 	// Now come the hard part: hide links having no selected tags (well, unless there is absolutly no selected tag)
 	refreshVisiblePosts()
 }
