@@ -79,3 +79,8 @@ body {
 .content {
 	text-align: justify;
 }
+
+/* Ensure linked tags never have any kind of underline, because it is so ugly */
+a.linked_tag:hover {
+  text-decoration: none;
+}
