@@ -135,17 +135,17 @@ public class Wordpress implements InputLoader<Post, WordpressConfiguration> {
 
 	FinderCrudService<Post,PostInformer> buildPostCollection(WebClient client, InputStream xmlSource, WordpressConfiguration configuration) {
 		ExecutorService executor = Executors.newFixedThreadPool(configuration.getThreadCount());
-		FinderCrudService<Post, PostInformer> bookService = wordpressEnvironment.getServiceFor(Post.class, PostInformer.class);
+		FinderCrudService<Post, PostInformer> postService = wordpressEnvironment.getServiceFor(Post.class, PostInformer.class);
 		try {
 			SyndFeedInput input = new SyndFeedInput();
 			SyndFeed feed = input.build(new XmlReader(xmlSource, true, "utf-8"));
 			for (SyndEntry entry : (Collection<SyndEntry>) feed.getEntries()) {
-				bookService.create(createPostFromEntry(entry));
+				postService.create(createPostFromEntry(entry));
 			}
-			new MultiResolver(client, configuration).resolveIn(executor, bookService);
+			new MultiResolver(client, configuration).resolveIn(executor, postService);
 			executor.shutdown();
 			executor.awaitTermination(1, TimeUnit.DAYS);
-			return bookService;
+			return postService;
 		} catch (Exception e) {
 			throw new UnableToTransformStreamInPostCollectionException(e);
 		}
