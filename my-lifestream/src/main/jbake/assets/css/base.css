@@ -84,3 +84,17 @@ body {
 a.linked_tag:hover {
   text-decoration: none;
 }
+
+.linked_tag {
+	cursor: pointer;
+}
+
+.linked_tag .go_to_tag {
+	visibility: hidden;
+	display:none;
+}
+
+.linked_tag:hover .go_to_tag {
+	visibility: visible;
+	display:inline;
+}

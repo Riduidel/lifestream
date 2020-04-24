@@ -1,19 +1,20 @@
 <#macro safe_tag tag>${tag?trim?replace("-", "_")?replace("@", "_at_")}</#macro>
 
 <#macro show_linked_tag linked_tag reference=false>
-					<a
-						class="<#if reference>reference_tag </#if>linked_tag linked_tag_<@safe_tag linked_tag/>"
-						<#if reference>
-						id="linked_tag_<@safe_tag linked_tag/>"
-						data-safe-tag="${linked_tag}"
-						data-selected="false"
-						</#if> 
-						onclick="toggleTag('linked_tag_<@safe_tag linked_tag/>');"
-						onmouseover="toggleHighlightedTagDisplay('linked_tag_<@safe_tag linked_tag/>', true);"
-						onmouseout="toggleHighlightedTagDisplay('linked_tag_<@safe_tag linked_tag/>', false);"
-						href="#">
-						<span class="label label-default">${linked_tag}</span>
-					</a>
+<span
+	class="<#if reference>reference_tag </#if>linked_tag linked_tag_<@safe_tag linked_tag/>"
+	<#if reference>
+	id="linked_tag_<@safe_tag linked_tag/>"
+	data-safe-tag="${linked_tag}"
+	data-selected="false"
+	</#if> 
+	onclick="toggleTag('linked_tag_<@safe_tag linked_tag/>');"
+	onmouseover="toggleHighlightedTagDisplay('linked_tag_<@safe_tag linked_tag/>', true);"
+	onmouseout="toggleHighlightedTagDisplay('linked_tag_<@safe_tag linked_tag/>', false);"
+	>
+	<span class="label label-default">${linked_tag}</span>
+	<a href="${linked_tag}.html" class="go_to_tag">&#127968;</a>
+</span>
 </#macro>
 
 <#include "header.ftl">
