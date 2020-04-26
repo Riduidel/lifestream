@@ -5,9 +5,9 @@
 	class="<#if reference>reference_tag </#if>linked_tag linked_tag_<@safe_tag linked_tag/>"
 	<#if reference>
 	id="linked_tag_<@safe_tag linked_tag/>"
-	data-safe-tag="${linked_tag}"
 	data-selected="false"
 	</#if> 
+	data-safe-tag="${linked_tag}"
 	onclick="toggleTag('linked_tag_<@safe_tag linked_tag/>');"
 	onmouseover="toggleHighlightedTagDisplay('linked_tag_<@safe_tag linked_tag/>', true);"
 	onmouseout="toggleHighlightedTagDisplay('linked_tag_<@safe_tag linked_tag/>', false);"
@@ -26,7 +26,7 @@
 	</div>
 	
 	<#assign all_linked_tags =  []>
-	<ul>
+	<ul id="linked_posts">
 		<#list tag_posts as post>
 		<#if (last_month)??>
 			<#if post.date?string("MMMM yyyy") != last_month>
@@ -47,10 +47,6 @@
 					<#if post_tag==tag>
 					<#else>
 					<@show_linked_tag linked_tag=post_tag/>
-					<#if all_linked_tags?seq_contains(post_tag)>
-					<#else>
-					<#assign all_linked_tags = all_linked_tags + [post_tag]>
-					</#if>
 					</#if>
 				</#list>
 			</span>
@@ -59,7 +55,7 @@
 		</#list>
 	</ul>
 	
-	<div>
+	<div id="linked_tags">
 	<#list all_linked_tags?sort as linked_tag>
 					<@show_linked_tag linked_tag=linked_tag reference=true/>
 	</#list>

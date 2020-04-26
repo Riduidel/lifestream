@@ -71,3 +71,23 @@ function showPostIfMatching(tags) {
 		}
 	}
 }
+
+// At document loaded, we search all distinct tags and generate for each one the "reference" tag
+function reconstituteTags() {
+	var all_linked_tags = {}
+	var linked_tags = document.getElementById("linked_tags")
+	Array.prototype.forEach.call(document.getElementsByClassName("linked_tag"), element => {
+		var linked_tag_name = element.getAttribute("data-safe-tag")
+		if(!all_linked_tags.hasOwnProperty(linked_tag_name)) {
+			var reference = element.cloneNode(true)
+			reference.setAttribute("id", "linked_tag_"+linked_tag_name)
+			reference.setAttribute("data-selected", false)
+			reference.classList.add("reference_tag")
+			all_linked_tags[linked_tag_name]=reference
+		}
+	})
+	// Now all elements have been added, sort them and add them to document
+	Object.keys(all_linked_tags).sort().forEach(tag => linked_tags.appendChild(all_linked_tags[tag]))
+}
+
+reconstituteTags();
