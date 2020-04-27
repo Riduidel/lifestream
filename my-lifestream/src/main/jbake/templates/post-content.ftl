@@ -14,10 +14,12 @@
 	<p><em>${post.date?string("dd MMMM yyyy")}</em></p>
 	
 	<p class="tags">
+	<#if post.tags??>
 	<#list post.tags?sort as tag>
 	<a class="tag" href="${content.rootpath}${config.tag_path}/${tag}.html">${tag}</a>
 	</#list>
 	</p>
+	</#if>
 	
 	<#if post.source??>
 	<a class="source" href="${post.source}">source</a>
