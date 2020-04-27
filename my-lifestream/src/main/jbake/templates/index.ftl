@@ -29,7 +29,7 @@
 	<#list posts_indices as post_index>
 	<!--including post ${post_index}-->
 		<#assign post=posts[post_index]>
-  		<#if (post.status == "published")>
+  		<#if (post.status == "published") && (!post.style?contains("no-index"))>
 			<#include "post-content.ftl" >
 			<hr/>
   		</#if>
