@@ -52,10 +52,8 @@ body {
 }*/
 
 /* my own customizations */
+/* hide shaarli links titles as they're internal links, what I don't really want except on tag pages) */
 .shaarli h1 {
-  font-size: 100%;
-}
-.shaarli .content p:first-child {
   display:none;
   visibility: hidden;
 }
