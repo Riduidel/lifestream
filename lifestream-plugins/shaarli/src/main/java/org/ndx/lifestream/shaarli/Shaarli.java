@@ -1,5 +1,7 @@
 package org.ndx.lifestream.shaarli;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -88,7 +90,6 @@ public class Shaarli implements InputLoader<MicroblogEntry, ShaarliConfiguration
 
 	private MicroblogEntry createEntryFrom(ShaarliConfiguration configuration, Element dt, @Nullable Element dd) {
 		MicroblogEntry returned = new MicroblogEntry();
-		returned.setSource(configuration.getSite());
 		Element link = dt.selectFirst("a");
 		returned.setLink(link.attr("href"));
 		returned.setTitle(HtmlToMarkdown.transformHtml(link.text()).trim());
@@ -107,6 +108,16 @@ public class Shaarli implements InputLoader<MicroblogEntry, ShaarliConfiguration
 		returned.setVisible(link.attr("private").equals("0"));
 		if(dd!=null) {
 			returned.setComment(HtmlToMarkdown.transformHtml(dd.text().trim()));
+		}
+		try {
+			returned.setSource(
+					String.format("%s?searchterm=%s&searchtags=%s", configuration.getSite(), 
+							URLEncoder.encode(returned.getLink(), "UTF-8"),
+							URLEncoder.encode(returned.getTags().stream().collect(Collectors.joining(" ")), "UTF-8")
+							)
+					);
+		} catch(UnsupportedEncodingException e) {
+			throw new UnableToProduceUTF8Exception(e);
 		}
 		return returned;
 	}
