@@ -38,13 +38,20 @@ function toggleTag(tagId) {
 	// Highlight matching tags
 	toggleHighlightedTagDisplay(tagId, true)
 	// Now come the hard part: hide links having no selected tags (well, unless there is absolutly no selected tag)
-	refreshVisiblePosts()
-}
-
-function refreshVisiblePosts() {
 	var linked_tags = document.getElementsByClassName("reference_tag")
 	var selected_tags = Array.prototype.filter.call(linked_tags, element => element.getAttribute("data-selected")=="true")
 		.map(element => element.getAttribute("data-safe-tag"))
+	refreshVisiblePosts(selected_tags)
+	refreshUrl(selected_tags)
+}
+function refreshUrl(selected_tags) {
+	var params = new URLSearchParams()
+	selected_tags.map(t => encodeURI(t))
+		.forEach(t => params.append("tag", t))
+	document.getElementById("autolink").setAttribute("href", document.location.href + "?" + params.toString())
+}
+
+function refreshVisiblePosts(selected_tags) {
 	var posts = document.getElementsByClassName("linked_post")
 	if(selected_tags.length<=0) {
 		// Display all posts
@@ -90,4 +97,15 @@ function reconstituteTags() {
 	Object.keys(all_linked_tags).sort().forEach(tag => linked_tags.appendChild(all_linked_tags[tag]))
 }
 
-reconstituteTags();
+function loadLinkedTags() {
+	var params = new URLSearchParams(document.location.search)
+	params.getAll("tag").map(t => "linked_tag_"+t)
+		.forEach(t => toggleTag(t))
+}
+
+function onLoad() {
+	reconstituteTags();
+	loadLinkedTags()
+}
+
+onLoad()

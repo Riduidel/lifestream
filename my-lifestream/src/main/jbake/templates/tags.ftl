@@ -13,7 +13,7 @@
 	onmouseout="toggleHighlightedTagDisplay('linked_tag_<@safe_tag linked_tag/>', false);"
 	>
 	<span class="label label-default">${linked_tag}</span>
-	<a href="${linked_tag}.html" class="go_to_tag">&#127968;</a>
+	<a href="${linked_tag}.html" class="go_to_tag">🏠</a>
 </span>
 </#macro>
 
@@ -23,7 +23,7 @@
 	<#include "menu.ftl">
 	
 	<div class="page-header">
-		<h1>Tag: ${tag}</h1>
+		<h1><a id="autolink" href="#">🔗</a> Tag: ${tag}</h1>
 	</div>
 	
 	<#assign all_linked_tags =  []>
