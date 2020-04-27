@@ -1,8 +1,15 @@
+<#ftl output_format="HTML">
 <!DOCTYPE html>
 <html lang="en">
   <head>
     <meta charset="utf-8"/>
-    <title><#if (content.title)??><#escape x as x?xml>${content.title}</#escape><#else>${config.site_title}</#if></title>
+    <#if title??>
+    <#elseif (content.title)??>
+    <#assign title=content.title>
+    <#else>
+    <#assign title=config.site_title>
+    </#if>
+    <title>${title}</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="">
     <meta name="author" content="">

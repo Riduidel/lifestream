@@ -17,6 +17,7 @@
 </span>
 </#macro>
 
+<#assign title=config.site_title + " >> tags >> " + tag>
 <#include "header.ftl">
 
 	<#include "menu.ftl">
