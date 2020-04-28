@@ -10,9 +10,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
+import org.apache.commons.io.FilenameUtils;
 import org.ndx.lifestream.rendering.OutputWriter;
 import org.ndx.lifestream.rendering.model.Input;
 import org.ndx.lifestream.rendering.model.Input.Headers;
+import org.ndx.lifestream.rendering.output.FileNameUtils;
 import org.ndx.lifestream.rendering.output.Freemarker;
 
 import freemarker.template.Template;
@@ -40,7 +42,7 @@ public class Serie extends BookInfos implements Input, Comparable<Serie> {
 
 	@Override
 	public Collection<String> getExpectedPath() {
-		return Arrays.asList("goodreads", "series", getTitle().replace(' ', '_'));
+		return Arrays.asList("goodreads", "series", FileNameUtils.simplify(getTitle()));
 	}
 
 	@Override
