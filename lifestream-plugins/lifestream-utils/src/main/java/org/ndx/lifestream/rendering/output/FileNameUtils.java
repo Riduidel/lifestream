@@ -19,7 +19,7 @@ public class FileNameUtils {
 				.replaceAll("[\\n\\x0B\\f\\r]", "")
 				.replaceAll("\\p{Blank}", "_")
 				.replace('/', '_')
-				.replaceAll("[*\"':?]", "_");
+				.replaceAll("[,*\"':?]", "_");
 		// Thanks @glaforge : http://glaforge.appspot.com/article/how-to-remove-accents-from-a-string
 		return name;
 	}
