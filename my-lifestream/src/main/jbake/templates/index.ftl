@@ -33,6 +33,8 @@
   		<#if post.smallimage??>
   			<#assign image = post.smallimage>
   			<!-- ${post.smallimage} -->
+  		<#else>
+  			<#assign image="">
   		</#if>
 			<#include "post-content.ftl" >
 			<hr/>

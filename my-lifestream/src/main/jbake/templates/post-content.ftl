@@ -30,7 +30,9 @@
 <#macro content_renderer post>
 <div class="content col-md-10">
 <#if image??>
+<#if image?length gt 0>
 <img class="special-image pull-left img-responsive" src="${image}"/>
+</#if>
 </#if>
 <div class="content-text">
 ${post.body}
