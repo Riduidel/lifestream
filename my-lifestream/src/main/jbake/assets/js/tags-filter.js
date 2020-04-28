@@ -87,7 +87,7 @@ function reconstituteTags() {
 		var linked_tag_name = element.getAttribute("data-safe-tag")
 		if(!all_linked_tags.hasOwnProperty(linked_tag_name)) {
 			var reference = element.cloneNode(true)
-			reference.setAttribute("id", "linked_tag_"+linked_tag_name)
+			reference.setAttribute("id", "linked_tag_"+linked_tag_name.split('-').join('_'))
 			reference.setAttribute("data-selected", false)
 			reference.classList.add("reference_tag")
 			all_linked_tags[linked_tag_name]=reference
