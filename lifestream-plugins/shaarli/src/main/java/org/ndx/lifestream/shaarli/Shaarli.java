@@ -20,6 +20,7 @@ import org.ndx.lifestream.plugin.exceptions.UnableToDownloadContentException;
 import org.ndx.lifestream.rendering.Mode;
 import org.ndx.lifestream.rendering.OutputWriter;
 import org.ndx.lifestream.rendering.model.InputLoader;
+import org.ndx.lifestream.utils.TagUtils;
 import org.ndx.lifestream.utils.transform.HtmlToMarkdown;
 
 import com.gargoylesoftware.htmlunit.WebClient;
@@ -103,8 +104,10 @@ public class Shaarli implements InputLoader<MicroblogEntry, ShaarliConfiguration
 				logger.log(Level.FINE, returned+" has no tags ?");
 			}
 		} else {
-			returned.setTags(Arrays.asList(tagsText.split(",")));
+			returned.addAllTags(Arrays.asList(tagsText.split(",")));
 		}
+		returned.addTag(TagUtils.monthAsTag(writeDate));
+		returned.addTag(TagUtils.yearAsTag(writeDate));
 		returned.setVisible(link.attr("private").equals("0"));
 		if(dd!=null) {
 			returned.setComment(HtmlToMarkdown.transformHtml(dd.text().trim()));

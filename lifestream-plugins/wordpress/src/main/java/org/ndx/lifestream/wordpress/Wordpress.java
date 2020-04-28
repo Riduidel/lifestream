@@ -28,6 +28,7 @@ import org.ndx.lifestream.rendering.Mode;
 import org.ndx.lifestream.rendering.OutputWriter;
 import org.ndx.lifestream.rendering.model.InputLoader;
 import org.ndx.lifestream.utils.Constants;
+import org.ndx.lifestream.utils.TagUtils;
 import org.ndx.lifestream.wordpress.resolvers.MultiResolver;
 
 import com.dooapp.gaedo.finders.FinderCrudService;
@@ -159,6 +160,8 @@ public class Wordpress implements InputLoader<Post, WordpressConfiguration> {
 		post.setText(getEntryText(entry));
 		post.setUri(entry.getUri());
 		post.setSource(entry.getLink());
+		post.tags.add(TagUtils.monthAsTag(post.getWriteDate()));
+		post.tags.add(TagUtils.yearAsTag(post.getWriteDate()));
 		try {
 			String basename = new URL(entry.getLink()).getPath();
 			if(basename.endsWith("/")) {

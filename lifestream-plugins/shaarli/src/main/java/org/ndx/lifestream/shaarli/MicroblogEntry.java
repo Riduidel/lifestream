@@ -1,6 +1,7 @@
 package org.ndx.lifestream.shaarli;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
@@ -33,7 +34,7 @@ public class MicroblogEntry implements Input {
 	private String title;
 	private String link;
 	private String comment;
-	private Collection<String> tags;
+	private Collection<String> tags = new ArrayList<>();
 	private Date writeDdate;
 	private boolean visible;
 	/**
@@ -97,13 +98,11 @@ public class MicroblogEntry implements Input {
 	public Collection<String> getTags() {
 		return tags;
 	}
-	/**
-	 * @param tags the tags to set
-	 * @category setter
-	 * @category tags
-	 */
-	public void setTags(Collection<String> tags) {
-		this.tags = tags;
+	public boolean addTag(String e) {
+		return tags.add(e);
+	}
+	public boolean addAllTags(Collection<? extends String> c) {
+		return tags.addAll(c);
 	}
 	/**
 	 * @return the date
