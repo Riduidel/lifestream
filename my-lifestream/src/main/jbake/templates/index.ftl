@@ -30,6 +30,10 @@
 	<!--including post ${post_index}-->
 		<#assign post=posts[post_index]>
   		<#if (post.status == "published") && (!post.style?contains("no-index"))>
+  		<#if post.smallimage??>
+  			<#assign image = post.smallimage>
+  			<!-- ${post.smallimage} -->
+  		</#if>
 			<#include "post-content.ftl" >
 			<hr/>
   		</#if>

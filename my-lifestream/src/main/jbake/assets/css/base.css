@@ -96,3 +96,7 @@ a.linked_tag:hover {
 	visibility: visible;
 	display:inline;
 }
+
+img.special-image {
+	margin: 10px;
+}

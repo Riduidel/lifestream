@@ -17,8 +17,9 @@ import java.util.logging.Logger;
 import org.ndx.lifestream.goodreads.references.Reference;
 import org.ndx.lifestream.rendering.OutputWriter;
 import org.ndx.lifestream.rendering.model.Input;
+import org.ndx.lifestream.rendering.model.Input.Headers;
 import org.ndx.lifestream.rendering.output.Freemarker;
-import org.ndx.lifestream.utils.ThreadSafeSimpleDateFormat;
+import org.ndx.lifestream.utils.TagUtils;
 
 import freemarker.template.Template;
 
@@ -44,20 +45,8 @@ public class Book extends BookInfos implements Input {
 	}
 	private static Template book;
 	private static final Logger logger = Logger.getLogger(Book.class.getName());
-	private static final ThreadSafeSimpleDateFormat MONTH_FORMATTER = new ThreadSafeSimpleDateFormat("MMM");
-	private static final ThreadSafeSimpleDateFormat YEAR_FORMATTER = new ThreadSafeSimpleDateFormat("yyyy");
-
 	static {
 		book = BookInfos.loadTemplate("book.ftl");
-	}
-	public static String ratingAsTag(Number rating) {
-		return "rated_"+rating;
-	}
-	public static String readMonthAsTag(Date d) {
-		return "read_on_"+MONTH_FORMATTER.format(d);
-	}
-	public static String readYearAsTag(Date d) {
-		return "read_in_"+YEAR_FORMATTER.format(d);
 	}
 	public Collection<Author> authors = new TreeSet<>();
 	public Number average;
@@ -66,6 +55,9 @@ public class Book extends BookInfos implements Input {
 	 * Source description (usually book's back text)
 	 */
 	public String description;
+	public String getDescription() {
+		return description;
+	}
 	public String initialPublication;
 	private String isbn10;
 	private String isbn13;
@@ -73,7 +65,15 @@ public class Book extends BookInfos implements Input {
 	public String notes;
 	public Integer owns;
 	public Integer pages = 0;
-	public Number rating;
+	private Number rating;
+	public Number getRating() {
+		return rating;
+	}
+	public void setRating(Number rating) {
+		this.rating = rating;
+		if(rating.floatValue()>0)
+			addTag(TagUtils.ratingAsTag(rating));
+	}
 	/**
 	 * Date book is read
 	 */
@@ -177,11 +177,6 @@ public class Book extends BookInfos implements Input {
 		return returned;
 	}
 
-	@Override
-	public String getId() {
-		return isbn13;
-	}
-
 	public String getIsbn10() {
 		return isbn10;
 	}
@@ -226,20 +221,16 @@ public class Book extends BookInfos implements Input {
 
 	public void setIsbn10(String isbn10) {
 		this.isbn10 = isbn10;
-		if(getId()==null) {
-			setId(isbn10);
-		}
 	}
 
 	public void setIsbn13(String isbn13) {
 		this.isbn13 = isbn13;
-		setId(isbn13);
 	}
 
 	public void setRead(Date date) {
 		read = Goodreads.OUTPUT_FORMATTER.format(date);
-		addTag(Book.readYearAsTag(date));
-		addTag(Book.readMonthAsTag(date));
+		addTag(TagUtils.yearAsTag(date));
+		addTag(TagUtils.monthAsTag(date));
 	}
 
 	@Override
@@ -251,7 +242,7 @@ public class Book extends BookInfos implements Input {
 		Map<String, String> returned = super.getAdditionalHeaders();
 		returned.put(Headers.BIG_IMAGE, bigImage);
 		returned.put(Headers.SMALL_IMAGE, smallImage);
-		returned.put(Headers.SOURCE, url);
+		returned.put(Headers.SOURCE, String.format("https://www.goodreads.com/book/show/%s", getId()));
 		return returned;
 	}
 	public String getReview() {

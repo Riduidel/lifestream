@@ -1,3 +1,12 @@
+<#if book.description??>
+++++
+<div class="book-description">
+${book.description}
+</div>
+++++
+</#if>
+
+
 <#if authors??><#if authors?has_content>
 ## Authors
 <#compress>
@@ -7,9 +16,6 @@
 </#compress>
 </#if></#if>
 
-<#if book.description??>
-${book.description}
-</#if>
 
 <#if series??><#if series?has_content>
 ## Series

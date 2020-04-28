@@ -103,7 +103,7 @@ public class Goodreads implements InputLoader<BookInfos, GoodreadsConfiguration>
 		return bookService;
 	}
 	public static enum Columns {
-		Title, Additional_Authors, ISBN, ISBN13, My_Rating, Average_Rating, Number_of_Pages, Original_Publication_Year, Date_Read, Bookshelves, Exclusive_Shelf, My_Review, Private_Notes, Owned_Copies;
+		Title, Additional_Authors, ISBN, ISBN13, My_Rating, Average_Rating, Number_of_Pages, Original_Publication_Year, Date_Read, Bookshelves, Exclusive_Shelf, My_Review, Private_Notes, Owned_Copies, Book_Id;
 		
 		private String asHeader() {
 			return name().replace('_', ' ');
@@ -136,11 +136,12 @@ public class Goodreads implements InputLoader<BookInfos, GoodreadsConfiguration>
 
 	Book createBook(Map<String, Integer> columns, String[] line) {
 		Book book = new Book();
+		book.setId(Columns.Book_Id.getString(columns, line));
 		book.setTitle(Columns.Title.getString(columns, line));
 //		String additionalAuthors = Columns.Additional_Authors.getString(columns, line);
 		book.setIsbn10(filterIsbn(Columns.ISBN.getString(columns, line)));
 		book.setIsbn13(filterIsbn(Columns.ISBN13.getString(columns, line)));
-		book.rating = Columns.My_Rating.getInteger(columns, line);
+		book.setRating(Columns.My_Rating.getInteger(columns, line));
 		book.average = Columns.Average_Rating.getFloat(columns, line);
 		book.pages = Columns.Number_of_Pages.getInteger(columns, line);
 		book.initialPublication = Columns.Original_Publication_Year.getString(columns, line);
@@ -153,8 +154,6 @@ public class Goodreads implements InputLoader<BookInfos, GoodreadsConfiguration>
 		book.notes = Columns.Private_Notes.getString(columns, line);
 		book.owns = Columns.Owned_Copies.getInteger(columns, line);
 		// Add a tag for book score
-		if(book.rating.floatValue()>0)
-			book.addTag(Book.ratingAsTag(book.rating));
 		return book;
 	}
 

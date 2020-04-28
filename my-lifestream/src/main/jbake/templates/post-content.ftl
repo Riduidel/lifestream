@@ -28,7 +28,14 @@
 </#macro>
 
 <#macro content_renderer post>
-<div class="content col-md-10">${post.body}</div>
+<div class="content col-md-10">
+<#if image??>
+<img class="special-image pull-left img-responsive" src="${image}"/>
+</#if>
+<div class="content-text">
+${post.body}
+</div>
+</div>
 </#macro>
 
 <div class="row ${post.style} clearfix">
