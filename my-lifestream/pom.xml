@@ -17,11 +17,12 @@
 		<site.input>${site.basedir}/input/</site.input>
 		<site.dir>${site.input}/content/</site.dir>
 		<site.output>${site.basedir}/output/</site.output>
+		<site.jbake>${site.output}/jbake/</site.jbake>
+		<site.upload.dir>lifestream/</site.upload.dir>
+		<site.upload.url>ftp://ftpperso.free.fr</site.upload.url>
 		<goodreads.dir>${site.dir}/</goodreads.dir>
 		<wordpress.dir>${site.dir}/</wordpress.dir>
 		<shaarli.dir>${site.dir}/</shaarli.dir>
-		<site.upload.dir>lifestream/</site.upload.dir>
-		<site.upload.url>ftp://ftpperso.free.fr</site.upload.url>
 		<pegdown.version>1.6.0</pegdown.version>
 	</properties>
 	<distributionManagement>
@@ -72,12 +73,12 @@
 	</build>
 	<profiles>
 		<profile>
-			<activation>
+<!-- 			<activation>
 				<property>
 					<name>goodreads.mail</name>
 				</property>
 			</activation>
-			<id>download-goodreads</id>
+-->			<id>download-goodreads</id>
 			<build>
 				<plugins>
 					<plugin>
@@ -136,12 +137,12 @@
 			</build>
 		</profile>
 		<profile>
-			<activation>
+<!-- 			<activation>
 				<property>
 					<name>shaarli.login</name>
 				</property>
 			</activation>
-			<!-- Download content and transform it -->
+-->			<!-- Download content and transform it -->
 			<id>download-shaarli</id>
 			<build>
 				<plugins>
@@ -175,7 +176,6 @@
 			<id>jbake</id>
 			<properties>
 				<output.mode>jbake</output.mode>
-				<site.jbake>${site.output}/jbake/</site.jbake>
 			</properties>
 			<build>
 				<plugins>
@@ -283,6 +283,13 @@
 								</webResources> -->
 						</configuration>
 					</plugin>
+				</plugins>
+			</build>
+		</profile>
+		<profile>
+			<id>ftp</id>
+			<build>
+				<plugins>
 					<plugin>
 						<groupId>org.codehaus.mojo</groupId>
 						<artifactId>wagon-maven-plugin</artifactId>

@@ -31,8 +31,6 @@ public abstract class AbstractOutputter implements OutputWriter {
 	private static final String DEFAULT_TEMPLATE_NAME = "page.ftl";
 	protected static final String HTML = "html";
 
-	public static final String MARKDOWN = ".md";
-
 	private Configuration configuration;
 	private String templateName;
 	/**
@@ -70,11 +68,6 @@ public abstract class AbstractOutputter implements OutputWriter {
 		}
 	}
 
-	protected void writeHTMLAsMarkdown(FileObject resultFile, String resultText)
-			throws IOException {
-		writeFile(resultFile, HtmlToMarkdown.transformHtml(resultText));
-	}
-	
 	protected void writeFile(FileObject resultFile, String resultText) throws IOException {
 		if(!resultFile.exists())
 			resultFile.createFile();
@@ -107,6 +100,10 @@ public abstract class AbstractOutputter implements OutputWriter {
 	 */
 	protected  PathNavigator toRealPath(Linkable input, String extension) {
 		return getPathBuilderFinder().get(input).build(extension);
+	}
+
+	protected PathNavigator toRealPath(Linkable input, Formats extension) {
+		return toRealPath(input, extension.extension);
 	}
 
 	/**
@@ -142,11 +139,11 @@ public abstract class AbstractOutputter implements OutputWriter {
 		return LinkUtils.relativePath(fromPath, toPath, extension);
 	}
 
-	protected String markdownLink(Input from, Linkable to, String text, String extension) {
+	protected String link(Input from, Linkable to, String text, Formats extension) {
 		PathNavigator fromPath = toRealPath(from);
 		// remove last element of from path, as it's the file name
 		PathNavigator toPath = toRealPath(to);
-		return MarkdownUtils.link(fromPath, toPath, text, extension);
+		return extension.link(fromPath, toPath, text);
 	}
 
 	protected String render(Map<String, Object> parameters) {

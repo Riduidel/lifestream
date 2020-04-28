@@ -1,4 +1,4 @@
-[${link.title}](${link.link})
+${link.link}[${link.title}]
 
 <#if link.comment ??>
 ${link.comment}

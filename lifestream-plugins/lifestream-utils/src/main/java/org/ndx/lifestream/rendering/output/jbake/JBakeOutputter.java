@@ -7,6 +7,7 @@ import org.ndx.lifestream.rendering.OutputWriter;
 import org.ndx.lifestream.rendering.model.Input;
 import org.ndx.lifestream.rendering.model.Linkable;
 import org.ndx.lifestream.rendering.output.AbstractOutputter;
+import org.ndx.lifestream.rendering.output.Formats;
 import org.ndx.lifestream.rendering.path.PathNavigator;
 import org.ndx.lifestream.utils.ThreadSafeSimpleDateFormat;
 
@@ -20,12 +21,12 @@ public class JBakeOutputter extends AbstractOutputter implements OutputWriter {
 
 	@Override
 	public String link(Input from, Linkable to, String text) {
-		return markdownLink(from, to, text, HTML);
+		return link(from, to, text, Formats.ASCIIDOC);
 	}
 
 	@Override
 	protected PathNavigator toRealPath(Linkable input) {
-		return toRealPath(input, MARKDOWN);
+		return toRealPath(input, Formats.ASCIIDOC);
 	}
 
 	protected String render(Input input) {

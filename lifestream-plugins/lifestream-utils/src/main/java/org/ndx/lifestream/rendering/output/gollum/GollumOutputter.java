@@ -1,10 +1,7 @@
 package org.ndx.lifestream.rendering.output.gollum;
 
-import java.util.Arrays;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
-import java.util.stream.StreamSupport;
 
 import org.apache.commons.vfs2.FileObject;
 import org.ndx.lifestream.rendering.OutputWriter;
@@ -12,7 +9,9 @@ import org.ndx.lifestream.rendering.model.Input;
 import org.ndx.lifestream.rendering.model.Linkable;
 import org.ndx.lifestream.rendering.output.AbstractOutputter;
 import org.ndx.lifestream.rendering.output.FileNameUtils;
+import org.ndx.lifestream.rendering.output.Formats;
 import org.ndx.lifestream.rendering.path.PathNavigator;
+import org.ndx.lifestream.utils.transform.HtmlToMarkdown;
 
 /**
  * Simple output of raw content to file
@@ -26,7 +25,7 @@ public class GollumOutputter extends AbstractOutputter implements OutputWriter {
 
 	@Override
 	protected PathNavigator toRealPath(Linkable input) {
-		return super.toRealPath(input, MARKDOWN);
+		return super.toRealPath(input, Formats.MARKDOWN);
 	}
 
 	@Override
@@ -38,7 +37,7 @@ public class GollumOutputter extends AbstractOutputter implements OutputWriter {
 					FileNameUtils.simplify(usedPath.toPathList()).stream().collect(Collectors.joining("/"))
 					);
 			input.accept(this);
-			writeHTMLAsMarkdown(resultFile, render(input));
+			writeFile(resultFile, HtmlToMarkdown.transformHtml(render(input)));
 			notify(input, resultFile, output);
 		} catch (Exception e) {
 			throw new GollumException("unable to output render for input "+usedPath, e);
@@ -52,6 +51,6 @@ public class GollumOutputter extends AbstractOutputter implements OutputWriter {
 
 	@Override
 	public String link(Input from, Linkable to, String text) {
-		return markdownLink(from, to, text, HTML);
+		return link(from, to, text, Formats.MARKDOWN);
 	}
 }

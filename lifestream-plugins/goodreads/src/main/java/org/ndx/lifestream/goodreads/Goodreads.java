@@ -36,7 +36,6 @@ import org.ndx.lifestream.rendering.OutputWriter;
 import org.ndx.lifestream.rendering.model.InputLoader;
 import org.ndx.lifestream.utils.Constants;
 import org.ndx.lifestream.utils.ThreadSafeSimpleDateFormat;
-import org.ndx.lifestream.utils.transform.HtmlToMarkdown;
 
 import com.dooapp.gaedo.finders.FinderCrudService;
 import com.dooapp.gaedo.utils.CollectionUtils;
@@ -150,7 +149,7 @@ public class Goodreads implements InputLoader<BookInfos, GoodreadsConfiguration>
 			book.setRead(parseDate(dateRead));
 		book.addAllTags(Arrays.asList(Columns.Bookshelves.getString(columns, line).split(",")));
 		book.addAllTags(Arrays.asList(Columns.Exclusive_Shelf.getString(columns, line).split(",")));
-		book.setReview(HtmlToMarkdown.transformHtml(Columns.My_Review.getString(columns, line)));
+		book.setReview(Columns.My_Review.getString(columns, line));
 		book.notes = Columns.Private_Notes.getString(columns, line);
 		book.owns = Columns.Owned_Copies.getInteger(columns, line);
 		// Add a tag for book score

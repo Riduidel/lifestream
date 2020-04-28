@@ -4,13 +4,9 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.io.UnsupportedEncodingException;
-import java.net.MalformedURLException;
-import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import java.util.Map;
 import java.util.concurrent.Callable;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -18,7 +14,6 @@ import java.util.logging.Logger;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.vfs2.FileObject;
 import org.apache.commons.vfs2.FileSystemException;
-import org.apache.maven.model.Developer;
 import org.jdom2.Document;
 import org.jdom2.Element;
 import org.jdom2.JDOMException;
@@ -27,10 +22,7 @@ import org.jdom2.input.SAXBuilder;
 import org.jdom2.xpath.XPathExpression;
 import org.jdom2.xpath.XPathFactory;
 import org.ndx.lifestream.configuration.AbstractConfiguration;
-import org.ndx.lifestream.goodreads.references.Reference;
-import org.ndx.lifestream.goodreads.references.References;
 import org.ndx.lifestream.utils.Constants;
-import org.ndx.lifestream.utils.transform.HtmlToMarkdown;
 
 import com.dooapp.gaedo.finders.FinderCrudService;
 import com.dooapp.gaedo.finders.QueryBuilder;
@@ -82,7 +74,7 @@ public class BookImprover implements Callable<Void> {
 				throw new UnableToLocateWorkIdException("we were unable to find work id for query "+isbn+"\nA cache file should be available at "+getCachedFileForKey(configuration, "books", isbn));
 			Element description = xpathForDescription.evaluateFirst(bookXmlData);
 			if(description!=null) {
-				returned.description = HtmlToMarkdown.transformHtml(description.getText());
+				returned.description = description.getText();
 			}
 			Element smallImage = xpathForSmallImage.evaluateFirst(bookXmlData);
 			if(smallImage!=null) {
@@ -158,12 +150,6 @@ public class BookImprover implements Callable<Void> {
 			String serieId = xpathForSerieId.evaluateFirst(element).getText();
 			String serieDesc = xpathForSerieDescription.evaluateFirst(element).getText();
 			String positionInSerie = xpathForPositionInSerie.evaluateFirst(element).getText();
-
-			try {
-				serieDesc = HtmlToMarkdown.transformHtml(serieDesc);
-			} catch(RuntimeException e) {
-				logger.log(Level.WARNING, "something went wrong while parsing one serie of work "+workId, e);
-			}
 
 			Serie used = findOrCreateSubClass(destination, serieId, Serie.class);
 			used.setTitle(xpathForSerieTitle.evaluateFirst(element).getText().trim());

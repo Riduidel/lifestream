@@ -127,6 +127,7 @@ public class Serie extends BookInfos implements Input, Comparable<Serie> {
 	public Map<String, String> getAdditionalHeaders() {
 		Map<String, String> returned = super.getAdditionalHeaders();
 		returned.put(Headers.STYLE, returned.get(Headers.STYLE)+" "+Headers.Styles.NO_INDEX);
+		returned.put(Headers.SOURCE, String.format("https://www.goodreads.com/series/%s", getId()));
 		return returned;
 	}
 }

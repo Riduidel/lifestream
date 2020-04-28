@@ -92,7 +92,7 @@ public class Shaarli implements InputLoader<MicroblogEntry, ShaarliConfiguration
 		MicroblogEntry returned = new MicroblogEntry();
 		Element link = dt.selectFirst("a");
 		returned.setLink(link.attr("href"));
-		returned.setTitle(HtmlToMarkdown.transformHtml(link.text()).trim());
+		returned.setTitle(link.text().trim());
 		long parsedLong = Long.parseLong(link.attr("add_date"));
 		Date writeDate = new Date();
 		writeDate.setTime(parsedLong*1000); // epoch time is given in seconds !

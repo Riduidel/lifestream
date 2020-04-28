@@ -5,6 +5,7 @@ import org.ndx.lifestream.rendering.OutputWriter;
 import org.ndx.lifestream.rendering.model.Input;
 import org.ndx.lifestream.rendering.model.Linkable;
 import org.ndx.lifestream.rendering.output.AbstractOutputter;
+import org.ndx.lifestream.rendering.output.Formats;
 import org.ndx.lifestream.rendering.path.PathNavigator;
 
 public class GumdropOutputter extends AbstractOutputter implements OutputWriter {
@@ -22,12 +23,12 @@ public class GumdropOutputter extends AbstractOutputter implements OutputWriter 
 
 	@Override
 	public String link(Input from, Linkable to, String text) {
-		return markdownLink(from, to, text, HTML);
+		return link(from, to, text, Formats.MARKDOWN);
 	}
 
 	@Override
 	protected PathNavigator toRealPath(Linkable input) {
-		return toRealPath(input, MARKDOWN);
+		return toRealPath(input, Formats.MARKDOWN);
 	}
 
 	@Override

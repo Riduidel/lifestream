@@ -6,8 +6,10 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
+import java.util.stream.Collectors;
 
 import org.ndx.lifestream.rendering.OutputWriter;
 import org.ndx.lifestream.rendering.model.Input;
@@ -78,6 +80,40 @@ public class Post implements Input {
 				text = text.replace(source, destination);
 			}
 		}
+		// Old wordpress messages don't contain any <p> tag, so add it around each line if missing
+		text = String.format("++++\n%s\n++++", improvePostText(text));
+	}
+
+	public static String improvePostText(String text) {
+		if(text.contains("<p>")) return text;
+		if(text.contains("<br")) return text;
+		// First, detect line return that come in blocks of two or more
+		List<String> lines = text.lines().collect(Collectors.toList());
+		String previousLine = "",
+				line = "",
+				nextLine = "";
+		List<String> returned = new ArrayList<>();
+		for(int index = 0; index<lines.size(); index++) {
+			if (index > 0)
+				previousLine = line;
+			if (index < lines.size() - 1)
+				nextLine = lines.get(index + 1).trim();
+			else
+				nextLine = "";
+			line = lines.get(index).trim();
+			if (!line.isEmpty()) {
+				if (previousLine.isBlank()) {
+					returned.add("<p>");
+				}
+				returned.add(line);
+				if (nextLine.isBlank()) {
+					returned.add("</p>");
+				} else {
+					returned.add("<br/>");
+				}
+			}
+		}
+		return returned.stream().collect(Collectors.joining("\n"));
 	}
 
 	@Override

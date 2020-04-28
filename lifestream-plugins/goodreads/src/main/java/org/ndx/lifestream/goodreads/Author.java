@@ -1,7 +1,5 @@
 package org.ndx.lifestream.goodreads;
 
-import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Date;
@@ -9,7 +7,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.TreeMap;
 import java.util.TreeSet;
 
 import org.ndx.lifestream.rendering.OutputWriter;
@@ -75,8 +72,8 @@ public class Author extends BookInfos implements Comparable<Author>{
 	 * @param writer
 	 * @return
 	 */
-	private List<String> createBooksList(OutputWriter writer) {
-		List<String> returned = new ArrayList<>();
+	private Collection<String> createBooksList(OutputWriter writer) {
+		Set<String> returned = new TreeSet<>();
 		for(Book b : books) {
 			returned.add(writer.link(this, b, b.getTitle()));
 		}
@@ -114,6 +111,7 @@ public class Author extends BookInfos implements Comparable<Author>{
 		Map<String, String> returned = super.getAdditionalHeaders();
 		returned.put(Headers.BIG_IMAGE, image);
 		returned.put(Headers.STYLE, returned.get(Headers.STYLE)+" "+Headers.Styles.NO_INDEX);
+		returned.put(Headers.SOURCE, String.format("https://www.goodreads.com/author/show/%s", getId()));
 		return returned;
 	}
 
