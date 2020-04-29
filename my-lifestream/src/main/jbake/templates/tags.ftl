@@ -1,8 +1,8 @@
-<#macro safe_tag tag>${tag?trim?replace("-", "_")?replace("@", "_at_")}</#macro>
+<#include "_tag_helper.ftl">
 
 <#macro show_linked_tag linked_tag reference=false>
 <span
-	class="<#if reference>reference_tag </#if>linked_tag linked_tag_<@safe_tag linked_tag/>"
+	class="<#if reference>reference_tag </#if>linked_tag <@tag_classes linked_tag/>"
 	<#if reference>
 	id="linked_tag_<@safe_tag linked_tag/>"
 	data-selected="false"

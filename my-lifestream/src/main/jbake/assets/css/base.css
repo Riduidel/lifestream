@@ -100,3 +100,48 @@ a.linked_tag:hover {
 img.special-image {
 	margin: 10px;
 }
+
+/*------------------------------------------------*/
+/*---------------- tag customization -------------*/
+/*------------------------------------------------*/
+
+
+.linked_tag__note_1 span:before {
+  content: "⭐ ";
+}
+.linked_tag__note_2 span:before {
+  content: "⭐⭐ ";
+}
+.linked_tag__note_3 span:before {
+  content: "⭐⭐⭐ ";
+}
+.linked_tag__note_4 span:before {
+  content: "⭐⭐⭐⭐ ";
+}
+.linked_tag__note_5 span:before {
+  content: "⭐⭐⭐⭐⭐ ";
+}
+.linked_tag__année span:before {
+  content: "📅 ";
+}
+.linked_tag__mois span:before {
+  content: "📅 ";
+}
+.linked_tag_amour span:before {
+  content: "❤️ ";
+}
+.linked_tag_bateaux span:before {
+  content: "⛵ ";
+}
+.linked_tag_space-opera span:before {
+  content: "🚀  ";
+}
+.linked_tag_planet-opera span:before {
+  content: "🪐";
+}
+.linked_tag_montagne span:before {
+  content: "⛰️ ";
+}
+.linked_tag_ville span:before {
+  content: "🏙️ ";
+}

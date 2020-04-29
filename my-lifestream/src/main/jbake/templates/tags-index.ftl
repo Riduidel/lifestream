@@ -1,3 +1,4 @@
+<#include "_tag_helper.ftl">
 <#include "header.ftl">
 
 	<#include "menu.ftl">
@@ -10,7 +11,7 @@
         <#list tags?sort_by("name") as tag>
         	<#if tag.name?trim?length gt 0>
         	<span class="tag">
-        		<a href="${content.rootpath}${tag.uri}">${tag.name}</a>
+        		<a class="<@tag_classes tag.name/>" href="${content.rootpath}${tag.uri}"><span>${tag.name}</span></a>
         		<span class="badge">${tag.tagged_posts?size}</span>
         	</span>
 			</#if>

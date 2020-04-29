@@ -4,11 +4,11 @@ import java.util.Date;
 
 public class TagUtils {
 
-	public static final String PREFIX_YEAR = "year_";
+	public static final String PREFIX_YEAR = "_année_";
 
-	public static final String PREFIX_RATED = "rated_";
+	public static final String PREFIX_RATED = "_note_";
 
-	public static final String PREFIX_MONTH = "month_";
+	public static final String PREFIX_MONTH = "_mois_";
 
 	public static final ThreadSafeSimpleDateFormat FORMATTER_MONTH = new ThreadSafeSimpleDateFormat("MMM");
 

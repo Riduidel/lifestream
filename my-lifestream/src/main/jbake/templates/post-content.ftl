@@ -1,3 +1,4 @@
+<#include "_tag_helper.ftl">
 <#macro nothing>
 <span class="col-md-2">
 </span>
@@ -16,7 +17,9 @@
 	<p class="tags">
 	<#if post.tags??>
 	<#list post.tags?sort as tag>
-	<a class="tag" href="${content.rootpath}${config.tag_path}/${tag}.html">${tag}</a>
+	<a class="tag <@tag_classes tag/>" href="${content.rootpath}${config.tag_path}/${tag}.html">
+		<span class="label label-default">${tag}</span>
+	</a>
 	</#list>
 	</p>
 	</#if>
