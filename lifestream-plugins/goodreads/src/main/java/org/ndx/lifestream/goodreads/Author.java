@@ -39,11 +39,7 @@ public class Author extends BookInfos implements Comparable<Author>{
 
 	@Override
 	public Collection<String> getTags() {
-		return Arrays.asList(getAssociatedTag());
-	}
-
-	String getAssociatedTag() {
-		return "by_"+forTag(getTitle());
+		return Arrays.asList("author");
 	}
 
 	@Override

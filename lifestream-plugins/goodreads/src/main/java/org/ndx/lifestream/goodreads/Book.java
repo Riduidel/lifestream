@@ -125,11 +125,9 @@ public class Book extends BookInfos implements Input {
 	}
 	public void addAuthor(Author author) {
 		authors.add(author);
-		addTag(author.getAssociatedTag());
 	}
 	public void addSerie(Serie serie) {
 		series.add(serie);
-		tags.add(serie.getAssociatedTag());
 	}
 	public void addTag(String associatedTag) {
 		tags.add(associatedTag);

@@ -47,11 +47,7 @@ public class Serie extends BookInfos implements Input, Comparable<Serie> {
 
 	@Override
 	public Collection<String> getTags() {
-		return Arrays.asList(getAssociatedTag());
-	}
-
-	String getAssociatedTag() {
-		return "in_serie_"+forTag(getTitle());
+		return Arrays.asList("serie");
 	}
 
 	/**
