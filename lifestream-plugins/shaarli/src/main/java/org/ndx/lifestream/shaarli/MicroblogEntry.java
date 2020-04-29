@@ -2,6 +2,7 @@ package org.ndx.lifestream.shaarli;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
@@ -42,6 +43,7 @@ public class MicroblogEntry implements Input {
 	 */
 	private String text;
 	private String source;
+	private String image;
 	/**
 	 * @return the title
 	 * @category getter
@@ -189,6 +191,12 @@ public class MicroblogEntry implements Input {
 	 */
 	@Override
 	public Collection<String> getSourceLinks() {
-		return Collections.emptyList();
+		return Arrays.asList(source);
+	}
+	public String getImage() {
+		return image;
+	}
+	public void setImage(String image) {
+		this.image = image;
 	}
 }
