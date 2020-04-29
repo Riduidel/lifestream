@@ -4,18 +4,24 @@ import java.util.Date;
 
 public class TagUtils {
 
-	public static final ThreadSafeSimpleDateFormat MONTH_FORMATTER = new ThreadSafeSimpleDateFormat("MMM");
+	public static final String PREFIX_YEAR = "year_";
 
-	public static final ThreadSafeSimpleDateFormat YEAR_FORMATTER = new ThreadSafeSimpleDateFormat("yyyy");
+	public static final String PREFIX_RATED = "rated_";
+
+	public static final String PREFIX_MONTH = "month_";
+
+	public static final ThreadSafeSimpleDateFormat FORMATTER_MONTH = new ThreadSafeSimpleDateFormat("MMM");
+
+	public static final ThreadSafeSimpleDateFormat FORMATTER_YEAR = new ThreadSafeSimpleDateFormat("yyyy");
 
 	public static String monthAsTag(Date d) {
-		return "month_"+MONTH_FORMATTER.format(d);
+		return PREFIX_MONTH+FORMATTER_MONTH.format(d);
 	}
 
 	public static String ratingAsTag(Number rating) {
-		return "rated_"+rating;
+		return PREFIX_RATED+rating;
 	}
 	public static String yearAsTag(Date d) {
-		return "year_"+YEAR_FORMATTER.format(d);
+		return PREFIX_YEAR+FORMATTER_YEAR.format(d);
 	}
 }
