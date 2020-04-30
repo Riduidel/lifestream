@@ -142,6 +142,84 @@ img.special-image {
 .linked_tag_montagne span:before {
   content: "⛰️ ";
 }
-.linked_tag_ville span:before {
-  content: "🏙️ ";
+.linked_tag_mort span:before {
+  content: "💀 ";
+}
+.linked_tag_vampires span:before {
+  content: "🧛 ";
+}
+.linked_tag_author span:before {
+  content: "✍️ ";
+}
+.linked_tag_japon span:before {
+  content: "🇯🇵 ";
+}
+.linked_tag_magie span:before {
+  content: "🪄 ";
+}
+.linked_tag_hiver span:before {
+  content: "❄️ ";
+}
+.linked_tag_extra_terrestres span:before {
+  content: "🛸 ";
+}
+.linked_tag_famille span:before {
+  content: "👨‍👩‍👧‍👦 ";
+}
+.linked_tag_monstres span:before {
+  content: "🐉 ";
+}
+.linked_tag_far_future span:before {
+  content: "🔮 ";
+}
+.linked_tag_handicap span:before {
+  content: "♿ ";
+}
+.linked_tag_hard_science span:before {
+  content: "🔭 ";
+}
+.linked_tag_musique span:before {
+  content: "🎶 ";
+}
+.linked_tag_near_space span:before {
+  content: "🛰️ ";
+}
+.linked_tag_pollution span:before {
+  content: "🏭 ";
+}
+.linked_tag_robots span:before {
+  content: "🤖 ";
+}
+.linked_tag_rock_n_roll span:before {
+  content: "🤘 ";
+}
+.linked_tag_science span:before {
+  content: "⚗️ ";
+}
+.linked_tag_sommeil span:before {
+  content: "😴  ";
+}
+.linked_tag_sorci_res span:before {
+  content: "🧙‍♀️ ";
+}
+.linked_tag_space_opera span:before {
+  content: "🚀 ";
+}
+.linked_tag_temps span:before {
+  content: "⌚ ";
+}
+.linked_tag_the_tre span:before {
+  content: "🎭 ";
+}
+.linked_tag_train span:before {
+  content: "🚆 ";
+}
+.linked_tag_lune span:before {
+  content: "🌙 ";
+}
+.linked_tag_trou_noir span:before {
+  content: "🕳️ ";
+}
+.linked_tag_zombie span:before {
+  content: "🧟 ";
 }
