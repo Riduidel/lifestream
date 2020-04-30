@@ -23,7 +23,7 @@
 	<#include "menu.ftl">
 	
 	<div class="page-header">
-		<h1><a id="autolink" href="#">🔗</a> Tag: ${tag}</h1>
+		<h1 class="<@tag_classes tag/>">Tag: <span>${tag}</span> <a id="autolink" href="#">🔗</a></h1>
 	</div>
 	
 	<#assign all_linked_tags =  []>
