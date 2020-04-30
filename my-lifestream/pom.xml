@@ -73,12 +73,12 @@
 	</build>
 	<profiles>
 		<profile>
-<!-- 			<activation>
+ 			<activation>
 				<property>
 					<name>goodreads.mail</name>
 				</property>
 			</activation>
--->			<id>download-goodreads</id>
+			<id>download-goodreads</id>
 			<build>
 				<plugins>
 					<plugin>
@@ -137,12 +137,12 @@
 			</build>
 		</profile>
 		<profile>
-<!-- 			<activation>
+ 			<activation>
 				<property>
 					<name>shaarli.login</name>
 				</property>
 			</activation>
--->			<!-- Download content and transform it -->
+			<!-- Download content and transform it -->
 			<id>download-shaarli</id>
 			<build>
 				<plugins>
