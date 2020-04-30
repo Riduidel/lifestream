@@ -41,7 +41,7 @@ public class ShortCodeResolver implements Resolver {
 	 */
 	private static ThreadLocal<Pattern> gistDetectorPattern = new ThreadLocalPattern("(?:\\[gist\\]|(?:\\[gist\\s*)?https?://gist.github.com/)([\\d\\w/]+)\\s?\\]?(?:\\[/gist\\])?");
 	
-	private static ThreadLocal<Pattern> tweetDetectorPattern = new ThreadLocalPattern("https?://twitter.com/([^/]+)/status/([\\d\\w]+)");
+	private static ThreadLocal<Pattern> tweetDetectorPattern = new ThreadLocalPattern("https?://twitter.com/([^/]+)/(?:status|statuses)/([\\d\\w]+)");
 
 	public class Gist implements Decoder {
 		/**
