@@ -32,6 +32,7 @@ public class Post implements Input {
 	private String source;
 	public String excerpt;
 	private Collection<Linkable> links = new HashSet<>();
+	public String status;
 
 	@Override
 	public String getText() {

@@ -141,7 +141,10 @@ public class Wordpress implements InputLoader<Post, WordpressConfiguration> {
 			SyndFeedInput input = new SyndFeedInput();
 			SyndFeed feed = input.build(new XmlReader(xmlSource, true, "utf-8"));
 			for (SyndEntry entry : (Collection<SyndEntry>) feed.getEntries()) {
-				postService.create(createPostFromEntry(entry));
+				Post post = createPostFromEntry(entry);
+				if("publish".equals(post.status)) {
+					postService.create(post);
+				}
 			}
 			new MultiResolver(client, configuration).resolveIn(executor, postService);
 			executor.shutdown();
@@ -182,7 +185,7 @@ public class Wordpress implements InputLoader<Post, WordpressConfiguration> {
 			case "post_id": break;
 			case "postmeta": break;
 			case "encoded": post.excerpt = e.getText(); break;
-			case "status": break;
+			case "status": post.status = e.getText(); break;
 			default:
 			}
 		}
