@@ -223,3 +223,50 @@ img.special-image {
 .linked_tag_zombie span:before {
   content: "🧟 ";
 }
+
+
+/*------------------------------------------------*/
+/*-------------- tweet customization -------------*/
+/*------------------------------------------------*/
+
+.wp-block-embed-twitter {
+  background-color: white;
+  border-color: gray;
+  border-radius: 5px;
+  position: static; 
+  visibility: visible; 
+  display: block; 
+  transform: rotate(0deg); 
+  max-width: 100%; 
+  width: 550px; 
+  min-width: 220px; 
+  margin: 10px; 
+  padding: 20px;
+  font: normal normal 16px/1.4 Helvetica,Roboto,"Segoe UI",Calibri,sans-serif;
+}
+
+.wp-block-embed-twitter .author {
+  margin-bottom: 10px;
+}
+.wp-block-embed-twitter .author img {
+  width: 48px;
+  border-radius: 24px;
+  margin-right: 10px;
+  float: left;
+}
+
+.wp-block-embed-twitter .author .name {
+  color: #1da1f2;
+  font-weight: bold;
+  display: block;
+}
+
+.wp-block-embed-twitter .twitter_status {
+  display: flex;
+  flex-direction: column;
+}
+.wp-block-embed-twitter .twitter_status .date{
+  /* According to flexbox spec, it is enough to pull the date at the end */
+  order: 1;
+  text-align: right;
+}
