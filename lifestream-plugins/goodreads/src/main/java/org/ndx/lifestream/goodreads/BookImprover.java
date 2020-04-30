@@ -255,7 +255,7 @@ public class BookImprover implements Callable<Void> {
 				query = book.getIsbn13();
 			}
 			if(query!=null) {
-				logger.info("Improvving book "+book);
+				logger.info("Improving book "+book);
 				synchronized(destination) {
 					book = (Book) destination.create(book);
 				}

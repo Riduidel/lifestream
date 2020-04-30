@@ -70,7 +70,13 @@ public abstract class AbstractDirectReference implements Reference {
 	public String getLink(OutputWriter writer, Book source) {
 		String link = getText();
 		if(getDestination()!=null) {
-			link = writer.link(source, getDestination(), getDestination().getTitle());
+			// As we output raw html (embedded in protected asciidoc sections), let's be a little more "direct", would we ?
+			link = String.format("<a class=\"%s %s\" href=\"%s\">%s</a>",
+					getClass().getSimpleName(),
+					"destination_"+getDestination().getClass().getSimpleName(),
+					writer.href(source, getDestination()),
+					getDestination().getTitle()
+					);
 		}
 		return link;
 	}
