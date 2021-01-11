@@ -4,6 +4,7 @@ import static org.ndx.lifestream.goodreads.GoodreadsConfiguration.GOODREADS_BASE
 
 import java.io.CharArrayReader;
 import java.io.IOException;
+import java.net.URL;
 import java.text.ParseException;
 import java.util.Arrays;
 import java.util.Collection;
@@ -39,8 +40,11 @@ import org.ndx.lifestream.utils.ThreadSafeSimpleDateFormat;
 
 import com.dooapp.gaedo.finders.FinderCrudService;
 import com.dooapp.gaedo.utils.CollectionUtils;
+import com.gargoylesoftware.htmlunit.HttpMethod;
 import com.gargoylesoftware.htmlunit.Page;
 import com.gargoylesoftware.htmlunit.WebClient;
+import com.gargoylesoftware.htmlunit.WebRequest;
+import com.gargoylesoftware.htmlunit.html.HtmlPage;
 
 import au.com.bytecode.opencsv.CSVReader;
 
@@ -50,30 +54,36 @@ public class Goodreads implements InputLoader<BookInfos, GoodreadsConfiguration>
 	private static final String INPUT_DATE_FORMAT = "yyyy/MM/dd";
 	private static final ThreadSafeSimpleDateFormat INPUT_FORMATTER = new ThreadSafeSimpleDateFormat(INPUT_DATE_FORMAT);
 	private static final String OUTPUT_DATE_FORMAT = "yyyy-MM-dd'T'HH:mm:ss.SSSZ";
-	public static final ThreadSafeSimpleDateFormat OUTPUT_FORMATTER = new ThreadSafeSimpleDateFormat(OUTPUT_DATE_FORMAT);
+	public static final ThreadSafeSimpleDateFormat OUTPUT_FORMATTER = new ThreadSafeSimpleDateFormat(
+			OUTPUT_DATE_FORMAT);
 
 	private GaedoEnvironmentProvider goodreadsEnvironment = new GaedoEnvironmentProvider();
 
 	public String xsl = null;
 
 	/**
-	 * Collection loading is partially synchronous (reading the CSV),
-	 * partially asynchronous (fetching metadatas from Goodreads API and inserting
-	 * a text header containing those datas)
-	 * @param client, used to improve books. May be null (in which case there is obviously no improvement done)
-	 * @param csv source csv file
+	 * Collection loading is partially synchronous (reading the CSV), partially
+	 * asynchronous (fetching metadatas from Goodreads API and inserting a text
+	 * header containing those datas)
+	 * 
+	 * @param client, used to improve books. May be null (in which case there is
+	 *                obviously no improvement done)
+	 * @param csv     source csv file
 	 * @return a collection of valid and usable books
 	 */
-	public FinderCrudService<BookInfos, BookInfosInformer> buildBooksCollection(WebClient client, List<String[]> csv, GoodreadsConfiguration configuration) {
-		FinderCrudService<BookInfos, BookInfosInformer> bookService = goodreadsEnvironment.getServiceFor(BookInfos.class, BookInfosInformer.class);
+	public FinderCrudService<BookInfos, BookInfosInformer> buildBooksCollection(WebClient client, List<String[]> csv,
+			GoodreadsConfiguration configuration) {
+		FinderCrudService<BookInfos, BookInfosInformer> bookService = goodreadsEnvironment
+				.getServiceFor(BookInfos.class, BookInfosInformer.class);
 		TreeMap<String, Reference> allReferences = new TreeMap<>();
 		Map<String, Reference> references = Collections.synchronizedSortedMap(allReferences);
 		ExecutorService executor = Executors.newFixedThreadPool(configuration.getThreadCount());
 		Map<String, Integer> columns = getColumnsNamesToColumnsIndices(csv.get(0));
 		List<String[]> usableLines = csv.subList(1, csv.size());
-		// Assynchronous submit allow us to wait for completion without stopping executor service
+		// Assynchronous submit allow us to wait for completion without stopping
+		// executor service
 		Collection<Callable<Void>> toRun = new LinkedList<>();
-		for(String[] line : usableLines) {
+		for (String[] line : usableLines) {
 			Book rawBook = createBook(columns, line);
 			toRun.add(new BookImprover(client, rawBook, bookService, configuration));
 		}
@@ -83,8 +93,8 @@ public class Goodreads implements InputLoader<BookInfos, GoodreadsConfiguration>
 			executor.invokeAll(toRun);
 			toRun.clear();
 			// Now build references
-			for(BookInfos b : bookService.findAll()) {
-				if(b instanceof Book) {
+			for (BookInfos b : bookService.findAll()) {
+				if (b instanceof Book) {
 					toRun.add(new ReferencesMerger((Book) b, references));
 				}
 			}
@@ -102,35 +112,37 @@ public class Goodreads implements InputLoader<BookInfos, GoodreadsConfiguration>
 		}
 		return bookService;
 	}
+
 	public static enum Columns {
-		Title, Additional_Authors, ISBN, ISBN13, My_Rating, Average_Rating, Number_of_Pages, Original_Publication_Year, Date_Read, Bookshelves, Exclusive_Shelf, My_Review, Private_Notes, Owned_Copies, Book_Id;
-		
+		Title, Additional_Authors, ISBN, ISBN13, My_Rating, Average_Rating, Number_of_Pages, Original_Publication_Year,
+		Date_Read, Bookshelves, Exclusive_Shelf, My_Review, Private_Notes, Owned_Copies, Book_Id;
+
 		private String asHeader() {
 			return name().replace('_', ' ');
 		}
 
 		public String getString(Map<String, Integer> columns, String[] line) {
 			int index = columns.get(asHeader());
-			if(index<line.length)
+			if (index < line.length)
 				return line[index];
 			else
 				return "";
 		}
-		
+
 		public Integer getInteger(Map<String, Integer> columns, String[] line) {
 			String v = getString(columns, line);
-			if(v.length()==0)
+			if (v.length() == 0)
 				return 0;
 			else
-				return  new Integer(v);
+				return new Integer(v);
 		}
-		
+
 		public Float getFloat(Map<String, Integer> columns, String[] line) {
 			String v = getString(columns, line);
-			if(v.length()==0)
+			if (v.length() == 0)
 				return 0f;
 			else
-				return  new Float(v);
+				return new Float(v);
 		}
 	}
 
@@ -146,7 +158,7 @@ public class Goodreads implements InputLoader<BookInfos, GoodreadsConfiguration>
 		book.pages = Columns.Number_of_Pages.getInteger(columns, line);
 		book.initialPublication = Columns.Original_Publication_Year.getString(columns, line);
 		String dateRead = Columns.Date_Read.getString(columns, line);
-		if(!(dateRead==null || dateRead.length()==0))
+		if (!(dateRead == null || dateRead.length() == 0))
 			book.setRead(parseDate(dateRead));
 		book.addAllTags(Arrays.asList(Columns.Bookshelves.getString(columns, line).split(",")));
 		book.addAllTags(Arrays.asList(Columns.Exclusive_Shelf.getString(columns, line).split(",")));
@@ -158,8 +170,8 @@ public class Goodreads implements InputLoader<BookInfos, GoodreadsConfiguration>
 	}
 
 	private String filterIsbn(String string) {
-		if(string!=null && string.length()>2)
-			return string.substring(2,string.length()-1);
+		if (string != null && string.length() > 2)
+			return string.substring(2, string.length() - 1);
 		return null;
 	}
 
@@ -170,7 +182,7 @@ public class Goodreads implements InputLoader<BookInfos, GoodreadsConfiguration>
 			return d;
 		} catch (ParseException e) {
 			if (logger.isLoggable(Level.WARNING)) {
-				logger.log(Level.WARNING, "unable to parse date "+text, e);
+				logger.log(Level.WARNING, "unable to parse date " + text, e);
 			}
 			return null;
 		}
@@ -190,22 +202,45 @@ public class Goodreads implements InputLoader<BookInfos, GoodreadsConfiguration>
 
 				@Override
 				public String load() throws Exception {
-					String userId = Authenticator.authenticateInGoodreads(client, configuration.getMail(), configuration.getPassword());
+					String userId = Authenticator.authenticateInGoodreads(client, configuration.getMail(),
+							configuration.getPassword());
 					logger.log(Level.INFO, "logged in ... downloading csv now ...");
-					// TODO ask for export through API
-					// Open export page
-					Page csv = client.getPage(
-							String.format("%sreview_porter/export/%s/goodreads_export.csv",
-									GOODREADS_BASE,
-									userId));
-					// May cause memory error, but later ...
+					String goodreadsExportPage = String.format("%sreview_porter/export/%s/goodreads_export.csv",
+							GOODREADS_BASE, userId);
+					Page csv = client.getPage(goodreadsExportPage);
+					if (csv.getWebResponse().getStatusCode() > 299) {
+						// Open user import and export page
+						HtmlPage importAndExport = client.getPage("https://www.goodreads.com/review/import");
+						List<Object> exportButtonPattern = importAndExport
+								.getByXPath("//button[text()='Export Library']");
+						if (exportButtonPattern.isEmpty()) {
+							throw new UnsupportedOperationException("Couldn't find the Export library button. How weird!");
+						} else {
+							// If there is an export button, a new export is needed, so run the POST request
+							// And wait for the export to be valid
+						    URL url = new URL("YOURURL");
+						    WebRequest requestSettings = new WebRequest(url, HttpMethod.POST);
+						    requestSettings.setAdditionalHeader("Content-Type", "application/x-www-form-urlencoded; charset=UTF-8");
+						    requestSettings.setRequestBody("format=json");
+						    client.getPage(requestSettings);
+						    // Now wait for the page to load
+						    while(csv.getWebResponse().getStatusCode()>299) {
+						    	synchronized(this) {
+						    		try {
+						    			this.wait(1_000);
+						    		} catch(InterruptedException e) {}
+									csv = client.getPage(goodreadsExportPage);
+						    	}
+						    }
+						}
+					}
 					return csv.getWebResponse().getContentAsString(Constants.UTF_8_CHARSET);
 				}
 			});
 			return splitIntoRows(csvContent);
-		} catch(AuthenticationFailedException e) {
+		} catch (AuthenticationFailedException e) {
 			throw e;
-		} catch(Exception e) {
+		} catch (Exception e) {
 			throw new UnableToDownloadContentException("unable to download CSV from Goodreads", e);
 		}
 	}
@@ -221,23 +256,23 @@ public class Goodreads implements InputLoader<BookInfos, GoodreadsConfiguration>
 
 	/**
 	 * Output given book list in the given folder using the given output mode
-	 * @param mode output mode, may generate any kind of file
-	 * @param books list of books to output
+	 * 
+	 * @param mode   output mode, may generate any kind of file
+	 * @param books  list of books to output
 	 * @param output output folder
 	 */
-	public void output(Mode mode, Collection<BookInfos> books, FileObject output, GoodreadsConfiguration configuration) {
-		Collection<BookInfos> filtered =
-				books.stream().parallel()
-				.filter(new Predicate<BookInfos>() {
-					@Override
-					public boolean test(BookInfos input) {
-						if(input instanceof Book) {
-							return input.getTags().contains("read");
-						}
-						// only output elements thar are in the past
-						return input.getWriteDate().compareTo(BookInfos.TODAY)<0;
-					}
-				}).collect(Collectors.toList());
+	public void output(Mode mode, Collection<BookInfos> books, FileObject output,
+			GoodreadsConfiguration configuration) {
+		Collection<BookInfos> filtered = books.stream().parallel().filter(new Predicate<BookInfos>() {
+			@Override
+			public boolean test(BookInfos input) {
+				if (input instanceof Book) {
+					return input.getTags().contains("read");
+				}
+				// only output elements thar are in the past
+				return input.getWriteDate().compareTo(BookInfos.TODAY) < 0;
+			}
+		}).collect(Collectors.toList());
 		OutputWriter writer = mode.getWriter();
 		LinkResolver linkResolver = configuration.getLinkResolver();
 		writer.addListener(linkResolver);
@@ -245,7 +280,8 @@ public class Goodreads implements InputLoader<BookInfos, GoodreadsConfiguration>
 		int size = filtered.size();
 		for (BookInfos book : filtered) {
 			if (logger.isLoggable(Level.INFO)) {
-				logger.log(Level.INFO, "writing "+book.getClass().getSimpleName().toLowerCase()+" "+(index++)+"/"+size+" : "+book);
+				logger.log(Level.INFO, "writing " + book.getClass().getSimpleName().toLowerCase() + " " + (index++)
+						+ "/" + size + " : " + book);
 			}
 			writer.write(book, output);
 		}
@@ -258,10 +294,11 @@ public class Goodreads implements InputLoader<BookInfos, GoodreadsConfiguration>
 			logger.info("loading CSV data");
 			List<String[]> rawData = loadCSV(client, configuration);
 			logger.info("transforming that data into books");
-			FinderCrudService<BookInfos, BookInfosInformer> allBookInfos = buildBooksCollection(client, rawData, configuration);
+			FinderCrudService<BookInfos, BookInfosInformer> allBookInfos = buildBooksCollection(client, rawData,
+					configuration);
 			// Now all book infos have been loaded, we can resolve references
 			return CollectionUtils.asList(allBookInfos.findAll());
-		} catch(Exception e) {
+		} catch (Exception e) {
 			throw new UnableToBuildBookCollection(e);
 		}
 	}
