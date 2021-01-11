@@ -21,7 +21,7 @@ public class WebClientFactory {
 	}
 
 	private static WebClient createWebClient() {
-		WebClient returned = new WebClient(BrowserVersion.FIREFOX_68);
+		WebClient returned = new WebClient(BrowserVersion.FIREFOX);
 		returned.setJavaScriptErrorListener(new SilentJavaScriptErrorListener());
 		returned.setCssErrorHandler(new SilentCssErrorHandler());
 		WebClientOptions options = returned.getOptions();
