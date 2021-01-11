@@ -6,3 +6,4 @@ target/
 *.iml
 .idea/
 my-lifestream/src/site/**/*
+my-lifestream/.cache/
