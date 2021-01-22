@@ -14,6 +14,7 @@
 		<github.global.server>github</github.global.server>
 		<java.version>11</java.version>
 		<freemarker.version>2.3.30</freemarker.version>
+		<selenium.version>3.141.59</selenium.version>
 	</properties>
 	<prerequisites>
 		<maven>3.6</maven>
@@ -58,9 +59,14 @@
 				<version>2.3</version>
 			</dependency>
 			<dependency>
-				<groupId>net.sourceforge.htmlunit</groupId>
-				<artifactId>htmlunit</artifactId>
-				<version>2.46.0</version>
+				<groupId>org.seleniumhq.selenium</groupId>
+				<artifactId>selenium-java</artifactId>
+				<version>${selenium.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.seleniumhq.selenium</groupId>
+				<artifactId>selenium-firefox-driver</artifactId>
+				<version>${selenium.version}</version>
 			</dependency>
 			<dependency>
 				<groupId>rome</groupId>
@@ -199,6 +205,35 @@
 						</configuration>
 					</execution>
 				</executions>
+			</plugin>
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>properties-maven-plugin</artifactId>
+				<version>1.0.0</version>
+				<executions>
+					<execution>
+						<goals>
+							<goal>set-system-properties</goal>
+						</goals>
+						<configuration>
+							<properties>
+								<property>
+									<name>$webdriver.gecko.driver</name>
+									<value>${webdriver.gecko.driver}</value>
+								</property>
+							</properties>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-surefire-plugin</artifactId>
+				<configuration>
+					<systemPropertyVariables>
+						<webdriver.gecko.driver>${webdriver.gecko.driver}</webdriver.gecko.driver>
+					</systemPropertyVariables>
+				</configuration>
 			</plugin>
 		</plugins>
 		<pluginManagement>

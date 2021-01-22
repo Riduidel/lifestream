@@ -1,5 +1,8 @@
 package org.ndx.lifestream.goodreads;
 
+import static org.hamcrest.core.Is.is;
+import static org.junit.Assert.assertThat;
+
 import java.util.Collection;
 import java.util.TreeMap;
 
@@ -13,25 +16,20 @@ import org.junit.Test;
 import org.ndx.lifestream.configuration.AbstractConfiguration;
 import org.ndx.lifestream.goodreads.references.Reference;
 import org.ndx.lifestream.plugin.GaedoEnvironmentProvider;
-import org.ndx.lifestream.rendering.output.VFSHelper;
-import org.ndx.lifestream.utils.web.WebClientFactory;
+import org.ndx.lifestream.utils.web.WebClientUtils;
+import org.openqa.selenium.WebDriver;
 
 import com.dooapp.gaedo.finders.FinderCrudService;
 import com.dooapp.gaedo.utils.CollectionUtils;
-import com.gargoylesoftware.htmlunit.WebClient;
-
-import static org.hamcrest.core.Is.is;
-
-import static org.junit.Assert.assertThat;
 
 public class BookImproverTest {
-	private static WebClient webClient;
+	private static WebDriver webClient;
 	private static AbstractConfiguration configuration;
 	private GaedoEnvironmentProvider goodreadsEnvironment;
 	private TreeMap<String, Reference> references;
 
 	@BeforeClass public static void loadWebClient() throws FileSystemException {
-		webClient = WebClientFactory.getWebClient();
+		webClient = WebClientUtils.getWebClient();
 		configuration = ConnectionUtils.createConfiguration();
 	}
 

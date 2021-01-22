@@ -1,25 +1,26 @@
 package org.ndx.lifestream.wordpress.resolvers;
 
 import org.ndx.lifestream.configuration.CacheLoader;
-
-import com.gargoylesoftware.htmlunit.Page;
-import com.gargoylesoftware.htmlunit.WebClient;
+import org.ndx.lifestream.rendering.model.Page;
+import org.openqa.selenium.WebDriver;
 
 public class GistLoader implements CacheLoader {
 	private final String url;
-	private WebClient client;
+	private WebDriver client;
 
-	public GistLoader(WebClient client, String url) {
+	public GistLoader(WebDriver client, String url) {
 		this.client = client;
 		this.url = url;
 	}
 
 	@Override
 	public String load() throws Exception {
-		// used to resoolve potential redirections
-		Page loaded = client.getPage(url);
+		// used to resolve potential redirections
+		client.get(url);
+		client.get(client.getCurrentUrl().toString()+"/raw");
+		String text = client.getPageSource();
 		return "<pre class='github'>\n<code>\n"+
-						client.getPage(loaded.getUrl().toString()+"/raw").getWebResponse().getContentAsString()
+						text
 						+"\n</code>"
 						+"\n</pre>";
 	}

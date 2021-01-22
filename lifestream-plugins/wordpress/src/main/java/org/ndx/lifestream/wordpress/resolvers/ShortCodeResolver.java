@@ -2,7 +2,6 @@ package org.ndx.lifestream.wordpress.resolvers;
 
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Properties;
 import java.util.concurrent.ExecutorService;
 import java.util.logging.Logger;
 import java.util.regex.Matcher;
@@ -13,13 +12,9 @@ import org.ndx.lifestream.utils.ThreadLocalPattern;
 import org.ndx.lifestream.wordpress.Post;
 import org.ndx.lifestream.wordpress.PostInformer;
 import org.ndx.lifestream.wordpress.WordpressConfiguration;
-
-import twitter4j.auth.BasicAuthorization;
-import twitter4j.auth.NullAuthorization;
-import twitter4j.conf.PropertyConfiguration;
+import org.openqa.selenium.WebDriver;
 
 import com.dooapp.gaedo.finders.FinderCrudService;
-import com.gargoylesoftware.htmlunit.WebClient;
 
 /**
  * Tries to detect and transform as much shortcodes as possible
@@ -90,10 +85,10 @@ public class ShortCodeResolver implements Resolver {
 					(Decoder) new Gist(),
 					(Decoder) new Tweet());
 
-	private WebClient client;
+	private WebDriver client;
 	private WordpressConfiguration configuration;
 
-	public ShortCodeResolver(WebClient client, WordpressConfiguration configuration) {
+	public ShortCodeResolver(WebDriver client, WordpressConfiguration configuration) {
 		this.client = client;
 		this.configuration = configuration;
 	}
@@ -133,7 +128,7 @@ public class ShortCodeResolver implements Resolver {
 		try {
 			String filename = url.substring(url.indexOf("twitter"));
 			FileObject storage = configuration.getCacheFolder().resolveFile(filename);
-			return configuration.getFromCacheOrLoad(new TweetLoader(client, configuration, tweetId, url), storage, -1);
+			return configuration.getFromCacheOrLoad(new TweetLoader(configuration, tweetId, url), storage, -1);
 		} catch(Exception e) {
 			return url;
 		}

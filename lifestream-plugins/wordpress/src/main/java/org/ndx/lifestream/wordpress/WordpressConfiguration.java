@@ -55,12 +55,20 @@ public class WordpressConfiguration extends AbstractConfiguration implements Con
 		this.site = site;
 	}
 
-	public String getSiteLoginPage() {
-		return site + "wp-login.php";
+	public String getSiteLoginPage(String domain) {
+		if(!domain.endsWith("/")) {
+			domain += "/";
+		}
+		return domain + "wp-login.php";
 	}
 
 	public String getSiteExportPage() {
 		return site + "wp-admin/export.php?type=export";
+	}
+
+	public String getCloudExportPage(String domain) {
+		domain = domain.substring(domain.indexOf("//")+2, domain.lastIndexOf('/'));
+		return "https://wordpress.com/export/"+ domain;
 	}
 
 	@Override

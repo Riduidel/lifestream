@@ -13,7 +13,7 @@ import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.ndx.lifestream.rendering.output.VFSHelper;
-import org.ndx.lifestream.utils.web.WebClientFactory;
+import org.ndx.lifestream.utils.web.WebClientUtils;
 
 import com.dooapp.gaedo.finders.FinderCrudService;
 import com.dooapp.gaedo.utils.CollectionUtils;
@@ -41,14 +41,14 @@ public class WordpressTest {
 
 	@Test @Ignore
 	public void canLoadXMLData() {
-		String xml = tested.downloadXML(WebClientFactory.getWebClient(), configuration);
+		String xml = tested.downloadXMLFromSelfhostedWordpress(WebClientUtils.getWebClient(), configuration);
 		assertThat(xml, IsNull.notNullValue());
 	}
 
 	@Test @Ignore
 	public void canTransformStringInPostCollection() throws IOException {
 		InputStream testXmlFile = getClass().getResourceAsStream("/riduidel039swordpress.wordpress.2013-12-04.xml");
-		FinderCrudService<Post, PostInformer> posts = tested.buildPostCollection(WebClientFactory.getWebClient(), testXmlFile, configuration);
+		FinderCrudService<Post, PostInformer> posts = tested.buildPostCollection(WebClientUtils.getWebClient(), testXmlFile, configuration);
 		assertThat(CollectionUtils.asList(posts.findAll()).size(), IsNot.not(0));
 	}
 }

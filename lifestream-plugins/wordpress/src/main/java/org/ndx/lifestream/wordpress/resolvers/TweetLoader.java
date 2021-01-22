@@ -7,18 +7,14 @@ import java.util.logging.Level;
 
 import org.ndx.lifestream.configuration.CacheLoader;
 import org.ndx.lifestream.rendering.output.Freemarker;
-import org.ndx.lifestream.rendering.output.UnableToRenderException;
 import org.ndx.lifestream.wordpress.WordpressConfiguration;
 
+import freemarker.template.Configuration;
+import freemarker.template.Template;
 import twitter4j.ResponseList;
 import twitter4j.Status;
 import twitter4j.Twitter;
 import twitter4j.TwitterFactory;
-
-import com.gargoylesoftware.htmlunit.WebClient;
-
-import freemarker.template.Configuration;
-import freemarker.template.Template;
 
 public class TweetLoader implements CacheLoader {
 	private static Template template;
@@ -39,11 +35,9 @@ public class TweetLoader implements CacheLoader {
 	 * we create a Twitter object that is recognized as unauthorized by design 
 	 */
 	private Twitter twitter;
-	private WebClient client;
 	
 
-	public TweetLoader(WebClient client, WordpressConfiguration configuration, String tweetId, String url) {
-		this.client = client;
+	public TweetLoader(WordpressConfiguration configuration, String tweetId, String url) {
 		this.tweetId = tweetId;
 		this.url = url;
 		this.twitter = new TwitterFactory(configuration.getTwitterConfiguration()).getInstance();

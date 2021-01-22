@@ -1,7 +1,10 @@
 package org.ndx.lifestream.shaarli;
 
+import java.io.File;
+import java.io.FilenameFilter;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
+import java.time.Duration;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -10,6 +13,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.vfs2.FileObject;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Element;
@@ -22,25 +26,29 @@ import org.ndx.lifestream.rendering.OutputWriter;
 import org.ndx.lifestream.rendering.model.InputLoader;
 import org.ndx.lifestream.utils.TagUtils;
 import org.ndx.lifestream.utils.transform.HtmlToMarkdown;
+import org.ndx.lifestream.utils.web.WebClientUtils;
+import org.openqa.selenium.By;
+import org.openqa.selenium.JavascriptExecutor;
+import org.openqa.selenium.TimeoutException;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.FluentWait;
+import org.openqa.selenium.support.ui.WebDriverWait;
 
-import com.gargoylesoftware.htmlunit.WebClient;
-import com.gargoylesoftware.htmlunit.html.HtmlForm;
-import com.gargoylesoftware.htmlunit.html.HtmlInput;
-import com.gargoylesoftware.htmlunit.html.HtmlPage;
-import com.gargoylesoftware.htmlunit.html.HtmlSubmitInput;
 import com.google.inject.internal.Nullable;
 
 public class Shaarli implements InputLoader<MicroblogEntry, ShaarliConfiguration> {
 	private static final Logger logger = Logger.getLogger(Shaarli.class.getName());
 
 	@Override
-	public Collection<MicroblogEntry> load(WebClient client, ShaarliConfiguration configuration) {
+	public Collection<MicroblogEntry> load(WebDriver client, ShaarliConfiguration configuration) {
 		String text =  loadXML(client, configuration);
 		org.jsoup.nodes.Document document = Jsoup.parse(text);
 		return buildEntriesCollection(configuration, document);
 	}
 
-	public String loadXML(final WebClient client, final ShaarliConfiguration configuration) {
+	public String loadXML(final WebDriver client, final ShaarliConfiguration configuration) {
 		try {
 			return configuration.refreshCacheWith(new CacheLoader() {
 
@@ -125,30 +133,42 @@ public class Shaarli implements InputLoader<MicroblogEntry, ShaarliConfiguration
 		return returned;
 	}
 
-	public String downloadXML(WebClient client, ShaarliConfiguration configuration) {
+	public String downloadXML(WebDriver browser, ShaarliConfiguration configuration) {
 		try {
 			String siteLogin = configuration.getSiteLoginPage();
-			HtmlPage signIn = client.getPage(siteLogin);
-			HtmlForm signInForm = signIn.getFormByName("loginform");
+			browser.get(siteLogin);
 			logger.log(Level.INFO, "logging in Shaarli as " + configuration.getLogin());
-			((HtmlInput) signInForm.getInputByName("login")).setValueAttribute(configuration.getLogin());
-			((HtmlInput) signInForm.getInputByName("password")).setValueAttribute(configuration.getPassword());
-			HtmlSubmitInput submitButton = (HtmlSubmitInput) signInForm.getInputByValue("Login");
-			HtmlPage signedIn = submitButton.click();
-			if (200 == signedIn.getWebResponse().getStatusCode()) {
-				String signedInUrl = signedIn.getUrl().toString();
-				if(signedInUrl.equals(siteLogin)) {
-					throw new AuthenticationFailedException(
-									configuration.getAuthenticationFailureMessage());
+			WebElement loginField = browser.findElement(By.name("login"));
+			WebElement passwordField = browser.findElement(By.name("password"));
+			String js = "arguments[0].setAttribute('value','%s')";
+			((JavascriptExecutor) browser).executeScript(String.format(js, configuration.getLogin()), loginField);
+			((JavascriptExecutor) browser).executeScript(String.format(js, configuration.getPassword()), passwordField);
+			WebElement button = browser.findElement(By.xpath("//input[@value='Login']"));
+			((JavascriptExecutor) browser).executeScript("arguments[0].click()", button);
+			new WebDriverWait(browser, 60*60).until(ExpectedConditions.elementToBeClickable(By.xpath("//a[@aria-label='Logout']")));
+			logger.log(Level.INFO, "logged in ... downloading html now ...");
+			// 404 will throw over all this stuff
+			try {
+				browser.get(configuration.getSiteExportPage());
+			} catch(TimeoutException e) {
+				// There is something strange here that I don't fully understand, but the only solution I have is letting this timeout
+				// Bad, and dangerous, but the only solution I could think about
+			}
+			// So there should now be an html file in download folder, no?
+			FluentWait<WebDriver> wait = new FluentWait<WebDriver>(browser).withTimeout(Duration.ofSeconds(60)).pollingEvery(Duration.ofMillis(100));
+			final FilenameFilter htmlLocator = new FilenameFilter() {
+				
+				@Override
+				public boolean accept(File dir, String name) {
+					return name.toLowerCase().endsWith(".html");
 				}
-				logger.log(Level.INFO, "logged in ... downloading html now ...");
-				// 404 will throw over all this stuff
-				HtmlPage xmlExportPage = client.getPage(configuration.getSiteExportPage());
-				// yay, serializing an XML document to deserialize it immediatly after may not be optimal. Objection received.
-				return xmlExportPage.asXml();
-			} else {
-				throw new AuthenticationFailedException(
-						configuration.getAuthenticationFailureMessage());
+			};
+			wait.until( unused -> WebClientUtils.getDownloadFolder().listFiles(htmlLocator).length>0);
+			File[] html = WebClientUtils.getDownloadFolder().listFiles(htmlLocator);
+			try {
+				return IOUtils.toString(html[0].toURI());
+			} finally {
+				html[0].delete();
 			}
 		} catch(AuthenticationFailedException e) {
 			throw e;

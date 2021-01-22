@@ -1,11 +1,11 @@
 package org.ndx.lifestream.goodreads;
 
-import static org.ndx.lifestream.goodreads.GoodreadsConfiguration.GOODREADS_BASE;
-
 import java.io.CharArrayReader;
+import java.io.File;
 import java.io.IOException;
-import java.net.URL;
+import java.net.MalformedURLException;
 import java.text.ParseException;
+import java.time.Duration;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
@@ -23,6 +23,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.vfs2.FileObject;
 import org.ndx.lifestream.configuration.CacheLoader;
 import org.ndx.lifestream.configuration.LinkResolver;
@@ -35,20 +36,23 @@ import org.ndx.lifestream.plugin.exceptions.UnableToDownloadContentException;
 import org.ndx.lifestream.rendering.Mode;
 import org.ndx.lifestream.rendering.OutputWriter;
 import org.ndx.lifestream.rendering.model.InputLoader;
-import org.ndx.lifestream.utils.Constants;
 import org.ndx.lifestream.utils.ThreadSafeSimpleDateFormat;
+import org.ndx.lifestream.utils.web.WebClientUtils;
+import org.openqa.selenium.By;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.FluentWait;
+import org.openqa.selenium.support.ui.WebDriverWait;
 
 import com.dooapp.gaedo.finders.FinderCrudService;
 import com.dooapp.gaedo.utils.CollectionUtils;
-import com.gargoylesoftware.htmlunit.HttpMethod;
-import com.gargoylesoftware.htmlunit.Page;
-import com.gargoylesoftware.htmlunit.WebClient;
-import com.gargoylesoftware.htmlunit.WebRequest;
-import com.gargoylesoftware.htmlunit.html.HtmlPage;
 
 import au.com.bytecode.opencsv.CSVReader;
 
 public class Goodreads implements InputLoader<BookInfos, GoodreadsConfiguration> {
+	private static final String GOODREADS_EXPORT = "https://www.goodreads.com/review/import";
+
 	static final Logger logger = Logger.getLogger(Goodreads.class.getName());
 
 	private static final String INPUT_DATE_FORMAT = "yyyy/MM/dd";
@@ -71,7 +75,7 @@ public class Goodreads implements InputLoader<BookInfos, GoodreadsConfiguration>
 	 * @param csv     source csv file
 	 * @return a collection of valid and usable books
 	 */
-	public FinderCrudService<BookInfos, BookInfosInformer> buildBooksCollection(WebClient client, List<String[]> csv,
+	public FinderCrudService<BookInfos, BookInfosInformer> buildBooksCollection(WebDriver client, List<String[]> csv,
 			GoodreadsConfiguration configuration) {
 		FinderCrudService<BookInfos, BookInfosInformer> bookService = goodreadsEnvironment
 				.getServiceFor(BookInfos.class, BookInfosInformer.class);
@@ -196,45 +200,50 @@ public class Goodreads implements InputLoader<BookInfos, GoodreadsConfiguration>
 		return returned;
 	}
 
-	public List<String[]> loadCSV(final WebClient client, final GoodreadsConfiguration configuration) {
+	public List<String[]> loadCSV(final WebDriver client, final GoodreadsConfiguration configuration) {
 		try {
 			String csvContent = configuration.refreshCacheWith(new CacheLoader() {
+				private String getExportIfExist() throws MalformedURLException, IOException {
+					client.get(GOODREADS_EXPORT);
+					for(WebElement anchor : WebClientUtils.getLinks(client)) {
+						String href = anchor.getAttribute("href");
+						if(href.contains("/review_porter/export/")) {
+							return readCSVExport(anchor);
+						}
+					}
+					// If we're here, there was no export available, so generate it, wait for it to be available, and download it
+					client.findElement(By.className("gr-form--compact__submitButton")).click();
+					new WebDriverWait(client, 60*60).until(ExpectedConditions.elementToBeClickable(By.className("gr-form--compact__submitButton")));
+					for(WebElement anchor : WebClientUtils.getLinks(client)) {
+						String href = anchor.getAttribute("href");
+						if(href.contains("/review_porter/export/")) {
+							return readCSVExport(anchor);
+						}
+					}
+					throw new UnsupportedOperationException("Unable to download reviews!");
+				}
+
+				private String readCSVExport(WebElement anchor) throws IOException {
+					// We have a CSV export! So use it
+					anchor.click();
+					// So we must have a file in the download folder now, which name ends with *.csv
+					File downloaded = new File(WebClientUtils.getDownloadFolder(), "goodreads_library_export.csv");
+					FluentWait<WebDriver> wait = new FluentWait<WebDriver>(client).withTimeout(Duration.ofSeconds(60)).pollingEvery(Duration.ofMillis(100));
+					wait.until( unused -> downloaded.exists());
+					try {
+						return FileUtils.readFileToString(downloaded);
+					} finally {
+						downloaded.delete();
+					}
+				}
 
 				@Override
 				public String load() throws Exception {
 					String userId = Authenticator.authenticateInGoodreads(client, configuration.getMail(),
 							configuration.getPassword());
 					logger.log(Level.INFO, "logged in ... downloading csv now ...");
-					String goodreadsExportPage = String.format("%sreview_porter/export/%s/goodreads_export.csv",
-							GOODREADS_BASE, userId);
-					Page csv = client.getPage(goodreadsExportPage);
-					if (csv.getWebResponse().getStatusCode() > 299) {
-						// Open user import and export page
-						HtmlPage importAndExport = client.getPage("https://www.goodreads.com/review/import");
-						List<Object> exportButtonPattern = importAndExport
-								.getByXPath("//button[text()='Export Library']");
-						if (exportButtonPattern.isEmpty()) {
-							throw new UnsupportedOperationException("Couldn't find the Export library button. How weird!");
-						} else {
-							// If there is an export button, a new export is needed, so run the POST request
-							// And wait for the export to be valid
-						    URL url = new URL("YOURURL");
-						    WebRequest requestSettings = new WebRequest(url, HttpMethod.POST);
-						    requestSettings.setAdditionalHeader("Content-Type", "application/x-www-form-urlencoded; charset=UTF-8");
-						    requestSettings.setRequestBody("format=json");
-						    client.getPage(requestSettings);
-						    // Now wait for the page to load
-						    while(csv.getWebResponse().getStatusCode()>299) {
-						    	synchronized(this) {
-						    		try {
-						    			this.wait(1_000);
-						    		} catch(InterruptedException e) {}
-									csv = client.getPage(goodreadsExportPage);
-						    	}
-						    }
-						}
-					}
-					return csv.getWebResponse().getContentAsString(Constants.UTF_8_CHARSET);
+					String csv = getExportIfExist();
+					return csv;
 				}
 			});
 			return splitIntoRows(csvContent);
@@ -289,7 +298,7 @@ public class Goodreads implements InputLoader<BookInfos, GoodreadsConfiguration>
 	}
 
 	@Override
-	public Collection<BookInfos> load(WebClient client, GoodreadsConfiguration configuration) {
+	public Collection<BookInfos> load(WebDriver client, GoodreadsConfiguration configuration) {
 		try {
 			logger.info("loading CSV data");
 			List<String[]> rawData = loadCSV(client, configuration);

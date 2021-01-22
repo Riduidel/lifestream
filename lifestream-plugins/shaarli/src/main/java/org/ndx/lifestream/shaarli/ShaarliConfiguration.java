@@ -58,7 +58,7 @@ public class ShaarliConfiguration extends AbstractConfiguration {
 	}
 
 	public String getSiteExportPage() {
-		return site + "?do=export&selection=public&prepend_note_url=on";
+		return site + "?do=export&selection=all&prepend_note_url=on";
 	}
 
 	public FileObject getCachedExport() throws FileSystemException {

@@ -11,6 +11,7 @@ public class GoodreadsConfiguration extends AbstractConfiguration implements Con
 	private String password;
 	private int threadCount = 2;
 	public static final String GOODREADS_BASE = "https://www.goodreads.com/";
+	public static final String SIGN_IN = GOODREADS_BASE+"user/sign_in";
 	/**
 	 * Yeah this is my dev key. Use it with care
 	 */

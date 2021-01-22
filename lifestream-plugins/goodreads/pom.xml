@@ -87,6 +87,7 @@
 					<systemPropertyVariables>
 						<goodreads.mail>${goodreads.mail}</goodreads.mail>
 						<goodreads.password>${goodreads.password}</goodreads.password>
+						<webdriver.gecko.driver>${webdriver.gecko.driver}</webdriver.gecko.driver>
 					</systemPropertyVariables>
 				</configuration>
 			</plugin>
