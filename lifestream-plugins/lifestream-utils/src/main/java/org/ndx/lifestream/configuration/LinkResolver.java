@@ -2,8 +2,6 @@ package org.ndx.lifestream.configuration;
 
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.Date;
 import java.util.Map;
 import java.util.Properties;
@@ -16,9 +14,6 @@ import org.ndx.lifestream.rendering.notifications.WriteEvent;
 import org.ndx.lifestream.rendering.notifications.WriteListener;
 import org.ndx.lifestream.rendering.path.ExternalLink;
 import org.ndx.lifestream.rendering.path.RelativeLink;
-
-import com.gargoylesoftware.htmlunit.WebClient;
-import com.gargoylesoftware.htmlunit.WebRequest;
 
 public class LinkResolver implements WriteListener {
 	private final FileObject storePath;
@@ -94,16 +89,4 @@ public class LinkResolver implements WriteListener {
 	public boolean containsKey(Object key) {
 		return resolvedLinks.containsKey(key);
 	}
-
-	/**
-	 * Prevent link rotting by ensuring link is not dead through Internet Wayback machine API call
-	 */
-	public void preventRottingWithWaybackMachine(WebClient client, String url) {
-		try {
-			WebRequest request = new WebRequest(new URL("http://archive.org/wayback/available"));
-		} catch (MalformedURLException e) {
-			throw new UnableToQueryWaybackMachineException(e);
-		}
-	}
-
 }
