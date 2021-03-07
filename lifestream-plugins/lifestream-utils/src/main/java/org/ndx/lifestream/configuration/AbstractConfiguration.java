@@ -62,8 +62,13 @@ public abstract class AbstractConfiguration implements Configuration {
 		if(cachedPath.exists()) {
 			long lastModifiedTime = cachedPath.getContent().getLastModifiedTime();
 			if(cacheTimeout<0 || (System.currentTimeMillis()-lastModifiedTime)<cacheTimeout) {
-				try(InputStream fileContent = cachedPath.getContent().getInputStream()) {
-					content = IOUtils.toString(fileContent, Constants.UTF_8);
+				// There may be cases where file is empty. In such a case, don't read file!
+				if(cachedPath.getContent().getSize()>0) {
+					try(InputStream fileContent = cachedPath.getContent().getInputStream()) {
+						content = IOUtils.toString(fileContent, Constants.UTF_8);
+					}
+				} else {
+					cachedPath.delete();
 				}
 			}
 		}

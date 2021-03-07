@@ -302,6 +302,8 @@ public class Goodreads implements InputLoader<BookInfos, GoodreadsConfiguration>
 		try {
 			logger.info("loading CSV data");
 			List<String[]> rawData = loadCSV(client, configuration);
+			if(rawData.isEmpty())
+				throw new UnableToBuildBookCollection("unable to find any books on goodreads. Something is going wrong!");
 			logger.info("transforming that data into books");
 			FinderCrudService<BookInfos, BookInfosInformer> allBookInfos = buildBooksCollection(client, rawData,
 					configuration);
