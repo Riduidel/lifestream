@@ -36,13 +36,13 @@ public class HtmlToMarkdownTest {
 	@Test
 	public void transformTextWithLineReturnToMarkdown() {
 		String markdown = HtmlToMarkdown.transformHtml("a simple <br/>text");
-		assertThat(markdown, Is.is("a simple  \r\ntext"));
+		assertThat(markdown, Is.is("a simple  "+System.lineSeparator()+"text"));
 	}
 
 	@Test
 	public void transformTextWithH1ReturnToMarkdown() {
 		String markdown = HtmlToMarkdown.transformHtml("<h1>a simple</h1>\n text");
-		assertThat(markdown, Is.is("# a simple #\r\n\r\ntext"));
+		assertThat(markdown, Is.is("# a simple #"+System.lineSeparator()+System.lineSeparator()+"text"));
 	}
 
 	@Test
