@@ -45,6 +45,7 @@ public class WebClientUtils {
 	 */
 	private static WebDriver createWebClient() {
 		FirefoxOptions options = new FirefoxOptions();
+		options.setHeadless(true);
 	    options.addPreference("browser.download.folderList", 2);
 	    options.addPreference("browser.download.manager.showWhenStarting", false);
 	    options.addPreference(BROWSER_DOWNLOAD_DIR, getDownloadFolder().getAbsolutePath());
