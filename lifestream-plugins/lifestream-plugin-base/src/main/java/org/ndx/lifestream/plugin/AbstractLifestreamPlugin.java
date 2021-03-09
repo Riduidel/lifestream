@@ -18,6 +18,7 @@ import org.ndx.lifestream.rendering.model.Input;
 import org.ndx.lifestream.rendering.model.InputLoader;
 import org.ndx.lifestream.rendering.output.VFSHelper;
 import org.ndx.lifestream.utils.web.WebClientUtils;
+import org.openqa.selenium.WebDriver;
 import org.slf4j.bridge.SLF4JBridgeHandler;
 
 public abstract class AbstractLifestreamPlugin<Type extends Input, ConfigurationType extends Configuration> extends AbstractMojo {
@@ -38,16 +39,19 @@ public abstract class AbstractLifestreamPlugin<Type extends Input, Configuration
 	public void execute() throws MojoExecutionException, MojoFailureException {
 		InputLoader<Type, ConfigurationType> loader = loadInputLoader();
 		getLog().info("grabbing content");
+		WebDriver webClient = WebClientUtils.getWebClient();
 		try {
 			Mode mode = Mode.valueOf(getModeName());
 			getLog().info("Rendering will be made with \""+mode+"\"");
-			Collection<Type> inputs = loader.load(WebClientUtils.getWebClient(), getConfiguration());
+			Collection<Type> inputs = loader.load(webClient, getConfiguration());
 			FileObject outputRoot = VFSHelper.getManager().resolveFile(getOutput().toURI().toURL().toString());
 			outputRoot.createFolder();
 			// Now output all using given mode
 			loader.output(mode, inputs, outputRoot, getConfiguration());
 		} catch (Exception e) {
 			throw new MojoExecutionException("there was a failure during pages construction", e);
+		} finally {
+			webClient.close();
 		}
 	}
 

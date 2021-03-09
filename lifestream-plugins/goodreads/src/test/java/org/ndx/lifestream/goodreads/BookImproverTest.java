@@ -10,6 +10,7 @@ import org.apache.commons.vfs2.FileSystemException;
 import org.hamcrest.CoreMatchers;
 import org.hamcrest.core.Is;
 import org.hamcrest.core.IsInstanceOf;
+import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -31,6 +32,10 @@ public class BookImproverTest {
 	@BeforeClass public static void loadWebClient() throws FileSystemException {
 		webClient = WebClientUtils.getWebClient();
 		configuration = ConnectionUtils.createConfiguration();
+	}
+	
+	@AfterClass public static void unloadWebClient() {
+		webClient.close();
 	}
 
 	@Before public void loadGaedo() throws FileSystemException {
