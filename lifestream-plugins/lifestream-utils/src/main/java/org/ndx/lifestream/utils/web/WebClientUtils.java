@@ -4,6 +4,7 @@ import java.io.File;
 import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
+import java.util.logging.Level;
 import java.util.stream.Collectors;
 
 import org.openqa.selenium.By;
@@ -72,6 +73,7 @@ public class WebClientUtils {
 	    options.addPreference("services.sync.prefs.sync.browser.download.manager.showWhenStarting", false);
 	    options.addPreference("pdfjs.disabled", true);
 	    FirefoxDriver driver = new FirefoxDriver(options);
+	    driver.setLogLevel(Level.FINEST);
 	    driver.manage().timeouts().pageLoadTimeout(1, TimeUnit.MINUTES);
 		return driver;
 	}
