@@ -11,6 +11,7 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.firefox.FirefoxDriver;
+import org.openqa.selenium.firefox.FirefoxDriverLogLevel;
 import org.openqa.selenium.firefox.FirefoxOptions;
 
 public class WebClientUtils {
@@ -46,6 +47,7 @@ public class WebClientUtils {
 	 */
 	private static WebDriver createWebClient() {
 		FirefoxOptions options = new FirefoxOptions();
+		options.setLogLevel(FirefoxDriverLogLevel.TRACE);
 		options.setHeadless(true);
 	    options.addPreference("browser.download.folderList", 2);
 	    options.addPreference("browser.download.manager.showWhenStarting", false);
