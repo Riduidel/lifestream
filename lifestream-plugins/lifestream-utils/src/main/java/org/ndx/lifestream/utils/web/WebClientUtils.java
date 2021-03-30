@@ -13,6 +13,7 @@ import org.openqa.selenium.WebElement;
 import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.firefox.FirefoxDriverLogLevel;
 import org.openqa.selenium.firefox.FirefoxOptions;
+import org.openqa.selenium.firefox.FirefoxProfile;
 
 public class WebClientUtils {
 	public static final String BROWSER_DOWNLOAD_DIR = "browser.download.dir";
@@ -47,6 +48,8 @@ public class WebClientUtils {
 	 */
 	private static WebDriver createWebClient() {
 		FirefoxOptions options = new FirefoxOptions();
+		// Never reuse firefox profile
+		options.setProfile(new FirefoxProfile());
 		options.setLogLevel(FirefoxDriverLogLevel.TRACE);
 		options.setHeadless(true);
 	    options.addPreference("browser.download.folderList", 2);
