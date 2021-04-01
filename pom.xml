@@ -218,7 +218,7 @@
 						<configuration>
 							<properties>
 								<property>
-									<name>$webdriver.gecko.driver</name>
+									<name>webdriver.gecko.driver</name>
 									<value>${webdriver.gecko.driver}</value>
 								</property>
 							</properties>
