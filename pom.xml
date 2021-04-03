@@ -221,6 +221,10 @@
 									<name>webdriver.gecko.driver</name>
 									<value>${webdriver.gecko.driver}</value>
 								</property>
+								<property>
+									<name>webdriver.chrome.driver</name>
+									<value>${webdriver.chrome.driver}</value>
+								</property>
 							</properties>
 						</configuration>
 					</execution>
