@@ -1,19 +1,19 @@
 package org.ndx.lifestream.utils.web;
 
 import java.io.File;
-import java.util.Arrays;
+import java.io.FilenameFilter;
 import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
-import java.util.stream.Collectors;
 
 import org.openqa.selenium.By;
+import org.openqa.selenium.UnexpectedAlertBehaviour;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
-import org.openqa.selenium.firefox.FirefoxDriver;
-import org.openqa.selenium.firefox.FirefoxDriverLogLevel;
-import org.openqa.selenium.firefox.FirefoxOptions;
-import org.openqa.selenium.firefox.FirefoxProfile;
+import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.chrome.ChromeOptions;
 
 public class WebClientUtils {
 	public static final String BROWSER_DOWNLOAD_DIR = "browser.download.dir";
@@ -47,9 +47,15 @@ public class WebClientUtils {
 	 * @see https://stackoverflow.com/a/23514381/15619
 	 */
 	private static WebDriver createWebClient() {
+		return createChromiumwebClient();
+	}
+
+	/*
+	private static WebDriver createFirefoxWebClient() {
 		FirefoxOptions options = new FirefoxOptions();
 		// Never reuse firefox profile
 		options.setProfile(new FirefoxProfile());
+		options.setLegacy(false);
 		options.setLogLevel(FirefoxDriverLogLevel.TRACE);
 		options.setHeadless(true);
 	    options.addPreference("browser.download.folderList", 2);
@@ -82,11 +88,46 @@ public class WebClientUtils {
 	    driver.manage().timeouts().pageLoadTimeout(1, TimeUnit.MINUTES);
 		return driver;
 	}
+	*/
+
+	private static WebDriver createChromiumwebClient() {
+	    ChromeOptions options = new ChromeOptions();
+//	    options.setHeadless(true);
+	    options.setUnhandledPromptBehaviour(UnexpectedAlertBehaviour.ACCEPT);
+	    Map<String, Object> preferences = new TreeMap<>();
+	    // See https://stackoverflow.com/a/34530160/15619 for download folder
+	    preferences.put("credentials_enable_service", false);
+	    preferences.put("profile.default_content_settings.popups", 0);
+	    preferences.put("download.prompt_for_download", 0);
+	    preferences.put("download.default_directory", getDownloadFolder().getAbsolutePath());
+	    // Now fill the correct objects
+	    options.setExperimentalOption("prefs", preferences);
+		ChromeDriver driver = new ChromeDriver(options);
+	    driver.setLogLevel(Level.FINEST);
+	    driver.manage().timeouts().pageLoadTimeout(1, TimeUnit.MINUTES);
+		return driver;
+	}
 
 	/**
 	 * Get all links in current page
 	 */
 	public static List<WebElement> getLinks(WebDriver driver) {
 		return driver.findElements(By.xpath("//*[@href]"));
+	}
+
+	/**
+	 * This method exists only because chrome gives back hand as soon as the link is clicked, instead of waiting for the file to be downloaded
+	 */
+	public static void waitForDownloadOver() {
+		File[] temp = null;
+		do {
+			synchronized(WebClientUtils.class) {
+				try {
+					WebClientUtils.class.wait(1_000);
+				} catch (InterruptedException e) {
+				}
+			}
+			temp = getDownloadFolder().listFiles((dir, name) -> name.endsWith(".crdownload") || name.endsWith(".tmp"));
+		} while(temp.length>0);
 	}
 }

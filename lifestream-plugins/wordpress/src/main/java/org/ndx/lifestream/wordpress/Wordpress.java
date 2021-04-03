@@ -133,6 +133,7 @@ public class Wordpress implements InputLoader<Post, WordpressConfiguration> {
 			.until(ExpectedConditions.presenceOfElementLocated(By.className("notice__action")));
 			// Now there should be a download link
 			browser.findElement(By.className("notice__action")).click();
+			WebClientUtils.waitForDownloadOver();
 			// Content should be downloaded into download folder, no ?
 			File[] matching = WebClientUtils.getDownloadFolder().listFiles(new FilenameFilter() {
 				
