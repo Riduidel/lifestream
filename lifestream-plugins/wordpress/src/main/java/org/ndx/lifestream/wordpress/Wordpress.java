@@ -241,24 +241,7 @@ public class Wordpress implements InputLoader<Post, WordpressConfiguration> {
 
 	private Post createPostFromEntry(SyndEntry entry) {
 		Post post = new Post(); // TODO Use http://sujitpal.blogspot.fr/2008/08/parsing-custom-modules-with-rome.html to parse wp:comment
-		post.setWriteDate(entry.getPublishedDate()==null ? entry.getUpdatedDate() : entry.getPublishedDate());
-		post.setTitle(entry.getTitle());
-		post.tags = getEntryTags(entry);
-		post.setText(getEntryText(entry));
-		post.setUri(entry.getUri());
-		post.setSource(entry.getLink());
-		post.tags.add(TagUtils.monthAsTag(post.getWriteDate()));
-		post.tags.add(TagUtils.yearAsTag(post.getWriteDate()));
-		try {
-			String basename = new URL(entry.getLink()).getPath();
-			if(basename.endsWith("/")) {
-				basename = basename.substring(0, basename.lastIndexOf('/'));
-			}
-			post.setBasename(basename);
-		} catch (MalformedURLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		// We read the forein markup first, as it contains the post status which may mark the post as draft
 		List<Element> elements = (List<Element>) entry.getForeignMarkup();
 		for(Element e : elements) {
 			switch(e.getName()) {
@@ -272,6 +255,27 @@ public class Wordpress implements InputLoader<Post, WordpressConfiguration> {
 			case "status": post.status = e.getText(); break;
 			default:
 			}
+		}
+		post.setWriteDate(entry.getPublishedDate()==null ? entry.getUpdatedDate() : entry.getPublishedDate());
+		post.setTitle(entry.getTitle());
+		post.tags = getEntryTags(entry);
+		post.setText(getEntryText(entry));
+		post.setUri(entry.getUri());
+		post.setSource(entry.getLink());
+		// Write date is not set for drafts
+		if(post.getWriteDate()!=null) {
+			post.tags.add(TagUtils.monthAsTag(post.getWriteDate()));
+			post.tags.add(TagUtils.yearAsTag(post.getWriteDate()));
+		}
+		try {
+			String basename = new URL(entry.getLink()).getPath();
+			if(basename.endsWith("/")) {
+				basename = basename.substring(0, basename.lastIndexOf('/'));
+			}
+			post.setBasename(basename);
+		} catch (MalformedURLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 		return post;
 	}
