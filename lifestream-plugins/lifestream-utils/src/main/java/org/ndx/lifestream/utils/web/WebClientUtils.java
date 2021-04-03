@@ -92,7 +92,7 @@ public class WebClientUtils {
 
 	private static WebDriver createChromiumwebClient() {
 	    ChromeOptions options = new ChromeOptions();
-//	    options.setHeadless(true);
+	    options.setHeadless(true);
 	    options.setUnhandledPromptBehaviour(UnexpectedAlertBehaviour.ACCEPT);
 	    Map<String, Object> preferences = new TreeMap<>();
 	    // See https://stackoverflow.com/a/34530160/15619 for download folder
