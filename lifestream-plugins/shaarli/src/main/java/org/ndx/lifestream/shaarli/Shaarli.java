@@ -166,7 +166,7 @@ public class Shaarli implements InputLoader<MicroblogEntry, ShaarliConfiguration
 			wait.until( unused -> WebClientUtils.getDownloadFolder().listFiles(htmlLocator).length>0);
 			File[] html = WebClientUtils.getDownloadFolder().listFiles(htmlLocator);
 			try {
-				return IOUtils.toString(html[0].toURI());
+				return IOUtils.toString(html[0].toURI(), "UTF-8");
 			} finally {
 				html[0].delete();
 			}

@@ -231,7 +231,7 @@ public class Goodreads implements InputLoader<BookInfos, GoodreadsConfiguration>
 					FluentWait<WebDriver> wait = new FluentWait<WebDriver>(client).withTimeout(Duration.ofSeconds(60)).pollingEvery(Duration.ofMillis(100));
 					wait.until( unused -> downloaded.exists());
 					try {
-						return FileUtils.readFileToString(downloaded);
+						return FileUtils.readFileToString(downloaded, "UTF-8");
 					} finally {
 						downloaded.delete();
 					}
