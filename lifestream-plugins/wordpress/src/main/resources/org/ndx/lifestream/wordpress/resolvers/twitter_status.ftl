@@ -14,7 +14,7 @@
 	<span class="text">${status.getText()}</span>
 	
 	<span class="medias">
-	<#list status.getExtendedMediaEntities() as media>
+	<#list status.getMediaEntities() as media>
 		<span class="media media-${media.getType()}">
 		<#switch media.getType()>
 			<#case "photo">
