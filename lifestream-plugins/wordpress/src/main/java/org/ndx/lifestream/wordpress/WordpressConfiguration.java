@@ -98,14 +98,4 @@ public class WordpressConfiguration extends AbstractConfiguration implements Con
 		setTwitterConfiguration(configuration);
 		return this;
 	}
-	
-	@Override
-	public long getCacheTimeout() {
-		if(getSite().contains("wordpress.com")) {
-			// As long as I don't know how to login into wordpress.com, I will use a cached version
-			return -1;
-		} else {
-			return super.getCacheTimeout();
-		}
-	}
 }
