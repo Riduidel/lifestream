@@ -9,10 +9,12 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Date;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.vfs2.FileObject;
 import org.jsoup.Jsoup;
@@ -28,7 +30,10 @@ import org.ndx.lifestream.utils.TagUtils;
 import org.ndx.lifestream.utils.transform.HtmlToMarkdown;
 import org.ndx.lifestream.utils.web.WebClientUtils;
 import org.openqa.selenium.By;
+import org.openqa.selenium.ElementNotInteractableException;
 import org.openqa.selenium.JavascriptExecutor;
+import org.openqa.selenium.OutputType;
+import org.openqa.selenium.TakesScreenshot;
 import org.openqa.selenium.TimeoutException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
@@ -138,13 +143,28 @@ public class Shaarli implements InputLoader<MicroblogEntry, ShaarliConfiguration
 			String siteLogin = configuration.getSiteLoginPage();
 			browser.get(siteLogin);
 			logger.log(Level.INFO, "logging in Shaarli as " + configuration.getLogin());
-			WebElement loginField = browser.findElement(By.name("login"));
-			WebElement passwordField = browser.findElement(By.name("password"));
-			String js = "arguments[0].setAttribute('value','%s')";
-			((JavascriptExecutor) browser).executeScript(String.format(js, configuration.getLogin()), loginField);
-			((JavascriptExecutor) browser).executeScript(String.format(js, configuration.getPassword()), passwordField);
-			WebElement button = browser.findElement(By.xpath("//input[@value='Login']"));
-			((JavascriptExecutor) browser).executeScript("arguments[0].click()", button);
+			browser.findElements(By.xpath("//input[@name='login']")).stream().forEach(field -> {
+				try {
+				field.click();
+				field.sendKeys(configuration.getLogin());
+				} catch(ElementNotInteractableException e) {
+					
+				}
+			});
+			browser.findElements(By.xpath("//input[@name='password']")).stream().forEach(field -> {
+				try {
+				field.click();
+				field.sendKeys(configuration.getPassword());
+				} catch(ElementNotInteractableException e) {
+					
+				}
+			});
+			browser.findElements(By.xpath("//input[@value='Login']")).stream().forEach(field -> {
+				try {
+				field.click();
+				} catch(ElementNotInteractableException e) {
+				}
+			});
 			new WebDriverWait(browser, 60*60).until(ExpectedConditions.elementToBeClickable(By.xpath("//a[@aria-label='Logout']")));
 			logger.log(Level.INFO, "logged in ... downloading html now ...");
 			// 404 will throw over all this stuff
