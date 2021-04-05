@@ -209,6 +209,7 @@
 						<executions>
 							<execution>
 								<id>kill chromium and chromedriver at once</id>
+								<phase>process-classes</phase>
 								<goals>
 									<goal>exec</goal>
 								</goals>
@@ -233,7 +234,7 @@
 							<execution>
 								<id>generate_jbake</id>
 								<!-- moved into compile phase to make sure files are generated before -->
-								<phase>compile</phase>
+								<phase>package</phase>
 								<goals>
 									<goal>generate</goal>
 								</goals>
