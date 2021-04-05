@@ -33,6 +33,7 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.ElementNotInteractableException;
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.OutputType;
+import org.openqa.selenium.StaleElementReferenceException;
 import org.openqa.selenium.TakesScreenshot;
 import org.openqa.selenium.TimeoutException;
 import org.openqa.selenium.WebDriver;
@@ -137,35 +138,57 @@ public class Shaarli implements InputLoader<MicroblogEntry, ShaarliConfiguration
 		}
 		return returned;
 	}
+	
+	private String getFieldDescription(WebElement element) {
+		StringBuilder returned = new StringBuilder();
+		returned.append("<");
+		returned.append(element.getTagName());
+		returned.append(" type=\"").append(element.getAttribute("type")).append("\"");
+		returned.append(" name=\"").append(element.getAttribute("name")).append("\"");
+		returned.append(" value=\"").append(element.getAttribute("value")).append("\"");
+		returned.append(">...</>");
+		return returned.toString();
+	}
 
 	public String downloadXML(WebDriver browser, ShaarliConfiguration configuration) {
 		try {
 			String siteLogin = configuration.getSiteLoginPage();
 			browser.get(siteLogin);
 			logger.log(Level.INFO, "logging in Shaarli as " + configuration.getLogin());
-			browser.findElements(By.xpath("//input[@name='login']")).stream().forEach(field -> {
+			browser.findElements(By.xpath("//input[@name='login']")).stream()
+				.filter(WebElement::isDisplayed)
+				.forEach(field -> {
 				try {
 				field.click();
 				field.sendKeys(configuration.getLogin());
+				logger.info("Set login field "+getFieldDescription(field));
 				} catch(ElementNotInteractableException e) {
 					
 				}
 			});
-			browser.findElements(By.xpath("//input[@name='password']")).stream().forEach(field -> {
+			browser.findElements(By.xpath("//input[@name='password']")).stream()
+				.filter(WebElement::isDisplayed)
+				.forEach(field -> {
 				try {
 				field.click();
 				field.sendKeys(configuration.getPassword());
+				logger.info("Set password field "+getFieldDescription(field));
 				} catch(ElementNotInteractableException e) {
 					
 				}
 			});
-			browser.findElements(By.xpath("//input[@value='Login']")).stream().forEach(field -> {
+			browser.findElements(By.xpath("//input[@value='Login']")).stream()
+				.filter(WebElement::isDisplayed)
+				.forEach(field -> {
 				try {
 				field.click();
+				logger.info("Clicked on login button "+getFieldDescription(field));
+				} catch(StaleElementReferenceException e) {
 				} catch(ElementNotInteractableException e) {
 				}
 			});
-			new WebDriverWait(browser, 60*60).until(ExpectedConditions.elementToBeClickable(By.xpath("//a[@aria-label='Logout']")));
+			new WebDriverWait(browser, 60*60).until(ExpectedConditions
+					.presenceOfElementLocated(By.id("linklist")));
 			logger.log(Level.INFO, "logged in ... downloading html now ...");
 			// 404 will throw over all this stuff
 			try {
