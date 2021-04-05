@@ -217,6 +217,8 @@ public class Shaarli implements InputLoader<MicroblogEntry, ShaarliConfiguration
 			throw e;
 		} catch(Exception e) {
 			throw new UnableToDownloadContentException("Unable to download HTML export from Shaarli\n"+configuration.getDownloadFailureMessage(), e);
+		} finally {
+			browser.close();
 		}
 	}
 

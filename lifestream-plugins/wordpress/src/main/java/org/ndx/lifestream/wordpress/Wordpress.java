@@ -163,6 +163,8 @@ public class Wordpress implements InputLoader<Post, WordpressConfiguration> {
 			}
 		} catch (Exception e) {
 			throw new UnableToDownloadContentException("Unable to download XML export from Wordpress site", e);
+		} finally {
+			browser.close();
 		}
 	}
 
@@ -215,6 +217,8 @@ public class Wordpress implements InputLoader<Post, WordpressConfiguration> {
 			}
 */		} catch (Exception e) {
 			throw new UnableToDownloadContentException("Unable to download XML export from Wordpress site", e);
+		} finally {
+			browser.close();
 		}
 	}
 

@@ -251,6 +251,8 @@ public class Goodreads implements InputLoader<BookInfos, GoodreadsConfiguration>
 			throw e;
 		} catch (Exception e) {
 			throw new UnableToDownloadContentException("unable to download CSV from Goodreads", e);
+		} finally {
+			client.close();
 		}
 	}
 
