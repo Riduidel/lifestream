@@ -290,11 +290,9 @@ public class Goodreads implements InputLoader<BookInfos, GoodreadsConfiguration>
 		int index = 1;
 		int size = filtered.size();
 		for (BookInfos book : filtered) {
-			if (logger.isLoggable(Level.INFO)) {
-				logger.log(Level.INFO, "writing " + book.getClass().getSimpleName().toLowerCase() + " " + (index++)
-						+ "/" + size + " : " + book);
-			}
-			writer.write(book, output);
+			String message = "writing " + book.getClass().getSimpleName().toLowerCase() + " " + (index++)
+					+ "/" + size + " : " + book;
+			writer.write(book, output, message);
 		}
 		linkResolver.save();
 	}

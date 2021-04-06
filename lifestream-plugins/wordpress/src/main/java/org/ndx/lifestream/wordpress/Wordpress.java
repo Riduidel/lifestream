@@ -82,10 +82,8 @@ public class Wordpress implements InputLoader<Post, WordpressConfiguration> {
 		int index = 1;
 		int size = filtered.size();
 		for (Post post : filtered) {
-			if (logger.isLoggable(Level.INFO)) {
-				logger.log(Level.INFO, "writing post "+(index++)+"/"+size+" : "+post);
-			}
-			writer.write(post, outputRoot);
+			String logMessage = "writing post "+(index++)+"/"+size+" : "+post;
+			writer.write(post, outputRoot, logMessage);
 		}
 		linkResolver.save();
 	}

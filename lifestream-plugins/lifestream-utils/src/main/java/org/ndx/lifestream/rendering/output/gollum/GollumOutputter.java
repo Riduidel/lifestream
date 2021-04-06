@@ -29,7 +29,7 @@ public class GollumOutputter extends AbstractOutputter implements OutputWriter {
 	}
 
 	@Override
-	public void write(Input input, FileObject output) {
+	public void write(Input input, FileObject output, String message) {
 		FileObject resultFile;
 		PathNavigator usedPath = toRealPath(input);
 		try {
@@ -37,7 +37,7 @@ public class GollumOutputter extends AbstractOutputter implements OutputWriter {
 					FileNameUtils.simplify(usedPath.toPathList()).stream().collect(Collectors.joining("/"))
 					);
 			input.accept(this);
-			writeFile(resultFile, HtmlToMarkdown.transformHtml(render(input)));
+			writeFile(resultFile, HtmlToMarkdown.transformHtml(render(input)), message);
 			notify(input, resultFile, output);
 		} catch (Exception e) {
 			throw new GollumException("unable to output render for input "+usedPath, e);

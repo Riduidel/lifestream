@@ -12,7 +12,7 @@ import org.ndx.lifestream.rendering.notifications.WriteListener;
  */
 public interface OutputWriter {
 
-	void write(Input input, FileObject output);
+	void write(Input input, FileObject output, String logMessage);
 
 	/**
 	 * Generate the text of a link (using the current rendering engine) from the source input to the target input

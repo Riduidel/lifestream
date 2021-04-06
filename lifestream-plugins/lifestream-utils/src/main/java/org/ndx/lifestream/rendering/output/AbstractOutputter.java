@@ -9,6 +9,8 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.vfs2.FileObject;
@@ -18,6 +20,7 @@ import org.ndx.lifestream.rendering.model.Input;
 import org.ndx.lifestream.rendering.model.Linkable;
 import org.ndx.lifestream.rendering.notifications.WriteEvent;
 import org.ndx.lifestream.rendering.notifications.WriteListener;
+import org.ndx.lifestream.rendering.output.jbake.JBakeOutputter;
 import org.ndx.lifestream.rendering.path.PathBuilderFinder;
 import org.ndx.lifestream.rendering.path.PathNavigator;
 import org.ndx.lifestream.rendering.path.RelativePath;
@@ -28,6 +31,7 @@ import freemarker.template.Configuration;
 import freemarker.template.Template;
 
 public abstract class AbstractOutputter implements OutputWriter {
+	static final Logger logger = Logger.getLogger(JBakeOutputter.class.getName());
 	private static final String DEFAULT_TEMPLATE_NAME = "page.ftl";
 	protected static final String HTML = "html";
 
@@ -56,25 +60,31 @@ public abstract class AbstractOutputter implements OutputWriter {
 		returned.setClassForTemplateLoading(getClass(), "");
 		return returned;
 	}
-	public void write(Input input, FileObject output) {
+	public void write(Input input, FileObject output, String logMessage) {
 		FileObject resultFile = toRealFile(input, output);
 		try {
 			input.accept(this);
 			String rendered = render(input);
-			writeFile(resultFile, rendered);
+			writeFile(resultFile, rendered, logMessage);
 			notify(input, resultFile, output);
 		} catch (Exception e) {
 			throw new UnableToRenderException("unable to output render for input file "+resultFile.getName().getPath(), e);
 		}
 	}
 
-	protected void writeFile(FileObject resultFile, String resultText) throws IOException {
+	protected void writeFile(FileObject resultFile, String resultText, String message) throws IOException {
 		if(!resultFile.exists())
 			resultFile.createFile();
-		try (OutputStream outputStream = resultFile.getContent()
-				.getOutputStream()) {
-			IOUtils.write(resultText,
-					outputStream, Constants.UTF_8);
+		String initialContent = new String(resultFile.getContent().getByteArray());
+		if(initialContent.length()!=resultText.length()) {
+			if(logger.isLoggable(Level.INFO)) {
+				logger.info(message);
+			}
+			try (OutputStream outputStream = resultFile.getContent()
+					.getOutputStream()) {
+				IOUtils.write(resultText,
+						outputStream, Constants.UTF_8);
+			}
 		}
 	}
 

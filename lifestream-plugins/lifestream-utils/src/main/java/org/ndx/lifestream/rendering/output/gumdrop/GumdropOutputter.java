@@ -11,7 +11,7 @@ import org.ndx.lifestream.rendering.path.PathNavigator;
 public class GumdropOutputter extends AbstractOutputter implements OutputWriter {
 
 	@Override
-	public void write(Input input, FileObject output) {
+	public void write(Input input, FileObject output, String logMessage) {
 		// TODO Auto-generated method stub
 		throw new UnsupportedOperationException("method "+OutputWriter.class.getName()+"#write has not yet been implemented AT ALL");
 	}

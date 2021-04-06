@@ -234,10 +234,8 @@ public class Shaarli implements InputLoader<MicroblogEntry, ShaarliConfiguration
 		int index = 1;
 		int size = filtered.size();
 		for (MicroblogEntry entry : filtered) {
-			if (logger.isLoggable(Level.INFO)) {
-				logger.log(Level.INFO, "writing entry "+(index++)+"/"+size+" : "+entry);
-			}
-			writer.write(entry, outputRoot);
+			String message = "writing entry "+(index++)+"/"+size+" : "+entry;
+			writer.write(entry, outputRoot, message);
 		}
 		linkResolver.save();
 	}
