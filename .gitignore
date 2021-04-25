@@ -7,3 +7,4 @@ target/
 .idea/
 my-lifestream/src/site/**/*
 my-lifestream/.cache/
+my-lifestream/cache/
