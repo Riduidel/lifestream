@@ -23,3 +23,13 @@ jobs:
         run: >
           mvn --batch-mode --update-snapshots verify 
           -Plifestream -Pmy-lifeastream -Pjbake
+          -Dgoodreads.mail=${{env.GOODREADS_MAIL}}
+          -Dgoodreads.password=${{env.GOODREADS_PASSWORD}}
+          -Dwordpress.login=${{env.WORDPRESS_LOGIN}}
+          -Dwordpress.password=${{env.WORDPRESS_PASSWORD}}
+          -Dwordpress.address=${{env.WORDPRESS_ADDRESS}}
+          -Dtwitter4j.oauth.accessToken=${{env.TWITTER4J_OAUTH_ACCESSTOKEN}}
+          -Dtwitter4j.oauth.accessTokenSecret=${{env.TWITTER4J_OAUTH_ACCESSTOKENSECRET}}
+          -Dshaarli.login=${{env.SHAARLI_LOGIN}}
+          -Dshaarli.password=${{env.SHAARLI_PASSWORD}}
+          -Dshaarli.address=${{env.SHAARLI_ADDRESS}}
