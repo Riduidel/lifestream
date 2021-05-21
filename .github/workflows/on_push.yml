@@ -20,16 +20,27 @@ jobs:
           key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
           restore-keys: ${{ runner.os }}-m2
       - name: Build with Maven
+        env:
+          GOODREADS_MAIL: ${{env.GOODREADS_MAIL}}
+          GOODREADS_PASSWORD: ${{env.GOODREADS_PASSWORD}}
+          WORDPRESS_LOGIN: ${{env.WORDPRESS_LOGIN}}
+          WORDPRESS_PASSWORD: ${{env.WORDPRESS_PASSWORD}}
+          WORDPRESS_ADDRESS: ${{env.WORDPRESS_ADDRESS}}
+          TWITTER4J_OAUTH_ACCESSTOKEN: ${{env.TWITTER4J_OAUTH_ACCESSTOKEN}}
+          TWITTER4J_OAUTH_ACCESSTOKENSECRET: ${{env.TWITTER4J_OAUTH_ACCESSTOKENSECRET}}
+          SHAARLI_LOGIN: ${{env.SHAARLI_LOGIN}}
+          SHAARLI_PASSWORD: ${{env.SHAARLI_PASSWORD}}
+          SHAARLI_ADDRESS: ${{env.SHAARLI_ADDRESS}}
         run: >
           mvn --batch-mode --update-snapshots verify 
-          -Plifestream -Pmy-lifeastream -Pjbake
-          -Dgoodreads.mail=${{env.GOODREADS_MAIL}}
-          -Dgoodreads.password=${{env.GOODREADS_PASSWORD}}
-          -Dwordpress.login=${{env.WORDPRESS_LOGIN}}
-          -Dwordpress.password=${{env.WORDPRESS_PASSWORD}}
-          -Dwordpress.address=${{env.WORDPRESS_ADDRESS}}
-          -Dtwitter4j.oauth.accessToken=${{env.TWITTER4J_OAUTH_ACCESSTOKEN}}
-          -Dtwitter4j.oauth.accessTokenSecret=${{env.TWITTER4J_OAUTH_ACCESSTOKENSECRET}}
-          -Dshaarli.login=${{env.SHAARLI_LOGIN}}
-          -Dshaarli.password=${{env.SHAARLI_PASSWORD}}
-          -Dshaarli.address=${{env.SHAARLI_ADDRESS}}
+          -Plifestream -Pmy-lifeastream -Pjbake -Pplugins
+          -Dgoodreads.mail=$GOODREADS_MAIL
+          -Dgoodreads.password=$GOODREADS_PASSWORD
+          -Dwordpress.login=$WORDPRESS_LOGIN
+          -Dwordpress.password=$WORDPRESS_PASSWORD
+          -Dwordpress.address=$WORDPRESS_ADDRESS
+          -Dtwitter4j.oauth.accessToken=$TWITTER4J_OAUTH_ACCESSTOKEN
+          -Dtwitter4j.oauth.accessTokenSecret=$TWITTER4J_OAUTH_ACCESSTOKENSECRET
+          -Dshaarli.login=$SHAARLI_LOGIN
+          -Dshaarli.password=$SHAARLI_PASSWORD
+          -Dshaarli.address=$SHAARLI_ADDRESS
