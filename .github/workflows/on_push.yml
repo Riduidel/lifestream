@@ -19,6 +19,8 @@ jobs:
           path: ~/.m2
           key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
           restore-keys: ${{ runner.os }}-m2
+      - name: Start selenoid
+        uses: Xotabu4/selenoid-github-action@v1
       - name: Build with Maven
         env:
           GOODREADS_MAIL: ${{env.GOODREADS_MAIL}}
@@ -44,3 +46,5 @@ jobs:
           -Dshaarli.login=$SHAARLI_LOGIN
           -Dshaarli.password=$SHAARLI_PASSWORD
           -Dshaarli.address=$SHAARLI_ADDRESS
+          -Dlifestream.selenium.browser=chrome
+          -Dlifestream.selenium.remote.url=http://localhost:4444/wd/hub
