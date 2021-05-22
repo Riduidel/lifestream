@@ -10,6 +10,7 @@ import java.util.Map;
 import java.util.TreeMap;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
 import org.openqa.selenium.By;
@@ -22,10 +23,10 @@ import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.firefox.FirefoxDriverLogLevel;
 import org.openqa.selenium.firefox.FirefoxOptions;
 import org.openqa.selenium.firefox.FirefoxProfile;
-import org.openqa.selenium.remote.DesiredCapabilities;
 import org.openqa.selenium.remote.RemoteWebDriver;
 
 public class WebClientUtils {
+	private static final Logger logger = Logger.getLogger(WebClientUtils.class.getName());
 	public static final String BROWSER_DOWNLOAD_DIR = "browser.download.dir";
 	private static WebDriver webClient;
 	private static File downloadPath;
@@ -114,6 +115,7 @@ public class WebClientUtils {
 			ChromeDriver driver = new ChromeDriver(options);
 			driver.setLogLevel(Level.FINEST);
 			driver.manage().timeouts().pageLoadTimeout(1, TimeUnit.MINUTES);
+			logger.info("Using local chrome WebDriver");
 			return driver;
 		} else {
 			ChromeOptions chromeOptions = new ChromeOptions();
@@ -125,6 +127,7 @@ public class WebClientUtils {
 			try {
 				URL url = URI.create(urlText).toURL();
 				RemoteWebDriver driver = new RemoteWebDriver(url, chromeOptions);
+				logger.info(String.format("Using remote chrome WebDriver. Connected to %s", urlText));
 				return driver;
 			} catch (MalformedURLException e) {
 				throw new SeleniumException(String.format("provided url %s can't be parsed", urlText));
