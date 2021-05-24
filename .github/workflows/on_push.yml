@@ -9,7 +9,8 @@ jobs:
     steps:
       - name: Start selenoid
         uses: Xotabu4/selenoid-github-action@v1
-      - uses: actions/checkout@v2
+      - name: Obviously checkout code
+        uses: actions/checkout@v2
       - name: Set up JDK 11
         uses: actions/setup-java@v2
         with:
@@ -47,4 +48,4 @@ jobs:
           -Dshaarli.password=$SHAARLI_PASSWORD
           -Dshaarli.address=$SHAARLI_ADDRESS
           -Dlifestream.selenium.browser=chrome
-          -Dlifestream.selenium.remote.url=http://localhost:4444/wd/hub
+          -Dlifestream.selenium.remote.url=http://selenoid:4444/wd/hub
