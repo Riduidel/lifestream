@@ -13,6 +13,7 @@ import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.TreeMap;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
@@ -205,22 +206,35 @@ public class Goodreads implements InputLoader<BookInfos, GoodreadsConfiguration>
 			String csvContent = configuration.refreshCacheWith(new CacheLoader() {
 				private String getExportIfExist() throws MalformedURLException, IOException {
 					client.get(GOODREADS_EXPORT);
-					for(WebElement anchor : WebClientUtils.getLinks(client)) {
-						String href = anchor.getAttribute("href");
-						if(href.contains("/review_porter/export/")) {
-							return readCSVExport(anchor);
+					Optional<WebElement> export = getExportElement(client);
+					if(export.isPresent()) {
+						return readCSVExport(export.get());
+					} else {
+						// If we're here, there was no export available, so generate it, wait for it to be available, and download it
+						client.findElement(By.className("gr-form--compact__submitButton")).click();
+						new WebDriverWait(client, 60*60).until(ExpectedConditions.elementToBeClickable(By.className("gr-form--compact__submitButton")));
+						export = getExportElement(client);
+						if(export.isPresent()) {
+							return readCSVExport(export.get());
+						} else {
+							throw new UnsupportedOperationException("Unable to download reviews!");
 						}
 					}
-					// If we're here, there was no export available, so generate it, wait for it to be available, and download it
-					client.findElement(By.className("gr-form--compact__submitButton")).click();
-					new WebDriverWait(client, 60*60).until(ExpectedConditions.elementToBeClickable(By.className("gr-form--compact__submitButton")));
-					for(WebElement anchor : WebClientUtils.getLinks(client)) {
-						String href = anchor.getAttribute("href");
-						if(href.contains("/review_porter/export/")) {
-							return readCSVExport(anchor);
-						}
-					}
-					throw new UnsupportedOperationException("Unable to download reviews!");
+				}
+
+				private Optional<WebElement> getExportElement(WebDriver client) {
+					List<WebElement> links = WebClientUtils.getLinks(client);
+					return links.stream()
+						.filter(anchor -> {
+							try {
+								String href = anchor.getAttribute("href");
+								return anchor.getAttribute("href")!=null && href.contains("/review_porter/export/");
+							} catch(Exception e) {
+								e.printStackTrace();
+								return false;
+							}
+						})
+						.findAny();
 				}
 
 				private String readCSVExport(WebElement anchor) throws IOException {
@@ -228,8 +242,17 @@ public class Goodreads implements InputLoader<BookInfos, GoodreadsConfiguration>
 					anchor.click();
 					// So we must have a file in the download folder now, which name ends with *.csv
 					File downloaded = new File(WebClientUtils.getDownloadFolder(), "goodreads_library_export.csv");
-					FluentWait<WebDriver> wait = new FluentWait<WebDriver>(client).withTimeout(Duration.ofSeconds(60)).pollingEvery(Duration.ofMillis(100));
-					wait.until( unused -> downloaded.exists());
+					FluentWait<WebDriver> wait = new FluentWait<WebDriver>(client)
+							.withTimeout(Duration.ofSeconds(10))
+							.pollingEvery(Duration.ofMillis(100));
+					try {
+						wait.until( unused -> false);
+					} catch(org.openqa.selenium.TimeoutException e) {
+						// I don't care about the timeout exception
+					}
+					// File has been downloaded in browser Docker image. It is now time to download it
+					// to local file system
+					WebClientUtils.download(client, downloaded);
 					try {
 						return FileUtils.readFileToString(downloaded, "UTF-8");
 					} finally {
