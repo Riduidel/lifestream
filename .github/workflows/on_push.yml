@@ -48,4 +48,4 @@ jobs:
           -Dshaarli.password=$SHAARLI_PASSWORD
           -Dshaarli.address=$SHAARLI_ADDRESS
           -Dlifestream.selenium.browser=chrome
-          -Dlifestream.selenium.remote.url=http://selenoid:4444/wd/hub
+          -Dlifestream.selenium.remote.url=http://localhost:4444/wd/hub
