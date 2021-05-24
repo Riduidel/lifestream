@@ -36,6 +36,7 @@ jobs:
           SHAARLI_ADDRESS: ${{env.SHAARLI_ADDRESS}}
         run: >
           mvn --batch-mode --update-snapshots verify 
+          -DskipTests
           -Plifestream -Pmy-lifeastream -Pjbake -Pplugins
           -Dgoodreads.mail=$GOODREADS_MAIL
           -Dgoodreads.password=$GOODREADS_PASSWORD
