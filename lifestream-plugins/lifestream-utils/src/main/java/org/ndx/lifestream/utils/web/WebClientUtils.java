@@ -8,26 +8,22 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
-import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
 import org.apache.commons.vfs2.AllFileSelector;
 import org.apache.commons.vfs2.FileObject;
-import org.apache.commons.vfs2.FileSelector;
 import org.apache.commons.vfs2.FileSystemException;
 import org.apache.commons.vfs2.VFS;
 import org.openqa.selenium.By;
-import org.openqa.selenium.UnexpectedAlertBehaviour;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
-import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
-import org.openqa.selenium.firefox.FirefoxDriver;
-import org.openqa.selenium.firefox.FirefoxDriverLogLevel;
 import org.openqa.selenium.firefox.FirefoxOptions;
-import org.openqa.selenium.firefox.FirefoxProfile;
+import org.openqa.selenium.logging.LogType;
+import org.openqa.selenium.logging.LoggingPreferences;
+import org.openqa.selenium.remote.CapabilityType;
 import org.openqa.selenium.remote.RemoteWebDriver;
 import org.openqa.selenium.remote.SessionId;
 
@@ -102,6 +98,10 @@ public class WebClientUtils {
 				    "enableVNC", true,
 				    "enableVideo", true
 				));
+			LoggingPreferences logPrefs = new LoggingPreferences();
+			// https://stackoverflow.com/a/56536604/15619
+			logPrefs.enable(LogType.PERFORMANCE, Level.ALL);
+			options.setCapability(CapabilityType.LOGGING_PREFS, logPrefs);
 			try {
 				URL url = URI.create(urlText).toURL();
 				RemoteWebDriver driver = new RemoteWebDriver(url, options);
@@ -121,6 +121,7 @@ public class WebClientUtils {
 		preferences.put("profile.default_content_settings.popups", 0);
 		preferences.put("download.prompt_for_download", 0);
 		preferences.put("download.default_directory", getDownloadFolder().getAbsolutePath());
+		
 		if (urlText == null) {
 			throw new UnsupportedOperationException("Running selnium-driven browser locally is no more possible. Set the "+BROWSER_SELENIUM_REMOTE_URL+" system property");
 		} else {
@@ -130,6 +131,10 @@ public class WebClientUtils {
 				    "enableVNC", true,
 				    "enableVideo", true
 				));
+			LoggingPreferences logPrefs = new LoggingPreferences();
+			logPrefs.enable(LogType.PERFORMANCE, Level.ALL);
+			chromeOptions.setCapability(CapabilityType.LOGGING_PREFS, logPrefs);
+			chromeOptions.setCapability("goog:loggingPrefs", logPrefs);
 			try {
 				URL url = URI.create(urlText).toURL();
 				RemoteWebDriver driver = new RemoteWebDriver(url, chromeOptions);
@@ -173,9 +178,11 @@ public class WebClientUtils {
 			try {
 				URL url = URI.create(urlText).toURL();
 				String path= String.format("http://%s:%s/download/%s/%s", url.getHost(), url.getPort(), id.toString(), destination.getName());
-				FileObject source = VFS.getManager().resolveFile(path);
-				FileObject dest = VFS.getManager().resolveFile(destination.toURI());
-				dest.copyFrom(source, new AllFileSelector());
+				try(FileObject source = VFS.getManager().resolveFile(path)) {
+					try(FileObject dest = VFS.getManager().resolveFile(destination.toURI())) {
+						dest.copyFrom(source, new AllFileSelector());
+					}
+				}
 			} catch (MalformedURLException | FileSystemException e) {
 				throw new SeleniumException(String.format("provided url %s can't be parsed", urlText));
 			}

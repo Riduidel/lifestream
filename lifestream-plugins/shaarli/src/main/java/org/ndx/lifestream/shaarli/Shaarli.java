@@ -14,7 +14,6 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
-import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.vfs2.FileObject;
 import org.jsoup.Jsoup;
@@ -31,18 +30,19 @@ import org.ndx.lifestream.utils.transform.HtmlToMarkdown;
 import org.ndx.lifestream.utils.web.WebClientUtils;
 import org.openqa.selenium.By;
 import org.openqa.selenium.ElementNotInteractableException;
-import org.openqa.selenium.JavascriptExecutor;
-import org.openqa.selenium.OutputType;
 import org.openqa.selenium.StaleElementReferenceException;
-import org.openqa.selenium.TakesScreenshot;
 import org.openqa.selenium.TimeoutException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
+import org.openqa.selenium.logging.LogEntries;
+import org.openqa.selenium.logging.LogType;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.FluentWait;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
 import com.google.inject.internal.Nullable;
+
+import twitter4j.JSONObject;
 
 public class Shaarli implements InputLoader<MicroblogEntry, ShaarliConfiguration> {
 	private static final Logger logger = Logger.getLogger(Shaarli.class.getName());
@@ -197,21 +197,30 @@ public class Shaarli implements InputLoader<MicroblogEntry, ShaarliConfiguration
 				// There is something strange here that I don't fully understand, but the only solution I have is letting this timeout
 				// Bad, and dangerous, but the only solution I could think about
 			}
+			LogEntries logs = browser.manage().logs().get(LogType.PERFORMANCE);
+			List<JSONObject> jsonLogs = logs.getAll().stream()
+				.map(entry -> new JSONObject(entry.getMessage()))
+				.filter(entry -> "Network.responseReceived".equals(entry.getJSONObject("message").getString("method")))
+				.collect(Collectors.toList());
+			JSONObject downloadExchange = jsonLogs.get(jsonLogs.size()-1);
+			JSONObject response = downloadExchange.getJSONObject("message").getJSONObject("params").getJSONObject("response");
+			String contentDisposition = response.getJSONObject("headers").getString("Content-disposition");
+			String filename = contentDisposition.substring(contentDisposition.indexOf('=')+1);
 			// So there should now be an html file in download folder, no?
-			FluentWait<WebDriver> wait = new FluentWait<WebDriver>(browser).withTimeout(Duration.ofSeconds(60)).pollingEvery(Duration.ofMillis(100));
-			final FilenameFilter htmlLocator = new FilenameFilter() {
-				
-				@Override
-				public boolean accept(File dir, String name) {
-					return name.toLowerCase().endsWith(".html");
-				}
-			};
-			wait.until( unused -> WebClientUtils.getDownloadFolder().listFiles(htmlLocator).length>0);
-			File[] html = WebClientUtils.getDownloadFolder().listFiles(htmlLocator);
+			File file = new File(WebClientUtils.getDownloadFolder(), filename);
+			FluentWait<WebDriver> wait = new FluentWait<WebDriver>(browser)
+					.withTimeout(Duration.ofSeconds(10))
+					.pollingEvery(Duration.ofMillis(100));
 			try {
-				return IOUtils.toString(html[0].toURI(), "UTF-8");
+				wait.until( unused -> false);
+			} catch(org.openqa.selenium.TimeoutException e) {
+				// I don't care about the timeout exception
+			}
+			WebClientUtils.download(browser, file);
+			try {
+				return IOUtils.toString(file.toURI(), "UTF-8");
 			} finally {
-				html[0].delete();
+				file.delete();
 			}
 		} catch(AuthenticationFailedException e) {
 			throw e;

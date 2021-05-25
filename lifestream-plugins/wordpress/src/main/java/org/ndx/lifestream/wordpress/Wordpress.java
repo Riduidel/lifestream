@@ -2,7 +2,6 @@ package org.ndx.lifestream.wordpress;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
-import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
@@ -19,11 +18,8 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
-import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
-import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.vfs2.FileObject;
-import org.apache.commons.vfs2.FileSystemException;
 import org.jdom.Element;
 import org.ndx.lifestream.configuration.CacheLoader;
 import org.ndx.lifestream.configuration.LinkResolver;
@@ -41,7 +37,9 @@ import org.ndx.lifestream.wordpress.resolvers.MultiResolver;
 import org.openqa.selenium.By;
 import org.openqa.selenium.Keys;
 import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.FluentWait;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
 import com.dooapp.gaedo.finders.FinderCrudService;
@@ -52,6 +50,8 @@ import com.sun.syndication.feed.synd.SyndEntry;
 import com.sun.syndication.feed.synd.SyndFeed;
 import com.sun.syndication.io.SyndFeedInput;
 import com.sun.syndication.io.XmlReader;
+
+import de.schlichtherle.truezip.file.TVFS;
 
 public class Wordpress implements InputLoader<Post, WordpressConfiguration> {
 	private static final String EXPORT_BUTTON = "export-card__export-button";
@@ -125,39 +125,37 @@ public class Wordpress implements InputLoader<Post, WordpressConfiguration> {
 			new WebDriverWait(browser, 60)
 			.pollingEvery(Duration.ofSeconds(1))
 			.until(ExpectedConditions.presenceOfElementLocated(By.className(EXPORT_BUTTON)));
-			browser.findElement(By.className(EXPORT_BUTTON)).click();
+			WebElement exportButton = browser.findElement(By.className(EXPORT_BUTTON));
+			exportButton.click();
 			new WebDriverWait(browser, 60)
 			.pollingEvery(Duration.ofSeconds(1))
 			.until(ExpectedConditions.presenceOfElementLocated(By.className("notice__action")));
 			// Now there should be a download link
-			browser.findElement(By.className("notice__action")).click();
-			WebClientUtils.waitForDownloadOver();
+			WebElement downloadFileButton = browser.findElement(By.className("notice__action"));
+			String fullUrl = downloadFileButton.getAttribute("href");
+			URL url = new URL(fullUrl);
+			String filename = url.getFile();
+			filename = filename.substring(filename.lastIndexOf('/')+1);
+			downloadFileButton.click();
 			// Content should be downloaded into download folder, no ?
-			File[] matching = WebClientUtils.getDownloadFolder().listFiles(new FilenameFilter() {
-				
-				@Override
-				public boolean accept(File dir, String name) {
-					return name.toLowerCase().endsWith(".zip");
-				}
-			});
-			switch(matching.length) {
-			case 0:
-				throw new UnsupportedOperationException(
-						String.format("We couldn't locate wordpress export file in folder %s. No file matched. Is everything ok?", 
-								WebClientUtils.getDownloadFolder().getAbsolutePath()));
-			case 1: {
-				File file = matching[0];
-				try {
-					// So read the zip content, and get the biggest file in that zip
-					return readBiggestZipContent(file);
-				} finally {
-					file.delete();
-				}
-			} default:
-				throw new UnsupportedOperationException(
-						String.format("We couldn't locate wordpress export file in folder %s. %s files matched. Is everything ok?", 
-								WebClientUtils.getDownloadFolder().getAbsolutePath(),
-								ArrayUtils.toString(matching)));
+			File file = new File(WebClientUtils.getDownloadFolder(), filename);
+			FluentWait<WebDriver> wait = new FluentWait<WebDriver>(browser)
+					.withTimeout(Duration.ofSeconds(10))
+					.pollingEvery(Duration.ofMillis(100));
+			try {
+				wait.until( unused -> false);
+			} catch(org.openqa.selenium.TimeoutException e) {
+				// I don't care about the timeout exception
+			}
+			WebClientUtils.download(browser, file);
+			try {
+				// So read the zip content, and get the biggest file in that zip
+				return readBiggestZipContent(file);
+			} finally {
+				file.delete();
+				// This one is due to the fact that we use a zip file for Wordpress, which unmount
+				// requires a shutdown hook
+				TVFS.umount();
 			}
 		} catch (Exception e) {
 			throw new UnableToDownloadContentException("Unable to download XML export from Wordpress site", e);
