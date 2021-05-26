@@ -38,16 +38,16 @@ jobs:
           mvn 
           -DskipTests
           -Pmy-lifestream -Pjbake -Pplugins
-          -Dgoodreads.mail=$GOODREADS_MAIL
-          -Dgoodreads.password=$GOODREADS_PASSWORD
-          -Dwordpress.login=$WORDPRESS_LOGIN
-          -Dwordpress.password=$WORDPRESS_PASSWORD
-          -Dwordpress.address=$WORDPRESS_ADDRESS
-          -Dtwitter4j.oauth.accessToken=$TWITTER4J_OAUTH_ACCESSTOKEN
-          -Dtwitter4j.oauth.accessTokenSecret=$TWITTER4J_OAUTH_ACCESSTOKENSECRET
-          -Dshaarli.login=$SHAARLI_LOGIN
-          -Dshaarli.password=$SHAARLI_PASSWORD
-          -Dshaarli.address=$SHAARLI_ADDRESS
+          -Dgoodreads.mail="$GOODREADS_MAIL"
+          -Dgoodreads.password="$GOODREADS_PASSWORD"
+          -Dwordpress.login="$WORDPRESS_LOGIN"
+          -Dwordpress.password="$WORDPRESS_PASSWORD"
+          -Dwordpress.address="$WORDPRESS_ADDRESS"
+          -Dtwitter4j.oauth.accessToken="$TWITTER4J_OAUTH_ACCESSTOKEN"
+          -Dtwitter4j.oauth.accessTokenSecret="$TWITTER4J_OAUTH_ACCESSTOKENSECRET"
+          -Dshaarli.login="$SHAARLI_LOGIN"
+          -Dshaarli.password="$SHAARLI_PASSWORD"
+          -Dshaarli.address="$SHAARLI_ADDRESS"
           -Dlifestream.selenium.browser=chrome
           -Dlifestream.selenium.remote.url=http://localhost:4444/wd/hub
           --batch-mode --update-snapshots 
@@ -68,16 +68,16 @@ jobs:
           mvn
           -DskipTests
           -Pmy-lifestream -Pjbake -Pplugins
-          -Dgoodreads.mail=$GOODREADS_MAIL
-          -Dgoodreads.password=$GOODREADS_PASSWORD
-          -Dwordpress.login=$WORDPRESS_LOGIN
-          -Dwordpress.password=$WORDPRESS_PASSWORD
-          -Dwordpress.address=$WORDPRESS_ADDRESS
-          -Dtwitter4j.oauth.accessToken=$TWITTER4J_OAUTH_ACCESSTOKEN
-          -Dtwitter4j.oauth.accessTokenSecret=$TWITTER4J_OAUTH_ACCESSTOKENSECRET
-          -Dshaarli.login=$SHAARLI_LOGIN
-          -Dshaarli.password=$SHAARLI_PASSWORD
-          -Dshaarli.address=$SHAARLI_ADDRESS
+          -Dgoodreads.mail="$GOODREADS_MAIL"
+          -Dgoodreads.password="$GOODREADS_PASSWORD"
+          -Dwordpress.login="$WORDPRESS_LOGIN"
+          -Dwordpress.password="$WORDPRESS_PASSWORD"
+          -Dwordpress.address="$WORDPRESS_ADDRESS"
+          -Dtwitter4j.oauth.accessToken="$TWITTER4J_OAUTH_ACCESSTOKEN"
+          -Dtwitter4j.oauth.accessTokenSecret="$TWITTER4J_OAUTH_ACCESSTOKENSECRET"
+          -Dshaarli.login="$SHAARLI_LOGIN"
+          -Dshaarli.password="$SHAARLI_PASSWORD"
+          -Dshaarli.address="$SHAARLI_ADDRESS"
           -Dlifestream.selenium.browser=chrome
           -Dlifestream.selenium.remote.url=http://localhost:4444/wd/hub
           --batch-mode --update-snapshots
