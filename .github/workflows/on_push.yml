@@ -51,7 +51,7 @@ jobs:
           -Dlifestream.selenium.browser=chrome
           -Dlifestream.selenium.remote.url=http://localhost:4444/wd/hub
           --batch-mode --update-snapshots 
-          help:active-profiles 
+          help:evaluate -Dexpression=goodreads.mail
       - name: Build with Maven
         env:
           GOODREADS_MAIL: ${{secrets.GOODREADS_MAIL}}
