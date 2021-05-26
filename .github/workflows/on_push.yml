@@ -37,7 +37,7 @@ jobs:
         run: >
           mvn --batch-mode --update-snapshots verify 
           -DskipTests
-          -Plifestream -Pmy-lifeastream -Pjbake -Pplugins
+          -Plifestream -Pmy-lifestream -Pjbake -Pplugins
           -Dgoodreads.mail=$GOODREADS_MAIL
           -Dgoodreads.password=$GOODREADS_PASSWORD
           -Dwordpress.login=$WORDPRESS_LOGIN
