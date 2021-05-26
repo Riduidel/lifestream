@@ -22,36 +22,6 @@ jobs:
           path: ~/.m2
           key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
           restore-keys: ${{ runner.os }}-m2
-      - name: Validate active profiles
-        env:
-          GOODREADS_MAIL: ${{env.GOODREADS_MAIL}}
-          GOODREADS_PASSWORD: ${{env.GOODREADS_PASSWORD}}
-          WORDPRESS_LOGIN: ${{env.WORDPRESS_LOGIN}}
-          WORDPRESS_PASSWORD: ${{env.WORDPRESS_PASSWORD}}
-          WORDPRESS_ADDRESS: ${{env.WORDPRESS_ADDRESS}}
-          TWITTER4J_OAUTH_ACCESSTOKEN: ${{env.TWITTER4J_OAUTH_ACCESSTOKEN}}
-          TWITTER4J_OAUTH_ACCESSTOKENSECRET: ${{env.TWITTER4J_OAUTH_ACCESSTOKENSECRET}}
-          SHAARLI_LOGIN: ${{env.SHAARLI_LOGIN}}
-          SHAARLI_PASSWORD: ${{env.SHAARLI_PASSWORD}}
-          SHAARLI_ADDRESS: ${{env.SHAARLI_ADDRESS}}
-        run: >
-          mvn 
-          -DskipTests
-          -Plifestream -Pmy-lifestream -Pjbake -Pplugins
-          -Dgoodreads.mail=$GOODREADS_MAIL
-          -Dgoodreads.password=$GOODREADS_PASSWORD
-          -Dwordpress.login=$WORDPRESS_LOGIN
-          -Dwordpress.password=$WORDPRESS_PASSWORD
-          -Dwordpress.address=$WORDPRESS_ADDRESS
-          -Dtwitter4j.oauth.accessToken=$TWITTER4J_OAUTH_ACCESSTOKEN
-          -Dtwitter4j.oauth.accessTokenSecret=$TWITTER4J_OAUTH_ACCESSTOKENSECRET
-          -Dshaarli.login=$SHAARLI_LOGIN
-          -Dshaarli.password=$SHAARLI_PASSWORD
-          -Dshaarli.address=$SHAARLI_ADDRESS
-          -Dlifestream.selenium.browser=chrome
-          -Dlifestream.selenium.remote.url=http://localhost:4444/wd/hub
-          --batch-mode --update-snapshots 
-          help:active-profiles 
       - name: Build with Maven
         env:
           GOODREADS_MAIL: ${{env.GOODREADS_MAIL}}
@@ -67,7 +37,7 @@ jobs:
         run: >
           mvn
           -DskipTests
-          -Plifestream -Pmy-lifestream -Pjbake -Pplugins
+          -Pmy-lifestream -Pjbake -Pplugins
           -Dgoodreads.mail=$GOODREADS_MAIL
           -Dgoodreads.password=$GOODREADS_PASSWORD
           -Dwordpress.login=$WORDPRESS_LOGIN

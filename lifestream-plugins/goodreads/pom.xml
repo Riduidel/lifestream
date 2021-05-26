@@ -84,6 +84,7 @@
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-surefire-plugin</artifactId>
 				<configuration>
+					<forkMode>none</forkMode>
 					<systemPropertyVariables>
 						<goodreads.mail>${goodreads.mail}</goodreads.mail>
 						<goodreads.password>${goodreads.password}</goodreads.password>

@@ -85,6 +85,7 @@
 					<plugin>
 						<groupId>${project.groupId}</groupId>
 						<artifactId>goodreads</artifactId>
+						<version>${project.version}</version>
 						<executions>
 							<execution>
 								<id>download goodreads</id>
@@ -116,6 +117,7 @@
 					<plugin>
 						<groupId>${project.groupId}</groupId>
 						<artifactId>wordpress</artifactId>
+						<version>${project.version}</version>
 						<executions>
 							<execution>
 								<id>download wordpress</id>
@@ -150,6 +152,7 @@
 					<plugin>
 						<groupId>${project.groupId}</groupId>
 						<artifactId>shaarli</artifactId>
+						<version>${project.version}</version>
 						<executions>
 							<execution>
 								<id>download shaarli</id>

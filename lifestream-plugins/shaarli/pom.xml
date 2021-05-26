@@ -63,6 +63,7 @@
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-surefire-plugin</artifactId>
 				<configuration>
+					<forkMode>none</forkMode>
 					<systemPropertyVariables>
 						<shaarli.address>${shaarli.address}</shaarli.address>
 						<shaarli.login>${shaarli.login}</shaarli.login>
