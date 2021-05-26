@@ -76,7 +76,7 @@
 		<profile>
 			<activation>
 				<property>
-					<name>goo__dreads.mail</name>
+					<name>goodreads.mail</name>
 				</property>
 			</activation>
 			<id>download-goodreads</id>
@@ -106,7 +106,7 @@
 		<profile>
 			<activation>
 				<property>
-					<name>w__ordpress.login</name>
+					<name>wordpress.login</name>
 				</property>
 			</activation>
 			<!-- Download content and transform it -->
