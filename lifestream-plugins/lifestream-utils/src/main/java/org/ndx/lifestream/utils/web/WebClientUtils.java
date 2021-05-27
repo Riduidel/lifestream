@@ -180,6 +180,7 @@ public class WebClientUtils {
 				String path= String.format("http://%s:%s/download/%s/%s", url.getHost(), url.getPort(), id.toString(), destination.getName());
 				try(FileObject source = VFS.getManager().resolveFile(path)) {
 					try(FileObject dest = VFS.getManager().resolveFile(destination.toURI())) {
+						logger.info(String.format("Copying from %s to %s", source.getPublicURIString(), dest.getPublicURIString()));
 						dest.copyFrom(source, new AllFileSelector());
 					}
 				}

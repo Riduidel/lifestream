@@ -252,6 +252,7 @@ public class Goodreads implements InputLoader<BookInfos, GoodreadsConfiguration>
 					}
 					// File has been downloaded in browser Docker image. It is now time to download it
 					// to local file system
+					logger.info(String.format("downloading %s", downloaded));
 					WebClientUtils.download(client, downloaded);
 					try {
 						return FileUtils.readFileToString(downloaded, "UTF-8");
