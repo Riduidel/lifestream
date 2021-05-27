@@ -185,7 +185,7 @@ public class WebClientUtils {
 					}
 				}
 			} catch (MalformedURLException | FileSystemException e) {
-				throw new SeleniumException(String.format("provided url %s can't be parsed", urlText));
+				throw new SeleniumException(String.format("provided url %s can't be parsed", urlText), e);
 			}
 		}
 
