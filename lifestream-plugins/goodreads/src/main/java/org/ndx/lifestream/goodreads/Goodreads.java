@@ -208,8 +208,10 @@ public class Goodreads implements InputLoader<BookInfos, GoodreadsConfiguration>
 					client.get(GOODREADS_EXPORT);
 					Optional<WebElement> export = getExportElement(client);
 					if(export.isPresent()) {
+						logger.info("Found export element");
 						return readCSVExport(export.get());
 					} else {
+						logger.info("No export element found. Let's ask one export.");
 						// If we're here, there was no export available, so generate it, wait for it to be available, and download it
 						client.findElement(By.className("gr-form--compact__submitButton")).click();
 						new WebDriverWait(client, 60*60).until(ExpectedConditions.elementToBeClickable(By.className("gr-form--compact__submitButton")));
@@ -224,16 +226,11 @@ public class Goodreads implements InputLoader<BookInfos, GoodreadsConfiguration>
 
 				private Optional<WebElement> getExportElement(WebDriver client) {
 					List<WebElement> links = WebClientUtils.getLinks(client);
-					return links.stream()
-						.filter(anchor -> {
-							try {
-								String href = anchor.getAttribute("href");
-								return anchor.getAttribute("href")!=null && href.contains("/review_porter/export/");
-							} catch(Exception e) {
-								e.printStackTrace();
-								return false;
-							}
-						})
+					return links.stream().parallel()
+						.map(anchor -> Map.entry(anchor, anchor.getAttribute("href")))
+						.filter(entry -> entry.getValue()!=null)
+						.filter(entry -> entry.getValue().contains("/review_porter/export/"))
+						.map(entry -> entry.getKey())
 						.findAny();
 				}
 
@@ -242,16 +239,7 @@ public class Goodreads implements InputLoader<BookInfos, GoodreadsConfiguration>
 					anchor.click();
 					// So we must have a file in the download folder now, which name ends with *.csv
 					File downloaded = new File(WebClientUtils.getDownloadFolder(), "goodreads_library_export.csv");
-					FluentWait<WebDriver> wait = new FluentWait<WebDriver>(client)
-							.withTimeout(Duration.ofSeconds(10))
-							.pollingEvery(Duration.ofMillis(100));
-					try {
-						wait.until( unused -> false);
-					} catch(org.openqa.selenium.TimeoutException e) {
-						// I don't care about the timeout exception
-					}
-					// File has been downloaded in browser Docker image. It is now time to download it
-					// to local file system
+					// Hopefully both wait and download are handled in this magic method
 					logger.info(String.format("downloading %s", downloaded));
 					WebClientUtils.download(client, downloaded);
 					try {

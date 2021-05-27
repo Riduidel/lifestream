@@ -208,14 +208,6 @@ public class Shaarli implements InputLoader<MicroblogEntry, ShaarliConfiguration
 			String filename = contentDisposition.substring(contentDisposition.indexOf('=')+1);
 			// So there should now be an html file in download folder, no?
 			File file = new File(WebClientUtils.getDownloadFolder(), filename);
-			FluentWait<WebDriver> wait = new FluentWait<WebDriver>(browser)
-					.withTimeout(Duration.ofSeconds(10))
-					.pollingEvery(Duration.ofMillis(100));
-			try {
-				wait.until( unused -> false);
-			} catch(org.openqa.selenium.TimeoutException e) {
-				// I don't care about the timeout exception
-			}
 			WebClientUtils.download(browser, file);
 			try {
 				return IOUtils.toString(file.toURI(), "UTF-8");

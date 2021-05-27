@@ -53,7 +53,7 @@ public class WebClientUtils {
 				}
 			}
 		}
-		return createWebClient();
+		return webClient;
 	}
 
 	/**
@@ -173,6 +173,14 @@ public class WebClientUtils {
 	public static void download(WebDriver client, File destination) {
 		if (client instanceof RemoteWebDriver) {
 			RemoteWebDriver remoteClient = (RemoteWebDriver) client;
+			if(!client.getCurrentUrl().startsWith("chrome://downloads")) {
+				client.get("chrome://downloads");
+			}
+			// Now wait
+			remoteClient.executeScript("var items = document.querySelector('downloads-manager').shadowRoot.getElementById('downloadsList').items;\n"+
+					"if (items.every(e => e.state === \"COMPLETE\"))\n"+
+					"\treturn items.map(e => e.fileUrl || e.file_url);");
+			// And download
 			String urlText = System.getProperty(BROWSER_SELENIUM_REMOTE_URL);
 			SessionId id = remoteClient.getSessionId();
 			try {

@@ -139,14 +139,6 @@ public class Wordpress implements InputLoader<Post, WordpressConfiguration> {
 			downloadFileButton.click();
 			// Content should be downloaded into download folder, no ?
 			File file = new File(WebClientUtils.getDownloadFolder(), filename);
-			FluentWait<WebDriver> wait = new FluentWait<WebDriver>(browser)
-					.withTimeout(Duration.ofSeconds(10))
-					.pollingEvery(Duration.ofMillis(100));
-			try {
-				wait.until( unused -> false);
-			} catch(org.openqa.selenium.TimeoutException e) {
-				// I don't care about the timeout exception
-			}
 			WebClientUtils.download(browser, file);
 			try {
 				// So read the zip content, and get the biggest file in that zip
