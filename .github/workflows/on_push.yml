@@ -52,3 +52,4 @@ jobs:
           -Dlifestream.selenium.remote.url=http://localhost:4444/wd/hub
           --batch-mode --update-snapshots
           verify 
+          -X
