@@ -1,9 +1,11 @@
 package org.ndx.lifestream.utils.web;
 
 import java.io.File;
+import java.net.ConnectException;
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URL;
+import java.time.Duration;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
@@ -26,6 +28,9 @@ import org.openqa.selenium.logging.LoggingPreferences;
 import org.openqa.selenium.remote.CapabilityType;
 import org.openqa.selenium.remote.RemoteWebDriver;
 import org.openqa.selenium.remote.SessionId;
+
+import net.jodah.failsafe.Failsafe;
+import net.jodah.failsafe.RetryPolicy;
 
 public class WebClientUtils {
 	private static final String BROWSER_SELENIUM_REMOTE_URL = "lifestream.selenium.remote.url";
@@ -188,8 +193,17 @@ public class WebClientUtils {
 				String path= String.format("http://%s:%s/download/%s/%s", url.getHost(), url.getPort(), id.toString(), destination.getName());
 				try(FileObject source = VFS.getManager().resolveFile(path)) {
 					try(FileObject dest = VFS.getManager().resolveFile(destination.toURI())) {
+						RetryPolicy<Object> retryPolicy = new RetryPolicy<>()
+								  .handle(FileSystemException.class)
+								  .withDelay(Duration.ofSeconds(5))
+								  .withMaxRetries(3);
 						logger.info(String.format("Copying from %s to %s", source.getPublicURIString(), dest.getPublicURIString()));
-						dest.copyFrom(source, new AllFileSelector());
+						Failsafe.with(retryPolicy)
+						.onFailure(e -> logger.severe(String.format("Unable to download file at try %s/3", e.getAttemptCount())))
+						.onSuccess(e -> logger.info(String.format("Successfully downloaded %s", dest.getName().getBaseName())))
+						.run(() -> {
+							dest.copyFrom(source, new AllFileSelector());
+						});
 					}
 				}
 			} catch (MalformedURLException | FileSystemException e) {
