@@ -1,19 +1,21 @@
 package org.ndx.lifestream.utils.web;
 
 import java.io.File;
-import java.net.ConnectException;
+import java.io.IOException;
+import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URL;
-import java.time.Duration;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
+import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.vfs2.AllFileSelector;
 import org.apache.commons.vfs2.FileObject;
 import org.apache.commons.vfs2.FileSystemException;
@@ -28,16 +30,27 @@ import org.openqa.selenium.logging.LoggingPreferences;
 import org.openqa.selenium.remote.CapabilityType;
 import org.openqa.selenium.remote.RemoteWebDriver;
 import org.openqa.selenium.remote.SessionId;
-
-import net.jodah.failsafe.Failsafe;
-import net.jodah.failsafe.RetryPolicy;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.FluentWait;
+import org.openqa.selenium.support.ui.WebDriverWait;
 
 public class WebClientUtils {
+	private static final String WAIT_UNTIL_DOWNLOAD_IS_OVER_CHROME_JS = "wait_until_download_is_over.chrome.js";
 	private static final String BROWSER_SELENIUM_REMOTE_URL = "lifestream.selenium.remote.url";
 	private static final Logger logger = Logger.getLogger(WebClientUtils.class.getName());
 	public static final String BROWSER_DOWNLOAD_DIR = "browser.download.dir";
 	private static WebDriver webClient;
 	private static File downloadPath;
+	private static String WAITING_SCRIPT;
+	static {
+		URL scriptPath = WebClientUtils.class.getResource(WAIT_UNTIL_DOWNLOAD_IS_OVER_CHROME_JS);
+		logger.info(String.format("Loading waiting script from %s", scriptPath));
+		try {
+			WAITING_SCRIPT = IOUtils.toString(scriptPath, "UTF-8");
+		} catch (IOException e) {
+			throw new RuntimeException("Unable to read wait for download script", e);
+		}
+	}
 
 	public static File getDownloadFolder() {
 		if (downloadPath == null) {
@@ -181,10 +194,10 @@ public class WebClientUtils {
 			if(!client.getCurrentUrl().startsWith("chrome://downloads")) {
 				client.get("chrome://downloads");
 			}
+			Object returnedValue = new WebDriverWait(client, 60*60)
+				.until(ExpectedConditions.jsReturnsValue(WAITING_SCRIPT));
 			// Now wait
-			remoteClient.executeScript("var items = document.querySelector('downloads-manager').shadowRoot.getElementById('downloadsList').items;\n"+
-					"if (items.every(e => e.state === \"COMPLETE\"))\n"+
-					"\treturn items.map(e => e.fileUrl || e.file_url);");
+			remoteClient.executeScript(WAITING_SCRIPT);
 			// And download
 			String urlText = System.getProperty(BROWSER_SELENIUM_REMOTE_URL);
 			SessionId id = remoteClient.getSessionId();
@@ -193,17 +206,9 @@ public class WebClientUtils {
 				String path= String.format("http://%s:%s/download/%s/%s", url.getHost(), url.getPort(), id.toString(), destination.getName());
 				try(FileObject source = VFS.getManager().resolveFile(path)) {
 					try(FileObject dest = VFS.getManager().resolveFile(destination.toURI())) {
-						RetryPolicy<Object> retryPolicy = new RetryPolicy<>()
-								  .handle(FileSystemException.class)
-								  .withDelay(Duration.ofSeconds(5))
-								  .withMaxRetries(3);
-						logger.info(String.format("Copying from %s to %s", source.getPublicURIString(), dest.getPublicURIString()));
-						Failsafe.with(retryPolicy)
-						.onFailure(e -> logger.severe(String.format("Unable to download file at try %s/3", e.getAttemptCount())))
-						.onSuccess(e -> logger.info(String.format("Successfully downloaded %s", dest.getName().getBaseName())))
-						.run(() -> {
-							dest.copyFrom(source, new AllFileSelector());
-						});
+						logger.info(String.format("Downloading from %s to %s", source.getPublicURIString(), dest.getPublicURIString()));
+						dest.copyFrom(source, new AllFileSelector());
+						logger.info(String.format("Successfully downloaded %s", dest.getName().getBaseName()));
 					}
 				}
 			} catch (MalformedURLException | FileSystemException e) {

@@ -240,7 +240,6 @@ public class Goodreads implements InputLoader<BookInfos, GoodreadsConfiguration>
 					// So we must have a file in the download folder now, which name ends with *.csv
 					File downloaded = new File(WebClientUtils.getDownloadFolder(), "goodreads_library_export.csv");
 					// Hopefully both wait and download are handled in this magic method
-					logger.info(String.format("downloading %s", downloaded));
 					WebClientUtils.download(client, downloaded);
 					try {
 						return FileUtils.readFileToString(downloaded, "UTF-8");
