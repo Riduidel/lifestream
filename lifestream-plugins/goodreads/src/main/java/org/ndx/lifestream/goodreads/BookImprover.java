@@ -246,24 +246,21 @@ public class BookImprover implements Callable<Void> {
 	private void improveBook() {
 		String query = null;
 		try {
-			if(book.getIsbn13()==null) {
-				if(book.getTitle()==null) {
-					query = book.getTitle();
-				}
-			} else {
+			if(book.getIsbn13()!=null)
 				query = book.getIsbn13();
+			if(book.getIsbn10()!=null && query==null || query.isBlank())
+				query = book.getIsbn10();
+			if(query==null && query==null || query.isBlank())
+				query = book.getTitle();
+			logger.info("Improving book "+book);
+			synchronized(destination) {
+				book = (Book) destination.create(book);
 			}
-			if(query!=null) {
-				logger.info("Improving book "+book);
-				synchronized(destination) {
-					book = (Book) destination.create(book);
-				}
-				String workId = workFinder.improveBook(client, query, book, configuration, destination);
-				synchronized(destination) {
-					book = (Book) destination.update(book);
-				}
-				serieFinder.improveBook(client, destination, workId, book, configuration);
+			String workId = workFinder.improveBook(client, query, book, configuration, destination);
+			synchronized(destination) {
+				book = (Book) destination.update(book);
 			}
+			serieFinder.improveBook(client, destination, workId, book, configuration);
 		} catch(RuntimeException e) {
 			logger.log(Level.WARNING, "something failed while improving book "+book, e);
 			throw e;
