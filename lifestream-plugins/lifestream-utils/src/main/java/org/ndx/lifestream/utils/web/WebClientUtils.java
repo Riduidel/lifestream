@@ -194,10 +194,9 @@ public class WebClientUtils {
 			if(!client.getCurrentUrl().startsWith("chrome://downloads")) {
 				client.get("chrome://downloads");
 			}
-			Object returnedValue = new WebDriverWait(client, 60*60)
-				.until(ExpectedConditions.jsReturnsValue(WAITING_SCRIPT));
 			// Now wait
-			remoteClient.executeScript(WAITING_SCRIPT);
+			new WebDriverWait(client, 60*60)
+				.until(ExpectedConditions.jsReturnsValue(WAITING_SCRIPT));
 			// And download
 			String urlText = System.getProperty(BROWSER_SELENIUM_REMOTE_URL);
 			SessionId id = remoteClient.getSessionId();
