@@ -19,7 +19,7 @@
 		<site.output>${site.basedir}/output/</site.output>
 		<site.jbake>${site.output}/jbake/</site.jbake>
 		<site.upload.dir>lifestream/</site.upload.dir>
-		<site.upload.url>ftp://ftpperso.free.fr</site.upload.url>
+		<site.upload.url>ftpperso.free.fr</site.upload.url>
 		<goodreads.dir>${site.dir}/</goodreads.dir>
 		<wordpress.dir>${site.dir}/</wordpress.dir>
 		<shaarli.dir>${site.dir}/</shaarli.dir>
@@ -207,9 +207,9 @@
 						</executions>
 					</plugin>
 					<plugin>
-						<groupId>org.jbake</groupId>
-						<artifactId>jbake-maven-plugin</artifactId>
-						<version>0.3.3</version>
+					    <groupId>org.jbake</groupId>
+					    <artifactId>jbake-maven-plugin</artifactId>
+					    <version>0.3.5</version>
 						<configuration>
 							<inputDirectory>${site.input}</inputDirectory>
 							<outputDirectory>${site.jbake}</outputDirectory>
@@ -229,26 +229,14 @@
 							<dependency>
 								<groupId>org.asciidoctor</groupId>
 								<artifactId>asciidoctorj</artifactId>
-								<version>2.4.3</version>
-							</dependency>
-
-							<!-- Markdown content support -->
-							<dependency>
-								<groupId>com.vladsch.flexmark</groupId>
-								<artifactId>flexmark</artifactId>
-								<version>${flexmark.version}</version>
-							</dependency>
-							<dependency>
-								<groupId>com.vladsch.flexmark</groupId>
-								<artifactId>flexmark-profile-pegdown</artifactId>
-								<version>${flexmark.version}</version>
+								<version>2.5.2</version>
 							</dependency>
 
 							<!-- Freemarker template support -->
 							<dependency>
 								<groupId>org.freemarker</groupId>
 								<artifactId>freemarker</artifactId>
-								<version>2.3.30</version>
+								<version>2.3.31</version>
 							</dependency>
 
 							<!-- Groovy template support -->
@@ -296,20 +284,21 @@
 				<plugins>
 					<plugin>
 						<groupId>org.codehaus.mojo</groupId>
-						<artifactId>wagon-maven-plugin</artifactId>
+						<artifactId>exec-maven-plugin</artifactId>
+						<version>3.0.0</version>
 						<executions>
 							<execution>
-								<id>upload-generated-site-to-ftp</id>
-								<phase>deploy</phase>
+								<id>push to ftpperso.free.fr with lftp</id>
+								<phase>install</phase>
 								<goals>
-									<goal>upload</goal>
+									<goal>exec</goal>
 								</goals>
 								<configuration>
-									<fromDir>${site.jbake}</fromDir>
-									<includes>**/*</includes>
-									<url>${site.upload.url}</url>
-									<toDir>${site.upload.dir}</toDir>
-									<serverId>ftpperso.free.fr</serverId>
+									<workingDirectory>${site.jbake}</workingDirectory>
+									<executable>lftp</executable>
+									<commandlineArgs>
+									<![CDATA[-u ${lifestream.ftp.user},${lifestream.ftp.password} -e 'mirror --reverse --verbose . ${site.upload.dir}' ${site.upload.url}]]>
+									</commandlineArgs>
 								</configuration>
 							</execution>
 						</executions>
