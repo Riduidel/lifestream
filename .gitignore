@@ -10,3 +10,4 @@ my-lifestream/.cache/
 my-lifestream/cache/
 my-lifestream/.download/
 cache/
+.vscode/settings.json
