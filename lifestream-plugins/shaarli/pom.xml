@@ -1,78 +1,77 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-	<modelVersion>4.0.0</modelVersion>
-	<parent>
-		<groupId>org.ndx.lifestream</groupId>
-		<artifactId>lifestream-plugins</artifactId>
-		<version>0.0.1-SNAPSHOT</version>
-	</parent>
-	<artifactId>shaarli</artifactId>
-	<description>don't know shaarli ? It's a delicious clone documented there : http://sebsauvage.net/wiki/doku.php?id=php:shaarli</description>
-	<packaging>maven-plugin</packaging>
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>org.ndx.lifestream</groupId>
+        <artifactId>lifestream-plugins</artifactId>
+        <version>0.0.1-SNAPSHOT</version>
+    </parent>
+    <artifactId>shaarli</artifactId>
+    <packaging>maven-plugin</packaging>
+    <description>don't know shaarli ? It's a delicious clone documented there : http://sebsauvage.net/wiki/doku.php?id=php:shaarli</description>
 
-	<dependencies>
-		<dependency>
-			<groupId>${project.groupId}</groupId>
-			<artifactId>lifestream-plugin-base</artifactId>
-			<version>${project.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>junit</groupId>
-			<artifactId>junit</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.jsoup</groupId>
-			<artifactId>jsoup</artifactId>
-		</dependency>
-	</dependencies>
-	<build>
-		<plugins>
-			<plugin>
-				<artifactId>maven-enforcer-plugin</artifactId>
-				<executions>
-					<execution>
-						<id>enforce-maven</id>
-						<goals>
-							<goal>enforce</goal>
-						</goals>
-						<configuration>
-							<rules>
-								<requireProperty>
-									<property>shaarli.address</property>
-									<message><![CDATA[You must set a shaarli address (&lt;shaarli.address&gt;myshaarliblog&lt;/shaarli.address&gt;) for tests]]></message>
-								</requireProperty>
-								<requireProperty>
-									<property>shaarli.login</property>
-									<message><![CDATA[You must set a shaarli user login (&lt;shaarli.login&gt;riduidel&lt;/shaarli.login&gt;) for tests]]></message>
-								</requireProperty>
-								<requireProperty>
-									<property>shaarli.password</property>
-									<message><![CDATA[You must set a shaarli user password (&lt;shaarli.password&gt;guesst what ?&lt;/shaarli.password&gt;) for tests]]></message>
-								</requireProperty>
-							</rules>
-						</configuration>
-					</execution>
-				</executions>
-			</plugin>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-plugin-plugin</artifactId>
-			</plugin>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-surefire-plugin</artifactId>
-				<configuration>
-					<forkMode>none</forkMode>
-					<systemPropertyVariables>
-						<shaarli.address>${shaarli.address}</shaarli.address>
-						<shaarli.login>${shaarli.login}</shaarli.login>
-						<shaarli.password>${shaarli.password}</shaarli.password>
-						<webdriver.gecko.driver>${webdriver.gecko.driver}</webdriver.gecko.driver>
-					</systemPropertyVariables>
-				</configuration>
-			</plugin>
+    <dependencies>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>lifestream-plugin-base</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.jsoup</groupId>
+            <artifactId>jsoup</artifactId>
+        </dependency>
+    </dependencies>
+    <build>
+        <plugins>
+            <plugin>
+                <artifactId>maven-enforcer-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>enforce-maven</id>
+                        <goals>
+                            <goal>enforce</goal>
+                        </goals>
+                        <configuration>
+                            <rules>
+                                <requireProperty>
+                                    <property>shaarli.address</property>
+                                    <message><![CDATA[You must set a shaarli address (&lt;shaarli.address&gt;myshaarliblog&lt;/shaarli.address&gt;) for tests]]></message>
+                                </requireProperty>
+                                <requireProperty>
+                                    <property>shaarli.login</property>
+                                    <message><![CDATA[You must set a shaarli user login (&lt;shaarli.login&gt;riduidel&lt;/shaarli.login&gt;) for tests]]></message>
+                                </requireProperty>
+                                <requireProperty>
+                                    <property>shaarli.password</property>
+                                    <message><![CDATA[You must set a shaarli user password (&lt;shaarli.password&gt;guesst what ?&lt;/shaarli.password&gt;) for tests]]></message>
+                                </requireProperty>
+                            </rules>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-plugin-plugin</artifactId>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <configuration>
+                    <forkMode>none</forkMode>
+                    <systemPropertyVariables>
+                        <shaarli.address>${shaarli.address}</shaarli.address>
+                        <shaarli.login>${shaarli.login}</shaarli.login>
+                        <shaarli.password>${shaarli.password}</shaarli.password>
+                        <webdriver.gecko.driver>${webdriver.gecko.driver}</webdriver.gecko.driver>
+                    </systemPropertyVariables>
+                </configuration>
+            </plugin>
 
-		</plugins>
-	</build>
+        </plugins>
+    </build>
 </project>
