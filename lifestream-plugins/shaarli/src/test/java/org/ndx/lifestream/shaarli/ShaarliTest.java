@@ -17,9 +17,10 @@ import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.ndx.lifestream.rendering.output.VFSHelper;
+import org.ndx.lifestream.test.PlaywrightTest;
 import org.ndx.lifestream.utils.web.WebClientUtils;
 
-public class ShaarliTest {
+public class ShaarliTest extends PlaywrightTest {
 
 	private String site;
 	private String login;
@@ -43,7 +44,7 @@ public class ShaarliTest {
 
 	@Test @Ignore
 	public void canLoadXMLData() {
-		String xml = tested.downloadXML(WebClientUtils.getWebClient(), configuration);
+		String xml = tested.downloadXML(browser, configuration);
 		assertThat(xml, notNullValue());
 		assertThat(xml.length(), not(0));
 	}

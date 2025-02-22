@@ -15,5 +15,6 @@
         <module>wordpress</module>
         <module>lifestream-plugin-base</module>
         <module>shaarli</module>
+        <module>lifestream-test-utils</module>
     </modules>
 </project>

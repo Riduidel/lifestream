@@ -1,11 +1,10 @@
 package org.ndx.lifestream.goodreads;
 
 import java.io.CharArrayReader;
-import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.text.ParseException;
-import java.time.Duration;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
@@ -13,7 +12,6 @@ import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.TreeMap;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
@@ -25,6 +23,7 @@ import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.vfs2.FileObject;
 import org.ndx.lifestream.configuration.CacheLoader;
 import org.ndx.lifestream.configuration.LinkResolver;
@@ -38,16 +37,14 @@ import org.ndx.lifestream.rendering.Mode;
 import org.ndx.lifestream.rendering.OutputWriter;
 import org.ndx.lifestream.rendering.model.InputLoader;
 import org.ndx.lifestream.utils.ThreadSafeSimpleDateFormat;
-import org.ndx.lifestream.utils.web.WebClientUtils;
-import org.openqa.selenium.By;
-import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebElement;
-import org.openqa.selenium.support.ui.ExpectedConditions;
-import org.openqa.selenium.support.ui.FluentWait;
-import org.openqa.selenium.support.ui.WebDriverWait;
 
 import com.dooapp.gaedo.finders.FinderCrudService;
 import com.dooapp.gaedo.utils.CollectionUtils;
+import com.microsoft.playwright.Browser;
+import com.microsoft.playwright.Download;
+import com.microsoft.playwright.Locator;
+import com.microsoft.playwright.Locator.WaitForOptions;
+import com.microsoft.playwright.Page;
 
 import au.com.bytecode.opencsv.CSVReader;
 
@@ -70,14 +67,13 @@ public class Goodreads implements InputLoader<BookInfos, GoodreadsConfiguration>
 	 * Collection loading is partially synchronous (reading the CSV), partially
 	 * asynchronous (fetching metadatas from Goodreads API and inserting a text
 	 * header containing those datas)
+	 * @param csv     source csv file
 	 * 
 	 * @param client, used to improve books. May be null (in which case there is
 	 *                obviously no improvement done)
-	 * @param csv     source csv file
 	 * @return a collection of valid and usable books
 	 */
-	public FinderCrudService<BookInfos, BookInfosInformer> buildBooksCollection(WebDriver client, List<String[]> csv,
-			GoodreadsConfiguration configuration) {
+	public FinderCrudService<BookInfos, BookInfosInformer> buildBooksCollection(List<String[]> csv, GoodreadsConfiguration configuration) {
 		FinderCrudService<BookInfos, BookInfosInformer> bookService = goodreadsEnvironment
 				.getServiceFor(BookInfos.class, BookInfosInformer.class);
 		TreeMap<String, Reference> allReferences = new TreeMap<>();
@@ -90,7 +86,7 @@ public class Goodreads implements InputLoader<BookInfos, GoodreadsConfiguration>
 		Collection<Callable<Void>> toRun = new LinkedList<>();
 		for (String[] line : usableLines) {
 			Book rawBook = createBook(columns, line);
-			toRun.add(new BookImprover(client, rawBook, bookService, configuration));
+			toRun.add(new BookImprover(rawBook, bookService, configuration));
 		}
 		// We in fact don't care about the results
 		// Bu this is the way to wait for termination of those specific tasks
@@ -201,59 +197,47 @@ public class Goodreads implements InputLoader<BookInfos, GoodreadsConfiguration>
 		return returned;
 	}
 
-	public List<String[]> loadCSV(final WebDriver client, final GoodreadsConfiguration configuration) {
+	public List<String[]> loadCSV(final Browser client, final GoodreadsConfiguration configuration) {
 		try {
 			String csvContent = configuration.refreshCacheWith(new CacheLoader() {
-				private String getExportIfExist() throws MalformedURLException, IOException {
-					client.get(GOODREADS_EXPORT);
-					Optional<WebElement> export = getExportElement(client);
-					if(export.isPresent()) {
+				private String getExportIfExist(Page goodreads) throws MalformedURLException, IOException {
+					goodreads.navigate(GOODREADS_EXPORT);
+					if(goodreads.isVisible("div#exportFile a")) {
 						logger.info("Found export element");
-						return readCSVExport(export.get());
+						return readCSVExport(goodreads, goodreads.locator("div#exportFile a"));
 					} else {
 						logger.info("No export element found. Let's ask one export.");
 						// If we're here, there was no export available, so generate it, wait for it to be available, and download it
-						client.findElement(By.className("gr-form--compact__submitButton")).click();
-						new WebDriverWait(client, 60*60).until(ExpectedConditions.elementToBeClickable(By.className("gr-form--compact__submitButton")));
-						export = getExportElement(client);
-						if(export.isPresent()) {
-							return readCSVExport(export.get());
+						Locator button = goodreads.locator(".js-LibraryExport").first();
+						button.click();
+						WaitForOptions wait = new WaitForOptions();
+						wait.setTimeout(0);
+						goodreads.locator("div#exportFile a").waitFor(wait);
+						if(goodreads.isVisible("div#exportFile a")) {
+							return readCSVExport(goodreads, goodreads.locator("div#exportFile a"));
 						} else {
 							throw new UnsupportedOperationException("Unable to download reviews!");
 						}
 					}
 				}
 
-				private Optional<WebElement> getExportElement(WebDriver client) {
-					List<WebElement> links = WebClientUtils.getLinks(client);
-					return links.stream().parallel()
-						.map(anchor -> Map.entry(anchor, anchor.getAttribute("href")))
-						.filter(entry -> entry.getValue()!=null)
-						.filter(entry -> entry.getValue().contains("/review_porter/export/"))
-						.map(entry -> entry.getKey())
-						.findAny();
-				}
-
-				private String readCSVExport(WebElement anchor) throws IOException {
+				private String readCSVExport(Page goodreads, Locator anchor) throws IOException {
 					// We have a CSV export! So use it
+					Download download = goodreads.waitForDownload(() -> anchor.click());
 					anchor.click();
-					// So we must have a file in the download folder now, which name ends with *.csv
-					File downloaded = new File(WebClientUtils.getDownloadFolder(), "goodreads_library_export.csv");
 					// Hopefully both wait and download are handled in this magic method
-					WebClientUtils.download(client, downloaded);
-					try {
-						return FileUtils.readFileToString(downloaded, "UTF-8");
-					} finally {
-						downloaded.delete();
+					try (InputStream input = download.createReadStream()) {
+						return IOUtils.toString(input, "UTF-8");
 					}
 				}
 
 				@Override
 				public String load() throws Exception {
-					String userId = Authenticator.authenticateInGoodreads(client, configuration.getMail(),
+					Page gr = client.newPage();
+					String userId = Authenticator.authenticateInGoodreads(gr, configuration.getMail(),
 							configuration.getPassword());
 					logger.log(Level.INFO, "logged in ... downloading csv now ...");
-					String csv = getExportIfExist();
+					String csv = getExportIfExist(gr);
 					return csv;
 				}
 			});
@@ -262,8 +246,6 @@ public class Goodreads implements InputLoader<BookInfos, GoodreadsConfiguration>
 			throw e;
 		} catch (Exception e) {
 			throw new UnableToDownloadContentException("unable to download CSV from Goodreads", e);
-		} finally {
-			client.close();
 		}
 	}
 
@@ -309,15 +291,14 @@ public class Goodreads implements InputLoader<BookInfos, GoodreadsConfiguration>
 	}
 
 	@Override
-	public Collection<BookInfos> load(WebDriver client, GoodreadsConfiguration configuration) {
+	public Collection<BookInfos> load(Browser client, GoodreadsConfiguration configuration) {
 		try {
 			logger.info("loading CSV data");
 			List<String[]> rawData = loadCSV(client, configuration);
 			if(rawData.isEmpty())
 				throw new UnableToBuildBookCollection("unable to find any books on goodreads. Something is going wrong!");
 			logger.info("transforming that data into books");
-			FinderCrudService<BookInfos, BookInfosInformer> allBookInfos = buildBooksCollection(client, rawData,
-					configuration);
+			FinderCrudService<BookInfos, BookInfosInformer> allBookInfos = buildBooksCollection(rawData, configuration);
 			// Now all book infos have been loaded, we can resolve references
 			return CollectionUtils.asList(allBookInfos.findAll());
 		} catch (Exception e) {

@@ -55,7 +55,6 @@
         <github.global.server>github</github.global.server>
         <java.version>11</java.version>
         <freemarker.version>2.3.30</freemarker.version>
-        <selenium.version>4.0.0-beta-4</selenium.version>
     </properties>
     <dependencyManagement>
         <dependencies>
@@ -66,19 +65,14 @@
                 <scope>test</scope>
             </dependency>
             <dependency>
+                <groupId>com.microsoft.playwright</groupId>
+                <artifactId>playwright</artifactId>
+                <version>1.49.0</version>
+            </dependency>
+            <dependency>
                 <groupId>net.sf.opencsv</groupId>
                 <artifactId>opencsv</artifactId>
                 <version>2.3</version>
-            </dependency>
-            <dependency>
-                <groupId>org.seleniumhq.selenium</groupId>
-                <artifactId>selenium-java</artifactId>
-                <version>${selenium.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.seleniumhq.selenium</groupId>
-                <artifactId>selenium-firefox-driver</artifactId>
-                <version>${selenium.version}</version>
             </dependency>
             <dependency>
                 <groupId>rome</groupId>
@@ -96,6 +90,12 @@
                 <artifactId>jsoup</artifactId>
                 <version>1.14.2</version>
             </dependency>
+            <dependency>
+                <groupId>org.apache.commons</groupId>
+                <artifactId>commons-vfs2</artifactId>
+                <version>2.7.0</version>
+            </dependency>
+
         </dependencies>
     </dependencyManagement>
     <repositories>
@@ -161,11 +161,13 @@
                 <configuration>
                     <!-- define a language-specific format -->
                     <java>
-                        <!-- no need to specify files, inferred automatically, but you can if you want -->
+                        <!-- no need to specify files, inferred automatically,
+						but you can if you want -->
 
                     </java>
                     <pom>
-                        <!-- These are the defaults, you can override if you want -->
+                        <!-- These are the defaults, you can override if you
+						want -->
                         <includes>
                             <include>pom.xml</include>
                         </includes>
@@ -193,9 +195,11 @@
                             <!-- Should the xml attributes be indented -->
 
                             <predefinedSortOrder>recommended_2008_06</predefinedSortOrder>
-                            <!-- Sort order of elements: https://github.com/Ekryd/sortpom/wiki/PredefinedSortOrderProfiles -->
+                            <!-- Sort order of elements:
+							https://github.com/Ekryd/sortpom/wiki/PredefinedSortOrderProfiles -->
                             <sortPlugins></sortPlugins>
-                            <!-- Sort plugins: https://github.com/Ekryd/sortpom/wiki/SortPlugins -->
+                            <!-- Sort plugins:
+							https://github.com/Ekryd/sortpom/wiki/SortPlugins -->
 
                             <sortProperties>false</sortProperties>
                             <!-- Sort properties -->

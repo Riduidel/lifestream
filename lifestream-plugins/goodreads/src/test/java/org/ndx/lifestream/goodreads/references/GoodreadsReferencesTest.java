@@ -43,7 +43,7 @@ public class GoodreadsReferencesTest {
 		String testedString = IOUtils.toString(testCsvFile);
 		List<String[]> rows = tested.splitIntoRows(testedString);
 		assertThat(rows.size(), IsNot.not(0));
-		books = tested.buildBooksCollection(null /* no web client is given for faster test */, rows, configuration);
+		books = tested.buildBooksCollection(rows, configuration);
 		Collection<BookInfos> all = CollectionUtils.asList(books.findAll());
 	}
 

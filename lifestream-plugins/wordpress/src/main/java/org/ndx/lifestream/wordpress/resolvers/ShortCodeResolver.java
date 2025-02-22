@@ -12,9 +12,9 @@ import org.ndx.lifestream.utils.ThreadLocalPattern;
 import org.ndx.lifestream.wordpress.Post;
 import org.ndx.lifestream.wordpress.PostInformer;
 import org.ndx.lifestream.wordpress.WordpressConfiguration;
-import org.openqa.selenium.WebDriver;
 
 import com.dooapp.gaedo.finders.FinderCrudService;
+import com.microsoft.playwright.Page;
 
 /**
  * Tries to detect and transform as much shortcodes as possible
@@ -85,10 +85,10 @@ public class ShortCodeResolver implements Resolver {
 					(Decoder) new Gist(),
 					(Decoder) new Tweet());
 
-	private WebDriver client;
+	private Page client;
 	private WordpressConfiguration configuration;
 
-	public ShortCodeResolver(WebDriver client, WordpressConfiguration configuration) {
+	public ShortCodeResolver(Page client, WordpressConfiguration configuration) {
 		this.client = client;
 		this.configuration = configuration;
 	}

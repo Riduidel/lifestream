@@ -13,12 +13,13 @@ import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.ndx.lifestream.rendering.output.VFSHelper;
+import org.ndx.lifestream.test.PlaywrightTest;
 import org.ndx.lifestream.utils.web.WebClientUtils;
 
 import com.dooapp.gaedo.finders.FinderCrudService;
 import com.dooapp.gaedo.utils.CollectionUtils;
 
-public class WordpressTest {
+public class WordpressTest extends PlaywrightTest {
 	private String site;
 	private String login;
 	private String password;
@@ -41,14 +42,14 @@ public class WordpressTest {
 
 	@Test @Ignore
 	public void canLoadXMLData() {
-		String xml = tested.downloadXMLFromSelfhostedWordpress(WebClientUtils.getWebClient(), configuration);
+		String xml = tested.downloadXMLFromSelfhostedWordpress(browser.newPage(), configuration);
 		assertThat(xml, IsNull.notNullValue());
 	}
 
 	@Test @Ignore
 	public void canTransformStringInPostCollection() throws IOException {
 		InputStream testXmlFile = getClass().getResourceAsStream("/riduidel039swordpress.wordpress.2013-12-04.xml");
-		FinderCrudService<Post, PostInformer> posts = tested.buildPostCollection(WebClientUtils.getWebClient(), testXmlFile, configuration);
+		FinderCrudService<Post, PostInformer> posts = tested.buildPostCollection(browser.newPage(), testXmlFile, configuration);
 		assertThat(CollectionUtils.asList(posts.findAll()).size(), IsNot.not(0));
 	}
 }
