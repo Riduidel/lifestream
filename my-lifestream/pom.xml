@@ -89,7 +89,7 @@
                         <version>${project.version}</version>
                         <executions>
                             <execution>
-                                <id>download goodreads</id>
+                                <id>download-goodreads</id>
                                 <goals>
                                     <goal>goodreads</goal>
                                 </goals>
@@ -121,7 +121,7 @@
                         <version>${project.version}</version>
                         <executions>
                             <execution>
-                                <id>download wordpress</id>
+                                <id>download-wordpress</id>
                                 <goals>
                                     <goal>wordpress</goal>
                                 </goals>
@@ -156,7 +156,7 @@
                         <version>${project.version}</version>
                         <executions>
                             <execution>
-                                <id>download shaarli</id>
+                                <id>download-shaarli</id>
                                 <goals>
                                     <goal>shaarli</goal>
                                 </goals>
@@ -298,33 +298,6 @@
                                     <workingDirectory>${site.jbake}</workingDirectory>
                                     <executable>lftp</executable>
                                     <commandlineArgs><![CDATA[-u ${lifestream.ftp.user},${lifestream.ftp.password} -e 'mirror --reverse --verbose . ${site.upload.dir}' ${site.upload.url}]]></commandlineArgs>
-                                </configuration>
-                            </execution>
-                        </executions>
-                    </plugin>
-                </plugins>
-            </build>
-        </profile>
-        <profile>
-            <id>kill-chrome</id>
-            <build>
-                <plugins>
-                    <plugin>
-                        <groupId>org.codehaus.mojo</groupId>
-                        <artifactId>exec-maven-plugin</artifactId>
-                        <version>3.0.0</version>
-                        <executions>
-                            <execution>
-                                <id>kill chromium and chromedriver at once</id>
-                                <goals>
-                                    <goal>exec</goal>
-                                </goals>
-                                <phase>process-classes</phase>
-                                <configuration>
-                                    <executable>pkill</executable>
-                                    <arguments>
-                                        <argument>chrom</argument>
-                                    </arguments>
                                 </configuration>
                             </execution>
                         </executions>

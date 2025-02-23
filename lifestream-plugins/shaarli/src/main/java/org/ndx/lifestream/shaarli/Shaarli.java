@@ -133,19 +133,21 @@ public class Shaarli implements InputLoader<MicroblogEntry, ShaarliConfiguration
 			Page shaarliPage = browser.newPage();
 			shaarliPage.navigate(siteLogin);
 			logger.log(Level.INFO, "logging in Shaarli as " + configuration.getLogin());
-			Locator loginField = shaarliPage.locator("//input[@name='login']");
+			Locator loginField = shaarliPage.locator("//input[@name='login']").last();
 			loginField.click();
 			loginField.fill(configuration.getLogin());
 
-			Locator passwordField = shaarliPage.locator("//input[@name='password']");
+			Locator passwordField = shaarliPage.locator("//input[@name='password']").last();
 			passwordField.click();
 			passwordField.fill(configuration.getPassword());
 
-			shaarliPage.locator("//input[@type='submit']").click();
+			shaarliPage.locator("//input[@type='submit']").last().click();
 			logger.log(Level.INFO, "logged in ... downloading html now ...");
 			// 404 will throw over all this stuff
+			shaarliPage.navigate(configuration.getSiteExportPage());
+			shaarliPage.locator("#prepend_note_url").check();
 			Download download = shaarliPage.waitForDownload(() -> {
-				shaarliPage.navigate(configuration.getSiteExportPage());
+				shaarliPage.locator("input[value='Export']").first().click();
 			});
 			return IOUtils.toString(download.createReadStream(), "UTF-8");
 		} catch(AuthenticationFailedException e) {

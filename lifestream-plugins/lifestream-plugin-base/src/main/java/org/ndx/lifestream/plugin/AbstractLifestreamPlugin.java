@@ -21,6 +21,7 @@ import org.ndx.lifestream.utils.web.WebClientUtils;
 import org.slf4j.bridge.SLF4JBridgeHandler;
 
 import com.microsoft.playwright.Browser;
+import com.microsoft.playwright.BrowserContext;
 import com.microsoft.playwright.Page;
 import com.microsoft.playwright.Playwright;
 
@@ -43,18 +44,21 @@ public abstract class AbstractLifestreamPlugin<Type extends Input, Configuration
 		InputLoader<Type, ConfigurationType> loader = loadInputLoader();
 		getLog().info("grabbing content");
 		try(Playwright playwright = Playwright.create()) {
-			Browser browser = WebClientUtils.createWebClient(playwright);
-			// Always create a blank page to make sure browser is kept open
-			try(Page blank = browser.newPage()) {
-				Mode mode = Mode.valueOf(getModeName());
-				getLog().info("Rendering will be made with \""+mode+"\"");
-				Collection<Type> inputs = loader.load(browser, getConfiguration());
-				FileObject outputRoot = VFSHelper.getManager().resolveFile(getOutput().toURI().toURL().toString());
-				outputRoot.createFolder();
-				// Now output all using given mode
-				loader.output(mode, inputs, outputRoot, getConfiguration());
-			} catch (Exception e) {
-				throw new MojoExecutionException("there was a failure during pages construction", e);
+			try(BrowserContext context = WebClientUtils.createWebClient(playwright)
+					.newContext(getConfiguration().getPlaywrightContext())) {
+				Browser browser = context.browser();
+				// Always create a blank page to make sure browser is kept open
+				try(Page blank = browser.newPage()) {
+					Mode mode = Mode.valueOf(getModeName());
+					getLog().info("Rendering will be made with \""+mode+"\"");
+					Collection<Type> inputs = loader.load(browser, getConfiguration());
+					FileObject outputRoot = VFSHelper.getManager().resolveFile(getOutput().toURI().toURL().toString());
+					outputRoot.createFolder();
+					// Now output all using given mode
+					loader.output(mode, inputs, outputRoot, getConfiguration());
+				} catch (Exception e) {
+					throw new MojoExecutionException("there was a failure during pages construction", e);
+				}
 			}
 		}
 	}

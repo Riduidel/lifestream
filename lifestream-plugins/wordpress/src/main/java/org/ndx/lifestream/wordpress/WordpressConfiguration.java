@@ -1,5 +1,8 @@
 package org.ndx.lifestream.wordpress;
 
+import java.net.MalformedURLException;
+import java.net.URL;
+
 import org.apache.commons.vfs2.FileObject;
 import org.apache.commons.vfs2.FileSystemException;
 import org.ndx.lifestream.configuration.AbstractConfiguration;
@@ -67,8 +70,12 @@ public class WordpressConfiguration extends AbstractConfiguration implements Con
 	}
 
 	public String getCloudExportPage(String domain) {
-		domain = domain.substring(domain.indexOf("//")+2, domain.lastIndexOf('/'));
-		return "https://wordpress.com/export/"+ domain;
+		try {
+			URL url = new URL(domain);
+			return "https://wordpress.com/export/"+ url.getHost();
+		} catch (MalformedURLException e) {
+			throw new UnsupportedOperationException(e);
+		}
 	}
 
 	@Override

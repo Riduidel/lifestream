@@ -16,10 +16,6 @@ import org.ndx.lifestream.rendering.model.Input;
 import org.ndx.lifestream.rendering.model.Linkable;
 
 public class Post implements Input {
-	public static enum Type {
-		post, attachment, page, link;
-	}
-
 	private String title;
 	private String uri;
 	Collection<String> tags;
@@ -28,7 +24,7 @@ public class Post implements Input {
 	Collection<Comment> comments = new ArrayList<>();
 
 	private String basename;
-	private Type type;
+	private String type;
 	private String source;
 	public String excerpt;
 	private Collection<Linkable> links = new HashSet<>();
@@ -167,7 +163,7 @@ public class Post implements Input {
 	 * @category getter
 	 * @category type
 	 */
-	public Type getType() {
+	public String getType() {
 		return type;
 	}
 
@@ -176,7 +172,7 @@ public class Post implements Input {
 	 * @category setter
 	 * @category type
 	 */
-	public void setType(Type type) {
+	public void setType(String type) {
 		this.type = type;
 	}
 

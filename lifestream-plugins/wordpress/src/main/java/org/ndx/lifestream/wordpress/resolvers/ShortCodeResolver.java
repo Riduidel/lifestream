@@ -57,33 +57,13 @@ public class ShortCodeResolver implements Resolver {
 			return text;
 		}
 	}
-	
-	public class Tweet implements Decoder {
-		/**
-		 * Locate each [tweet ...] text or even simpler http://twitter.com... and try to replace it
-		 * @see Decoder#decode(java.lang.String)
-		 */
-		@Override
-		public String decode(String text) {
-			Matcher matcher = tweetDetectorPattern.get().matcher(text);
-			while(matcher.find()) {
-				String found = matcher.group(0);
-				String author = matcher.group(1);
-				String tweetId = matcher.group(2);
-				String tweetText = getTweetAt(found, author, tweetId);
-				text = text.replace(found, "<div class='twitter'>\n"+tweetText+"\n</div>");
-			}
-			return text;
-		}
-	}
 
 	public interface Decoder {
 		public String decode(String text);
 	}
 	
 	public Collection<Decoder> decoders = Arrays.asList(
-					(Decoder) new Gist(),
-					(Decoder) new Tweet());
+					(Decoder) new Gist());
 
 	private Page client;
 	private WordpressConfiguration configuration;
@@ -114,21 +94,6 @@ public class ShortCodeResolver implements Resolver {
 			String filename = url.substring(url.indexOf(GIST_GITHUB_COM));
 			FileObject storage = configuration.getCacheFolder().resolveFile(filename);
 			return configuration.getFromCacheOrLoad(new GistLoader(client, url), storage, -1);
-		} catch(Exception e) {
-			return url;
-		}
-	}
-
-	/**
-	 * Download and cache gist raw content
-	 * @param url
-	 * @return
-	 */
-	protected String getTweetAt(final String url, final String author, final String tweetId) {
-		try {
-			String filename = url.substring(url.indexOf("twitter"));
-			FileObject storage = configuration.getCacheFolder().resolveFile(filename);
-			return configuration.getFromCacheOrLoad(new TweetLoader(configuration, tweetId, url), storage, -1);
 		} catch(Exception e) {
 			return url;
 		}

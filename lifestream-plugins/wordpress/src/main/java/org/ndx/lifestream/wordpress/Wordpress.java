@@ -39,7 +39,9 @@ import com.dooapp.gaedo.utils.CollectionUtils;
 import com.microsoft.playwright.Browser;
 import com.microsoft.playwright.Download;
 import com.microsoft.playwright.Locator;
+import com.microsoft.playwright.Locator.WaitForOptions;
 import com.microsoft.playwright.Page;
+import com.microsoft.playwright.options.WaitForSelectorState;
 import com.sun.syndication.feed.synd.SyndCategory;
 import com.sun.syndication.feed.synd.SyndContent;
 import com.sun.syndication.feed.synd.SyndEntry;
@@ -50,7 +52,7 @@ import com.sun.syndication.io.XmlReader;
 import de.schlichtherle.truezip.file.TVFS;
 
 public class Wordpress implements InputLoader<Post, WordpressConfiguration> {
-	private static final String EXPORT_BUTTON = "export-card__export-button";
+	private static final String EXPORT_BUTTON = ".export-card__export-button";
 	private static Logger logger = Logger.getLogger(Wordpress.class.getName());
 	private GaedoEnvironmentProvider wordpressEnvironment = new GaedoEnvironmentProvider();
 
@@ -71,7 +73,7 @@ public class Wordpress implements InputLoader<Post, WordpressConfiguration> {
 	public void output(Mode mode, Collection<Post> inputs, FileObject outputRoot, WordpressConfiguration configuration) {
 		Collection<Post> filtered =
 				inputs.stream()
-					.filter(input -> Post.Type.post.equals(input.getType()))
+					.filter(input -> "post".equals(input.getType()))
 					.collect(Collectors.toList());
 		OutputWriter writer = mode.getWriter();
 		LinkResolver linkResolver = configuration.getLinkResolver();
@@ -117,14 +119,16 @@ public class Wordpress implements InputLoader<Post, WordpressConfiguration> {
 			Locator password = browser.locator("#password");
 			password.fill(configuration.getPassword());
 			password.press("Enter");
-			browser.locator(".gravatar").waitFor();
+			browser.locator(".gravatar").first().waitFor();
 			logger.log(Level.INFO, "logged in ... downloading xml now ...");
 			browser.navigate(configuration.getCloudExportPage(configuration.getSite()));
-			Locator exportButton = browser.locator(EXPORT_BUTTON);
+			Locator exportButton = browser.locator(EXPORT_BUTTON).first();
 			exportButton.waitFor();
 			exportButton.click();
-			Locator downloadFileButton = browser.locator("notice__action");
-			downloadFileButton.waitFor();
+			Locator downloadFileButton = browser.locator(".notice__action").first();
+			WaitForOptions wait = new WaitForOptions();
+			wait.setState(WaitForSelectorState.VISIBLE);
+			downloadFileButton.waitFor(wait);
 			// Now there should be a download link
 			String fullUrl = downloadFileButton.getAttribute("href");
 			URL url = new URL(fullUrl);
@@ -213,7 +217,7 @@ public class Wordpress implements InputLoader<Post, WordpressConfiguration> {
 		List<Element> elements = (List<Element>) entry.getForeignMarkup();
 		for(Element e : elements) {
 			switch(e.getName()) {
-			case "post_type": post.setType(Post.Type.valueOf(e.getText())); break;
+			case "post_type": post.setType(e.getText()); break;
 			case "comment": post.comments.add(new Comment(e)); break;
 			case "post_name": break;
 			case "post_parent": break;
