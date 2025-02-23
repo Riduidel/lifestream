@@ -50,7 +50,7 @@
                 <artifactId>maven-assembly-plugin</artifactId>
                 <configuration>
                     <descriptors>
-                        <descriptor>src/main/assemblies/source-markdown.xml</descriptor>
+                        <descriptor>src/main/assemblies/source-docs.xml</descriptor>
                     </descriptors>
                 </configuration>
                 <executions>
