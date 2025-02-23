@@ -77,7 +77,6 @@ public class WebClientUtils {
 			
 			LaunchOptions firefoxLaunchOptions = new BrowserType.LaunchOptions();
 			firefoxLaunchOptions.setFirefoxUserPrefs(options);
-			firefoxLaunchOptions.setHeadless(false);
 			return playwright.firefox()
 					.launch(firefoxLaunchOptions)
 					;
