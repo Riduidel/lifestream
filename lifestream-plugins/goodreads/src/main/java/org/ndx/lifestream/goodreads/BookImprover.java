@@ -11,6 +11,9 @@ import java.util.concurrent.Callable;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import org.apache.commons.httpclient.HttpClient;
+import org.apache.commons.httpclient.HttpMethod;
+import org.apache.commons.httpclient.methods.GetMethod;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.vfs2.FileObject;
 import org.apache.commons.vfs2.FileSystemException;
@@ -23,7 +26,6 @@ import org.jdom2.xpath.XPathExpression;
 import org.jdom2.xpath.XPathFactory;
 import org.ndx.lifestream.configuration.AbstractConfiguration;
 import org.ndx.lifestream.utils.Constants;
-import org.openqa.selenium.WebDriver;
 
 import com.dooapp.gaedo.finders.FinderCrudService;
 import com.dooapp.gaedo.finders.QueryBuilder;
@@ -31,6 +33,7 @@ import com.dooapp.gaedo.finders.QueryExpression;
 
 public class BookImprover implements Callable<Void> {
 	private static final Logger logger = Logger.getLogger(BookImprover.class.getName());
+	private static HttpClient httpClient = new HttpClient();
 	/**
 	 * A class only made to hold some constants in other to separate data
 	 * @author Nicolas
@@ -52,13 +55,11 @@ public class BookImprover implements Callable<Void> {
 		 * @param destination destination servide for storing all output objects. It is used to locate/create authors
 		 * @return first work id, which will be used to grab serie
 		 */
-		public String improveBook(WebDriver client, String isbn,
-				Book returned,
+		public String improveBook(String isbn, Book returned,
 				AbstractConfiguration configuration,
 				FinderCrudService<BookInfos,BookInfosInformer> destination) throws FileSystemException {
-			
-			Document bookXmlData = queryToJDOM(client, 
-					String.format(QUERY, isbn), configuration, "books", isbn);
+			Document bookXmlData = queryToJDOM(String.format(QUERY, isbn), 
+					configuration, "books", isbn);
 			Element imageUrlText = xpathForImageUrl.evaluateFirst(bookXmlData);
 			if(imageUrlText!=null)
 				returned.bigImage = imageUrlText.getText();
@@ -128,14 +129,14 @@ public class BookImprover implements Callable<Void> {
 		 * May fail (XPath exception) if none found
 		 * @return collection of series this book associates to
 		 */
-		public Collection<Serie> improveBook(WebDriver client,
-				FinderCrudService<BookInfos, BookInfosInformer> destination,
+		public Collection<Serie> improveBook(FinderCrudService<BookInfos, BookInfosInformer> destination,
 				String workId,
-				Book source, AbstractConfiguration configuration) {
-			Document bookXmlData = queryToJDOM(client, 
-					// https://www.goodreads.com/series/40321-drina?format=xml&key=vzlZHr69We4utsOyP508tg
-					String.format("%sseries/work/%s?format=xml&key=%s", GoodreadsConfiguration.GOODREADS_BASE, workId, GoodreadsConfiguration.DEVELOPPER_KEY), 
-					configuration, "series", workId);
+				Book source,
+				AbstractConfiguration configuration) {
+			Document bookXmlData = queryToJDOM(// https://www.goodreads.com/series/40321-drina?format=xml&key=vzlZHr69We4utsOyP508tg
+			String.format("%sseries/work/%s?format=xml&key=%s", GoodreadsConfiguration.GOODREADS_BASE, workId, GoodreadsConfiguration.DEVELOPPER_KEY), 
+					configuration, 
+					"series", workId);
 			Collection<Serie> returned = new ArrayList<>();
 
 			List<Element> series = xpathForSerie.evaluate(bookXmlData);
@@ -158,7 +159,7 @@ public class BookImprover implements Callable<Void> {
 
 	}
 
-	private static synchronized Document queryToJDOM(WebDriver client, String query, AbstractConfiguration configuration, String cacheFolder, String cacheKey) {
+	private static synchronized Document queryToJDOM(String query, AbstractConfiguration configuration, String cacheFolder, String cacheKey) {
 		try {
 			FileObject cacheFile = getCachedFileForKey(configuration, cacheFolder, cacheKey);
 			String content = null;
@@ -167,10 +168,10 @@ public class BookImprover implements Callable<Void> {
 					content = IOUtils.toString(input, Constants.UTF_8);
 				}
 			} else {
-				Authenticator.authenticateInGoodreads(client, (GoodreadsConfiguration) configuration);
 				logger.info("download goodreads infos for "+cacheFolder+"/"+cacheKey);
-				client.get(query);
-				content = client.getPageSource();
+				HttpMethod get = new GetMethod(query);
+				httpClient.executeMethod(get);
+				content = get.getResponseBodyAsString();
 				try(OutputStream output = cacheFile.getContent().getOutputStream()) {
 					IOUtils.write(content, output, Constants.UTF_8);
 				}
@@ -221,17 +222,14 @@ public class BookImprover implements Callable<Void> {
 	private FindSerie serieFinder = new FindSerie();
 
 	private Book book;
-	private WebDriver client;
 
 	private FinderCrudService<BookInfos, BookInfosInformer> destination;
 
-	private AbstractConfiguration configuration;
+	private GoodreadsConfiguration configuration;
 
-	public BookImprover(WebDriver client,
-			Book rawBook,
+	public BookImprover(Book rawBook,
 			FinderCrudService<BookInfos, BookInfosInformer> books,
-			AbstractConfiguration configuration) {
-		this.client = client;
+			GoodreadsConfiguration configuration) {
 		this.book = rawBook;
 		this.destination = books;
 		this.configuration = configuration;
@@ -256,11 +254,11 @@ public class BookImprover implements Callable<Void> {
 			synchronized(destination) {
 				book = (Book) destination.create(book);
 			}
-			String workId = workFinder.improveBook(client, query, book, configuration, destination);
+			String workId = workFinder.improveBook(query, book, configuration, destination);
 			synchronized(destination) {
 				book = (Book) destination.update(book);
 			}
-			serieFinder.improveBook(client, destination, workId, book, configuration);
+			serieFinder.improveBook(destination, workId, book, configuration);
 		} catch(RuntimeException e) {
 			logger.log(Level.WARNING, "something failed while improving book "+book, e);
 			throw e;

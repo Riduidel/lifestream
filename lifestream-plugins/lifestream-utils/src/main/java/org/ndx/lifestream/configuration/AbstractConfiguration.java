@@ -3,12 +3,15 @@ package org.ndx.lifestream.configuration;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.TimeZone;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.vfs2.FileObject;
 import org.apache.commons.vfs2.FileSystemException;
 import org.ndx.lifestream.utils.Constants;
 import org.ndx.lifestream.utils.exception.LifestreamException;
+
+import com.microsoft.playwright.Browser.NewContextOptions;
 
 public abstract class AbstractConfiguration implements Configuration {
 
@@ -131,4 +134,20 @@ public abstract class AbstractConfiguration implements Configuration {
 	public void setTwitterConfiguration(twitter4j.conf.Configuration twitterConfiguration) {
 		this.twitterConfiguration = twitterConfiguration;
 	}
+	
+	@Override
+	public NewContextOptions getPlaywrightContext() {
+		return new NewContextOptions()
+			.setTimezoneId(getTimezone().getDisplayName())
+			.setLocale(getLocale());
+	}
+
+	protected String getLocale() {
+		return "fr-FR";
+	}
+
+	protected TimeZone getTimezone() {
+		return TimeZone.getTimeZone("Europe/Paris");
+	}
+
 }

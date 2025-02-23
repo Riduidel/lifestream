@@ -7,7 +7,6 @@ import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.time.Duration;
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
@@ -34,16 +33,15 @@ import org.ndx.lifestream.utils.Constants;
 import org.ndx.lifestream.utils.TagUtils;
 import org.ndx.lifestream.utils.web.WebClientUtils;
 import org.ndx.lifestream.wordpress.resolvers.MultiResolver;
-import org.openqa.selenium.By;
-import org.openqa.selenium.Keys;
-import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebElement;
-import org.openqa.selenium.support.ui.ExpectedConditions;
-import org.openqa.selenium.support.ui.FluentWait;
-import org.openqa.selenium.support.ui.WebDriverWait;
 
 import com.dooapp.gaedo.finders.FinderCrudService;
 import com.dooapp.gaedo.utils.CollectionUtils;
+import com.microsoft.playwright.Browser;
+import com.microsoft.playwright.Download;
+import com.microsoft.playwright.Locator;
+import com.microsoft.playwright.Locator.WaitForOptions;
+import com.microsoft.playwright.Page;
+import com.microsoft.playwright.options.WaitForSelectorState;
 import com.sun.syndication.feed.synd.SyndCategory;
 import com.sun.syndication.feed.synd.SyndContent;
 import com.sun.syndication.feed.synd.SyndEntry;
@@ -54,17 +52,18 @@ import com.sun.syndication.io.XmlReader;
 import de.schlichtherle.truezip.file.TVFS;
 
 public class Wordpress implements InputLoader<Post, WordpressConfiguration> {
-	private static final String EXPORT_BUTTON = "export-card__export-button";
+	private static final String EXPORT_BUTTON = ".export-card__export-button";
 	private static Logger logger = Logger.getLogger(Wordpress.class.getName());
 	private GaedoEnvironmentProvider wordpressEnvironment = new GaedoEnvironmentProvider();
 
 	@Override
-	public Collection<Post> load(WebDriver client, WordpressConfiguration configuration) {
-		String text = loadXML(client, configuration);
+	public Collection<Post> load(Browser client, WordpressConfiguration configuration) {
+		Page wordpressPage = client.newPage();
+		String text = loadXML(wordpressPage, configuration);
 		ByteArrayInputStream stream;
 		try {
 			stream = new ByteArrayInputStream(text.getBytes(Constants.UTF_8));
-			return CollectionUtils.asList(buildPostCollection(client, stream, configuration).findAll());
+			return CollectionUtils.asList(buildPostCollection(wordpressPage, stream, configuration).findAll());
 		} catch (UnsupportedEncodingException e) {
 			throw new UnableToReadStreamAsUTF8Exception(e);
 		}
@@ -74,7 +73,7 @@ public class Wordpress implements InputLoader<Post, WordpressConfiguration> {
 	public void output(Mode mode, Collection<Post> inputs, FileObject outputRoot, WordpressConfiguration configuration) {
 		Collection<Post> filtered =
 				inputs.stream()
-					.filter(input -> Post.Type.post.equals(input.getType()))
+					.filter(input -> "post".equals(input.getType()))
 					.collect(Collectors.toList());
 		OutputWriter writer = mode.getWriter();
 		LinkResolver linkResolver = configuration.getLinkResolver();
@@ -88,7 +87,7 @@ public class Wordpress implements InputLoader<Post, WordpressConfiguration> {
 		linkResolver.save();
 	}
 
-	public String loadXML(final WebDriver client, final WordpressConfiguration configuration) {
+	public String loadXML(final Page client, final WordpressConfiguration configuration) {
 		try {
 			return configuration.refreshCacheWith(new CacheLoader() {
 
@@ -106,40 +105,41 @@ public class Wordpress implements InputLoader<Post, WordpressConfiguration> {
 		}
 	}
 
-	public String downloadXMLFromWordpressCloud(WebDriver browser, WordpressConfiguration configuration) {
+	public String downloadXMLFromWordpressCloud(Page browser, WordpressConfiguration configuration) {
 		try {
 			// For login into wordpress.com, it is unfortunatly mandatory to have javascript enabled.
 			// A pity, if you ask me
 			String siteLogin = configuration.getSiteLoginPage("https://wordpress.com");
-			browser.get(siteLogin);
+			browser.navigate(siteLogin);
 			logger.log(Level.INFO, "logging in wordpress as " + configuration.getLogin());
-			browser.findElement(By.id("usernameOrEmail")).sendKeys(configuration.getLogin());
-			browser.findElement(By.id("usernameOrEmail")).sendKeys(Keys.ENTER);
+			Locator usernameOrId = browser.locator("#usernameOrEmail");
+			usernameOrId.fill(configuration.getLogin());
+			usernameOrId.press("Enter");
 			// Don't forget to press on the damn "Continue" button
-			new WebDriverWait(browser, 10).until(ExpectedConditions.elementToBeClickable(By.id("password")));
-			browser.findElement(By.id("password")).sendKeys(configuration.getPassword());
-			browser.findElement(By.id("password")).sendKeys(Keys.ENTER);
-			new WebDriverWait(browser, 10).until(ExpectedConditions.elementToBeClickable(By.className("gravatar")));
+			Locator password = browser.locator("#password");
+			password.fill(configuration.getPassword());
+			password.press("Enter");
+			browser.locator(".gravatar").first().waitFor();
 			logger.log(Level.INFO, "logged in ... downloading xml now ...");
-			browser.get(configuration.getCloudExportPage(configuration.getSite()));
-			new WebDriverWait(browser, 60)
-			.pollingEvery(Duration.ofSeconds(1))
-			.until(ExpectedConditions.presenceOfElementLocated(By.className(EXPORT_BUTTON)));
-			WebElement exportButton = browser.findElement(By.className(EXPORT_BUTTON));
+			browser.navigate(configuration.getCloudExportPage(configuration.getSite()));
+			Locator exportButton = browser.locator(EXPORT_BUTTON).first();
+			exportButton.waitFor();
 			exportButton.click();
-			new WebDriverWait(browser, 60)
-			.pollingEvery(Duration.ofSeconds(1))
-			.until(ExpectedConditions.presenceOfElementLocated(By.className("notice__action")));
+			Locator downloadFileButton = browser.locator(".notice__action").first();
+			WaitForOptions wait = new WaitForOptions();
+			wait.setState(WaitForSelectorState.VISIBLE);
+			downloadFileButton.waitFor(wait);
 			// Now there should be a download link
-			WebElement downloadFileButton = browser.findElement(By.className("notice__action"));
 			String fullUrl = downloadFileButton.getAttribute("href");
 			URL url = new URL(fullUrl);
 			String filename = url.getFile();
 			filename = filename.substring(filename.lastIndexOf('/')+1);
-			downloadFileButton.click();
+			Download downloaded = browser.waitForDownload(() -> {
+				downloadFileButton.click();
+			});
+			File file = new File(WebClientUtils.getDownloadFolder(), downloaded.suggestedFilename());
+			downloaded.saveAs(file.toPath());
 			// Content should be downloaded into download folder, no ?
-			File file = new File(WebClientUtils.getDownloadFolder(), filename);
-			WebClientUtils.download(browser, file);
 			try {
 				// So read the zip content, and get the biggest file in that zip
 				return readBiggestZipContent(file);
@@ -170,47 +170,27 @@ public class Wordpress implements InputLoader<Post, WordpressConfiguration> {
 		}
 	}
 
-	public String downloadXMLFromSelfhostedWordpress(WebDriver browser, WordpressConfiguration configuration) {
+	public String downloadXMLFromSelfhostedWordpress(Page browser, WordpressConfiguration configuration) {
 		try {
 			String siteLogin = configuration.getSiteLoginPage(configuration.getSite());
-			browser.get(siteLogin);
+			browser.navigate(siteLogin);
 			logger.log(Level.INFO, "logging in wordpress as " + configuration.getLogin());
-			browser.findElement(By.id("usernameOrEmail")).sendKeys(configuration.getLogin());
+			Locator usernameOrId = browser.locator("#usernameOrEmail");
+			usernameOrId.fill(configuration.getLogin());
+			usernameOrId.press("Enter");
 			// Don't forget to press on the damn "Continue" button
-			browser.findElement(By.id("password")).sendKeys(configuration.getPassword());
-			browser.findElement(By.id("password")).sendKeys(Keys.ENTER);
+			Locator password = browser.locator("#password");
+			password.fill(configuration.getPassword());
+			password.press("Enter");
 			throw new UnsupportedOperationException("not yet reimplemented");
-/*			HtmlPage signedIn = ((HtmlButton) signInForm.getElementsByAttribute("button", "type", "submit").get(0)).click();
-			String authenticationFailedMessage = "unable to sign in Wordpress using mail "
-					+ configuration.getLogin()
-					+ " and password "
-					+ configuration.getPassword()
-					+ ". can you check it by opening a browser at "
-					+ siteLogin
-					+ " ?";
-			if (200 == signedIn.getWebResponse().getStatusCode()) {
-				if (signedIn.getUrl().equals(signIn.getUrl()))
-					throw new AuthenticationFailedException(
-							authenticationFailedMessage);
-				logger.log(Level.INFO, "logged in ... downloading xml now ...");
-				HtmlPage xmlExportPage = browser.getPage(configuration.getSiteExportPage());
-				Page xml = ((HtmlInput) xmlExportPage.getElementById("submit"))
-						.click();
-				// May cause memory error, but later ...
-				String xmlContent = xml.getWebResponse().getContentAsString(Constants.UTF_8_CHARSET);
-				return xmlContent;
-			} else {
-				throw new AuthenticationFailedException(
-						authenticationFailedMessage);
-			}
-*/		} catch (Exception e) {
+		} catch (Exception e) {
 			throw new UnableToDownloadContentException("Unable to download XML export from Wordpress site", e);
 		} finally {
 			browser.close();
 		}
 	}
 
-	FinderCrudService<Post,PostInformer> buildPostCollection(WebDriver client, InputStream xmlSource, WordpressConfiguration configuration) {
+	FinderCrudService<Post,PostInformer> buildPostCollection(Page client, InputStream xmlSource, WordpressConfiguration configuration) {
 		ExecutorService executor = Executors.newFixedThreadPool(configuration.getThreadCount());
 		FinderCrudService<Post, PostInformer> postService = wordpressEnvironment.getServiceFor(Post.class, PostInformer.class);
 		try {
@@ -237,7 +217,7 @@ public class Wordpress implements InputLoader<Post, WordpressConfiguration> {
 		List<Element> elements = (List<Element>) entry.getForeignMarkup();
 		for(Element e : elements) {
 			switch(e.getName()) {
-			case "post_type": post.setType(Post.Type.valueOf(e.getText())); break;
+			case "post_type": post.setType(e.getText()); break;
 			case "comment": post.comments.add(new Comment(e)); break;
 			case "post_name": break;
 			case "post_parent": break;

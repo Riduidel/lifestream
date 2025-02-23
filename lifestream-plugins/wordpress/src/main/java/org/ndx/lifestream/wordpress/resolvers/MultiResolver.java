@@ -7,14 +7,14 @@ import java.util.concurrent.ExecutorService;
 import org.ndx.lifestream.wordpress.Post;
 import org.ndx.lifestream.wordpress.PostInformer;
 import org.ndx.lifestream.wordpress.WordpressConfiguration;
-import org.openqa.selenium.WebDriver;
 
 import com.dooapp.gaedo.finders.FinderCrudService;
+import com.microsoft.playwright.Page;
 
 public class MultiResolver {
 
-	private final WebDriver client;
-	public MultiResolver(WebDriver client, WordpressConfiguration configuration) {
+	private final Page client;
+	public MultiResolver(Page client, WordpressConfiguration configuration) {
 		super();
 		this.client = client;
 		this.configuration = configuration;

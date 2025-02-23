@@ -1,337 +1,309 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-	<modelVersion>4.0.0</modelVersion>
-	<parent>
-		<groupId>org.ndx.lifestream</groupId>
-		<artifactId>lifestream</artifactId>
-		<version>0.0.1-SNAPSHOT</version>
-	</parent>
-	<artifactId>my-lifestream</artifactId>
-	<packaging>pom</packaging>
-	<description>My very own lifestream, using all provided modules to create a valid output</description>
-	<properties>
-		<output.mode>jbake</output.mode>
-		<!-- site.dir is configured in profiles -->
-		<site.basedir>${project.build.directory}/site/generated/</site.basedir>
-		<site.input>${site.basedir}/input/</site.input>
-		<site.dir>${site.input}/content/</site.dir>
-		<site.output>${site.basedir}/output/</site.output>
-		<site.jbake>${site.output}/jbake/</site.jbake>
-		<site.upload.dir>lifestream/</site.upload.dir>
-		<site.upload.url>ftpperso.free.fr</site.upload.url>
-		<goodreads.dir>${site.dir}/</goodreads.dir>
-		<wordpress.dir>${site.dir}/</wordpress.dir>
-		<shaarli.dir>${site.dir}/</shaarli.dir>
-		<pegdown.version>1.6.0</pegdown.version>
-		<flexmark.version>0.62.2</flexmark.version>
-	</properties>
-	<distributionManagement>
-		<repository>
-			<id>ftpperso.free.fr</id>
-			<url>${site.upload.url}/${site.upload.dir}/</url>
-		</repository>
-	</distributionManagement>
-	<build>
-		<extensions>
-			<extension>
-				<groupId>org.apache.maven.wagon</groupId>
-				<artifactId>wagon-ftp</artifactId>
-			</extension>
-		</extensions>
-		<!-- standard deploy is disabled for this plugin as I don't want to see 
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>org.ndx.lifestream</groupId>
+        <artifactId>lifestream</artifactId>
+        <version>0.0.1-SNAPSHOT</version>
+    </parent>
+    <artifactId>my-lifestream</artifactId>
+    <packaging>pom</packaging>
+    <description>My very own lifestream, using all provided modules to create a valid output</description>
+    <distributionManagement>
+        <repository>
+            <id>ftpperso.free.fr</id>
+            <url>${site.upload.url}/${site.upload.dir}/</url>
+        </repository>
+    </distributionManagement>
+    <properties>
+        <output.mode>jbake</output.mode>
+        <!-- site.dir is configured in profiles -->
+        <site.basedir>${project.build.directory}/site/generated/</site.basedir>
+        <site.input>${site.basedir}/input/</site.input>
+        <site.dir>${site.input}/content/</site.dir>
+        <site.output>${site.basedir}/output/</site.output>
+        <site.jbake>${site.output}/jbake/</site.jbake>
+        <site.upload.dir>lifestream/</site.upload.dir>
+        <site.upload.url>ftpperso.free.fr</site.upload.url>
+        <goodreads.dir>${site.dir}/</goodreads.dir>
+        <wordpress.dir>${site.dir}/</wordpress.dir>
+        <shaarli.dir>${site.dir}/</shaarli.dir>
+        <pegdown.version>1.6.0</pegdown.version>
+        <flexmark.version>0.62.2</flexmark.version>
+    </properties>
+    <build>
+        <!-- standard deploy is disabled for this plugin as I don't want to see 
 			it appear anywhere. -->
-		<pluginManagement>
-			<plugins>
-				<plugin>
-					<artifactId>maven-deploy-plugin</artifactId>
-					<configuration>
-						<skip>true</skip>
-					</configuration>
-				</plugin>
-			</plugins>
-		</pluginManagement>
-		<plugins>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-assembly-plugin</artifactId>
-				<configuration>
-					<descriptors>
-						<descriptor>src/main/assemblies/source-markdown.xml</descriptor>
-					</descriptors>
-				</configuration>
-				<executions>
-					<execution>
-						<id>make-assembly</id> <!-- this is used for inheritance merges -->
-						<phase>package</phase> <!-- bind to the packaging phase -->
-						<goals>
-							<goal>single</goal>
-						</goals>
-					</execution>
-				</executions>
-			</plugin>
-		</plugins>
-	</build>
-	<profiles>
-		<profile>
-			<activation>
-				<property>
-					<name>goodreads.mail</name>
-				</property>
-			</activation>
-			<id>download-goodreads</id>
-			<build>
-				<plugins>
-					<plugin>
-						<groupId>${project.groupId}</groupId>
-						<artifactId>goodreads</artifactId>
-						<version>${project.version}</version>
-						<executions>
-							<execution>
-								<id>download goodreads</id>
-								<goals>
-									<goal>goodreads</goal>
-								</goals>
-								<configuration>
-									<mode>${output.mode}</mode>
-									<output>${goodreads.dir}</output>
-									<username>${goodreads.mail}</username>
-									<password>${goodreads.password}</password>
-								</configuration>
-							</execution>
-						</executions>
-					</plugin>
-				</plugins>
-			</build>
-		</profile>
-		<profile>
-			<activation>
-				<property>
-					<name>wordpress.login</name>
-				</property>
-			</activation>
-			<!-- Download content and transform it -->
-			<id>download-wordpress</id>
-			<build>
-				<plugins>
-					<plugin>
-						<groupId>${project.groupId}</groupId>
-						<artifactId>wordpress</artifactId>
-						<version>${project.version}</version>
-						<executions>
-							<execution>
-								<id>download wordpress</id>
-								<goals>
-									<goal>wordpress</goal>
-								</goals>
-								<configuration>
-									<mode>${output.mode}</mode>
-									<output>${wordpress.dir}</output>
-									<username>${wordpress.login}</username>
-									<password>${wordpress.password}</password>
-									<site>${wordpress.address}</site>
-									<twitterAccessToken>${twitter4j.oauth.accessToken}</twitterAccessToken>
-									<twitterAccessTokenSecret>${twitter4j.oauth.accessTokenSecret}</twitterAccessTokenSecret>
-								</configuration>
-							</execution>
-						</executions>
-					</plugin>
-				</plugins>
-			</build>
-		</profile>
-		<profile>
-			<activation>
-				<property>
-					<name>shaarli.login</name>
-				</property>
-			</activation>
-			<!-- Download content and transform it -->
-			<id>download-shaarli</id>
-			<build>
-				<plugins>
-					<plugin>
-						<groupId>${project.groupId}</groupId>
-						<artifactId>shaarli</artifactId>
-						<version>${project.version}</version>
-						<executions>
-							<execution>
-								<id>download shaarli</id>
-								<goals>
-									<goal>shaarli</goal>
-								</goals>
-								<configuration>
-									<mode>${output.mode}</mode>
-									<output>${shaarli.dir}</output>
-									<username>${shaarli.login}</username>
-									<password>${shaarli.password}</password>
-									<address>${shaarli.address}</address>
-								</configuration>
-							</execution>
-						</executions>
-					</plugin>
-				</plugins>
-			</build>
-		</profile>
-		<profile>
-			<activation>
-				<activeByDefault>false</activeByDefault>
-			</activation>
-			<!-- Generate website using JBake -->
-			<id>jbake</id>
-			<properties>
-				<output.mode>jbake</output.mode>
-			</properties>
-			<build>
-				<plugins>
-					<plugin>
-						<artifactId>maven-resources-plugin</artifactId>
-						<version>2.6</version>
-						<executions>
-							<execution>
-								<id>copy-jbake-templates</id>
-								<!-- here the phase you need -->
-								<phase>validate</phase>
-								<goals>
-									<goal>copy-resources</goal>
-								</goals>
-								<configuration>
-									<outputDirectory>${site.input}</outputDirectory>
-									<resources>
-										<resource>
-											<directory>src/main/jbake</directory>
-											<filtering>true</filtering>
-										</resource>
-									</resources>
-								</configuration>
-							</execution>
-						</executions>
-					</plugin>
-					<plugin>
-					    <groupId>org.jbake</groupId>
-					    <artifactId>jbake-maven-plugin</artifactId>
-					    <version>0.3.5</version>
-						<configuration>
-							<inputDirectory>${site.input}</inputDirectory>
-							<outputDirectory>${site.jbake}</outputDirectory>
-						</configuration>
-						<executions>
-							<execution>
-								<id>generate_jbake</id>
-								<!-- moved into compile phase to make sure files are generated before -->
-								<phase>package</phase>
-								<goals>
-									<goal>generate</goal>
-								</goals>
-							</execution>
-						</executions>
-						<dependencies>
-							<!-- AsciiDoc content support -->
-							<dependency>
-								<groupId>org.asciidoctor</groupId>
-								<artifactId>asciidoctorj</artifactId>
-								<version>2.5.2</version>
-							</dependency>
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <artifactId>maven-deploy-plugin</artifactId>
+                    <configuration>
+                        <skip>true</skip>
+                    </configuration>
+                </plugin>
+            </plugins>
+        </pluginManagement>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-assembly-plugin</artifactId>
+                <configuration>
+                    <descriptors>
+                        <descriptor>src/main/assemblies/source-docs.xml</descriptor>
+                    </descriptors>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>make-assembly</id>
+                        <!-- bind to the packaging phase -->
+                        <goals>
+                            <goal>single</goal>
+                        </goals>
+                        <!-- this is used for inheritance merges -->
+                        <phase>package</phase>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+        <extensions>
+            <extension>
+                <groupId>org.apache.maven.wagon</groupId>
+                <artifactId>wagon-ftp</artifactId>
+            </extension>
+        </extensions>
+    </build>
+    <profiles>
+        <profile>
+            <id>download-goodreads</id>
+            <activation>
+                <property>
+                    <name>goodreads.mail</name>
+                </property>
+            </activation>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>${project.groupId}</groupId>
+                        <artifactId>goodreads</artifactId>
+                        <version>${project.version}</version>
+                        <executions>
+                            <execution>
+                                <id>download-goodreads</id>
+                                <goals>
+                                    <goal>goodreads</goal>
+                                </goals>
+                                <configuration>
+                                    <mode>${output.mode}</mode>
+                                    <output>${goodreads.dir}</output>
+                                    <username>${goodreads.mail}</username>
+                                    <password>${goodreads.password}</password>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+        <profile>
+            <!-- Download content and transform it -->
+            <id>download-wordpress</id>
+            <activation>
+                <property>
+                    <name>wordpress.login</name>
+                </property>
+            </activation>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>${project.groupId}</groupId>
+                        <artifactId>wordpress</artifactId>
+                        <version>${project.version}</version>
+                        <executions>
+                            <execution>
+                                <id>download-wordpress</id>
+                                <goals>
+                                    <goal>wordpress</goal>
+                                </goals>
+                                <configuration>
+                                    <mode>${output.mode}</mode>
+                                    <output>${wordpress.dir}</output>
+                                    <username>${wordpress.login}</username>
+                                    <password>${wordpress.password}</password>
+                                    <site>${wordpress.address}</site>
+                                    <twitterAccessToken>${twitter4j.oauth.accessToken}</twitterAccessToken>
+                                    <twitterAccessTokenSecret>${twitter4j.oauth.accessTokenSecret}</twitterAccessTokenSecret>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+        <profile>
+            <!-- Download content and transform it -->
+            <id>download-shaarli</id>
+            <activation>
+                <property>
+                    <name>shaarli.login</name>
+                </property>
+            </activation>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>${project.groupId}</groupId>
+                        <artifactId>shaarli</artifactId>
+                        <version>${project.version}</version>
+                        <executions>
+                            <execution>
+                                <id>download-shaarli</id>
+                                <goals>
+                                    <goal>shaarli</goal>
+                                </goals>
+                                <configuration>
+                                    <mode>${output.mode}</mode>
+                                    <output>${shaarli.dir}</output>
+                                    <username>${shaarli.login}</username>
+                                    <password>${shaarli.password}</password>
+                                    <address>${shaarli.address}</address>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+        <profile>
+            <!-- Generate website using JBake -->
+            <id>jbake</id>
+            <activation>
+                <activeByDefault>false</activeByDefault>
+            </activation>
+            <properties>
+                <output.mode>jbake</output.mode>
+            </properties>
+            <build>
+                <plugins>
+                    <plugin>
+                        <artifactId>maven-resources-plugin</artifactId>
+                        <version>2.6</version>
+                        <executions>
+                            <execution>
+                                <id>copy-jbake-templates</id>
+                                <goals>
+                                    <goal>copy-resources</goal>
+                                </goals>
+                                <!-- here the phase you need -->
+                                <phase>validate</phase>
+                                <configuration>
+                                    <outputDirectory>${site.input}</outputDirectory>
+                                    <resources>
+                                        <resource>
+                                            <directory>src/main/jbake</directory>
+                                            <filtering>true</filtering>
+                                        </resource>
+                                    </resources>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.jbake</groupId>
+                        <artifactId>jbake-maven-plugin</artifactId>
+                        <version>0.3.5</version>
+                        <configuration>
+                            <inputDirectory>${site.input}</inputDirectory>
+                            <outputDirectory>${site.jbake}</outputDirectory>
+                        </configuration>
+                        <dependencies>
+                            <!-- AsciiDoc content support -->
+                            <dependency>
+                                <groupId>org.asciidoctor</groupId>
+                                <artifactId>asciidoctorj</artifactId>
+                                <version>2.5.2</version>
+                            </dependency>
 
-							<!-- Freemarker template support -->
-							<dependency>
-								<groupId>org.freemarker</groupId>
-								<artifactId>freemarker</artifactId>
-								<version>2.3.31</version>
-							</dependency>
+                            <!-- Freemarker template support -->
+                            <dependency>
+                                <groupId>org.freemarker</groupId>
+                                <artifactId>freemarker</artifactId>
+                                <version>2.3.31</version>
+                            </dependency>
 
-							<!-- Groovy template support -->
-							<!--<dependency> <groupId>org.codehaus.groovy</groupId> <artifactId>groovy</artifactId> 
+                            <!-- Groovy template support -->
+                            <!--<dependency> <groupId>org.codehaus.groovy</groupId> <artifactId>groovy</artifactId> 
 								<version>2.5.5</version> </dependency> <dependency> <groupId>org.codehaus.groovy</groupId> 
 								<artifactId>groovy-templates</artifactId> <version>2.5.5</version> </dependency> -->
 
-							<!-- Thymeleaf template support -->
-							<!--<dependency> <groupId>org.thymeleaf</groupId> <artifactId>thymeleaf</artifactId> 
+                            <!-- Thymeleaf template support -->
+                            <!--<dependency> <groupId>org.thymeleaf</groupId> <artifactId>thymeleaf</artifactId> 
 								<version>3.0.11.RELEASE</version> </dependency> -->
 
-							<!-- Jade4J template support -->
-							<!--<dependency> <groupId>de.neuland-bfi</groupId> <artifactId>jade4j</artifactId> 
+                            <!-- Jade4J template support -->
+                            <!--<dependency> <groupId>de.neuland-bfi</groupId> <artifactId>jade4j</artifactId> 
 								<version>1.2.7</version> </dependency> -->
-						</dependencies>
-					</plugin>
-					<plugin>
-						<groupId>org.apache.maven.plugins</groupId>
-						<artifactId>maven-assembly-plugin</artifactId>
-						<configuration>
-							<descriptors>
-								<descriptor>src/main/assemblies/generated-jbake.xml</descriptor>
-							</descriptors>
-						</configuration>
-					</plugin>
-					<plugin>
-						<groupId>org.apache.maven.plugins</groupId>
-						<artifactId>maven-war-plugin</artifactId>
-						<version>2.4</version>
-						<configuration>
-							<!-- web.xml is not mandatory since JavaEE 5 -->
-							<failOnMissingWebXml>false</failOnMissingWebXml>
-							<!-- <filteringDeploymentDescriptors>true</filteringDeploymentDescriptors> 
+                        </dependencies>
+                        <executions>
+                            <execution>
+                                <id>generate_jbake</id>
+                                <goals>
+                                    <goal>generate</goal>
+                                </goals>
+                                <!-- moved into compile phase to make sure files are generated before -->
+                                <phase>package</phase>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-assembly-plugin</artifactId>
+                        <configuration>
+                            <descriptors>
+                                <descriptor>src/main/assemblies/generated-jbake.xml</descriptor>
+                            </descriptors>
+                        </configuration>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-war-plugin</artifactId>
+                        <version>2.4</version>
+                        <configuration>
+                            <!-- web.xml is not mandatory since JavaEE 5 -->
+                            <failOnMissingWebXml>false</failOnMissingWebXml>
+                            <!-- <filteringDeploymentDescriptors>true</filteringDeploymentDescriptors> 
 								<warSourceDirectory>WebContent</warSourceDirectory> <webResources> <resource> 
 								<directory>src/main/webapp2</directory> <filtering>true</filtering> </resource> 
 								</webResources> -->
-						</configuration>
-					</plugin>
-				</plugins>
-			</build>
-		</profile>
-		<profile>
-			<id>ftp</id>
-			<build>
-				<plugins>
-					<plugin>
-						<groupId>org.codehaus.mojo</groupId>
-						<artifactId>exec-maven-plugin</artifactId>
-						<version>3.0.0</version>
-						<executions>
-							<execution>
-								<id>push to ftpperso.free.fr with lftp</id>
-								<phase>install</phase>
-								<goals>
-									<goal>exec</goal>
-								</goals>
-								<configuration>
-									<workingDirectory>${site.jbake}</workingDirectory>
-									<executable>lftp</executable>
-									<commandlineArgs>
-									<![CDATA[-u ${lifestream.ftp.user},${lifestream.ftp.password} -e 'mirror --reverse --verbose . ${site.upload.dir}' ${site.upload.url}]]>
-									</commandlineArgs>
-								</configuration>
-							</execution>
-						</executions>
-					</plugin>
-				</plugins>
-			</build>
-		</profile>
-		<profile>
-			<id>kill-chrome</id>
-			<build>
-				<plugins>
-					<plugin>
-						<groupId>org.codehaus.mojo</groupId>
-						<artifactId>exec-maven-plugin</artifactId>
-						<version>3.0.0</version>
-						<executions>
-							<execution>
-								<id>kill chromium and chromedriver at once</id>
-								<phase>process-classes</phase>
-								<goals>
-									<goal>exec</goal>
-								</goals>
-								<configuration>
-									<executable>pkill</executable>
-									<arguments>
-										<argument>chrom</argument>
-									</arguments>
-								</configuration>
-							</execution>
-						</executions>
-					</plugin>
-				</plugins>
-			</build>
-		</profile>
-	</profiles>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+        <profile>
+            <id>ftp</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.codehaus.mojo</groupId>
+                        <artifactId>exec-maven-plugin</artifactId>
+                        <version>3.0.0</version>
+                        <executions>
+                            <execution>
+                                <id>push to ftpperso.free.fr with lftp</id>
+                                <goals>
+                                    <goal>exec</goal>
+                                </goals>
+                                <phase>install</phase>
+                                <configuration>
+                                    <workingDirectory>${site.jbake}</workingDirectory>
+                                    <executable>lftp</executable>
+                                    <commandlineArgs><![CDATA[-u ${lifestream.ftp.user},${lifestream.ftp.password} -e 'mirror --reverse --verbose . ${site.upload.dir}' ${site.upload.url}]]></commandlineArgs>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
 </project>

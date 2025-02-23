@@ -1,15 +1,12 @@
 package org.ndx.lifestream.shaarli;
 
 import java.io.File;
-import java.io.FilenameFilter;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
-import java.time.Duration;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Date;
-import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
@@ -28,33 +25,24 @@ import org.ndx.lifestream.rendering.model.InputLoader;
 import org.ndx.lifestream.utils.TagUtils;
 import org.ndx.lifestream.utils.transform.HtmlToMarkdown;
 import org.ndx.lifestream.utils.web.WebClientUtils;
-import org.openqa.selenium.By;
-import org.openqa.selenium.ElementNotInteractableException;
-import org.openqa.selenium.StaleElementReferenceException;
-import org.openqa.selenium.TimeoutException;
-import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebElement;
-import org.openqa.selenium.logging.LogEntries;
-import org.openqa.selenium.logging.LogType;
-import org.openqa.selenium.support.ui.ExpectedConditions;
-import org.openqa.selenium.support.ui.FluentWait;
-import org.openqa.selenium.support.ui.WebDriverWait;
 
 import com.google.inject.internal.Nullable;
-
-import twitter4j.JSONObject;
+import com.microsoft.playwright.Browser;
+import com.microsoft.playwright.Download;
+import com.microsoft.playwright.Locator;
+import com.microsoft.playwright.Page;
 
 public class Shaarli implements InputLoader<MicroblogEntry, ShaarliConfiguration> {
 	private static final Logger logger = Logger.getLogger(Shaarli.class.getName());
 
 	@Override
-	public Collection<MicroblogEntry> load(WebDriver client, ShaarliConfiguration configuration) {
+	public Collection<MicroblogEntry> load(Browser client, ShaarliConfiguration configuration) {
 		String text =  loadXML(client, configuration);
 		org.jsoup.nodes.Document document = Jsoup.parse(text);
 		return buildEntriesCollection(configuration, document);
 	}
 
-	public String loadXML(final WebDriver client, final ShaarliConfiguration configuration) {
+	public String loadXML(final Browser client, final ShaarliConfiguration configuration) {
 		try {
 			return configuration.refreshCacheWith(new CacheLoader() {
 
@@ -139,87 +127,33 @@ public class Shaarli implements InputLoader<MicroblogEntry, ShaarliConfiguration
 		return returned;
 	}
 	
-	private String getFieldDescription(WebElement element) {
-		StringBuilder returned = new StringBuilder();
-		returned.append("<");
-		returned.append(element.getTagName());
-		returned.append(" type=\"").append(element.getAttribute("type")).append("\"");
-		returned.append(" name=\"").append(element.getAttribute("name")).append("\"");
-		returned.append(" value=\"").append(element.getAttribute("value")).append("\"");
-		returned.append(">...</>");
-		return returned.toString();
-	}
-
-	public String downloadXML(WebDriver browser, ShaarliConfiguration configuration) {
+	public String downloadXML(Browser browser, ShaarliConfiguration configuration) {
 		try {
 			String siteLogin = configuration.getSiteLoginPage();
-			browser.get(siteLogin);
+			Page shaarliPage = browser.newPage();
+			shaarliPage.navigate(siteLogin);
 			logger.log(Level.INFO, "logging in Shaarli as " + configuration.getLogin());
-			browser.findElements(By.xpath("//input[@name='login']")).stream()
-				.filter(WebElement::isDisplayed)
-				.forEach(field -> {
-				try {
-				field.click();
-				field.sendKeys(configuration.getLogin());
-				logger.info("Set login field "+getFieldDescription(field));
-				} catch(ElementNotInteractableException e) {
-					
-				}
-			});
-			browser.findElements(By.xpath("//input[@name='password']")).stream()
-				.filter(WebElement::isDisplayed)
-				.forEach(field -> {
-				try {
-				field.click();
-				field.sendKeys(configuration.getPassword());
-				logger.info("Set password field "+getFieldDescription(field));
-				} catch(ElementNotInteractableException e) {
-					
-				}
-			});
-			browser.findElements(By.xpath("//input[@value='Login']")).stream()
-				.filter(WebElement::isDisplayed)
-				.forEach(field -> {
-				try {
-				field.click();
-				logger.info("Clicked on login button "+getFieldDescription(field));
-				} catch(StaleElementReferenceException e) {
-				} catch(ElementNotInteractableException e) {
-				}
-			});
-			new WebDriverWait(browser, 60*60).until(ExpectedConditions
-					.presenceOfElementLocated(By.id("linklist")));
+			Locator loginField = shaarliPage.locator("//input[@name='login']").last();
+			loginField.click();
+			loginField.fill(configuration.getLogin());
+
+			Locator passwordField = shaarliPage.locator("//input[@name='password']").last();
+			passwordField.click();
+			passwordField.fill(configuration.getPassword());
+
+			shaarliPage.locator("//input[@type='submit']").last().click();
 			logger.log(Level.INFO, "logged in ... downloading html now ...");
 			// 404 will throw over all this stuff
-			try {
-				browser.get(configuration.getSiteExportPage());
-			} catch(TimeoutException e) {
-				// There is something strange here that I don't fully understand, but the only solution I have is letting this timeout
-				// Bad, and dangerous, but the only solution I could think about
-			}
-			LogEntries logs = browser.manage().logs().get(LogType.PERFORMANCE);
-			List<JSONObject> jsonLogs = logs.getAll().stream()
-				.map(entry -> new JSONObject(entry.getMessage()))
-				.filter(entry -> "Network.responseReceived".equals(entry.getJSONObject("message").getString("method")))
-				.collect(Collectors.toList());
-			JSONObject downloadExchange = jsonLogs.get(jsonLogs.size()-1);
-			JSONObject response = downloadExchange.getJSONObject("message").getJSONObject("params").getJSONObject("response");
-			String contentDisposition = response.getJSONObject("headers").getString("Content-disposition");
-			String filename = contentDisposition.substring(contentDisposition.indexOf('=')+1);
-			// So there should now be an html file in download folder, no?
-			File file = new File(WebClientUtils.getDownloadFolder(), filename);
-			WebClientUtils.download(browser, file);
-			try {
-				return IOUtils.toString(file.toURI(), "UTF-8");
-			} finally {
-				file.delete();
-			}
+			shaarliPage.navigate(configuration.getSiteExportPage());
+			shaarliPage.locator("#prepend_note_url").check();
+			Download download = shaarliPage.waitForDownload(() -> {
+				shaarliPage.locator("input[value='Export']").first().click();
+			});
+			return IOUtils.toString(download.createReadStream(), "UTF-8");
 		} catch(AuthenticationFailedException e) {
 			throw e;
 		} catch(Exception e) {
 			throw new UnableToDownloadContentException("Unable to download HTML export from Shaarli\n"+configuration.getDownloadFailureMessage(), e);
-		} finally {
-			browser.close();
 		}
 	}
 

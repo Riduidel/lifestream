@@ -6,6 +6,8 @@ import org.apache.commons.vfs2.FileSystemManager;
 import org.ndx.lifestream.configuration.AbstractConfiguration;
 import org.ndx.lifestream.configuration.Configuration;
 
+import com.microsoft.playwright.Browser.NewContextOptions;
+
 public class GoodreadsConfiguration extends AbstractConfiguration implements Configuration {
 	private String mail;
 	private String password;
