@@ -1,27 +1,26 @@
 package org.ndx.lifestream.goodreads;
 
-import static org.junit.Assert.assertThat;
+import static org.hamcrest.MatcherAssert.assertThat;
 
 import java.util.Date;
 import java.util.Map;
 
 import org.hamcrest.core.Is;
 import org.hamcrest.core.IsCollectionContaining;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
-public class BookTest {
+class BookTest {
 	private Goodreads tested;
 
-	@Before
-	public void loadCredentials() {
+	@BeforeEach
+	void loadCredentials() {
 		tested = new Goodreads();
 	}
 
 
-
 	@Test
-	public void canCreateAValidBookObjectFromAnUnreadBook() {
+	void canCreateAValidBookObjectFromAnUnreadBook() {
 		String headers = "Book Id, Title, Author, Author l-f, Additional Authors, ISBN, ISBN13, My Rating, Average Rating, Publisher, Binding, Number of Pages, Year Published, Original Publication Year, Date Read, Date Added, Bookshelves, Bookshelves with positions, Exclusive Shelf, My Review, Spoiler, Private Notes, Read Count, Recommended For, Recommended By, Owned Copies, Original Purchase Date, Original Purchase Location, Condition, Condition Description, BCID";
 		String[] headersArray = headers.split(", ");
 		String moorcock = "Michael Moorcock";
@@ -39,7 +38,7 @@ public class BookTest {
 	}
 
 	@Test
-	public void canCreateAvalidBookObjectFromAReadBook() {
+	void canCreateAvalidBookObjectFromAReadBook() {
 		String headers = "Book Id, Title, Author, Author l-f, Additional Authors, ISBN, ISBN13, "
 						+ "My Rating, Average Rating, Publisher, Binding, Number of Pages, Year Published, "
 						+ "Original Publication Year, Date Read, Date Added, Bookshelves, Bookshelves with positions, "

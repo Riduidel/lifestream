@@ -1,5 +1,7 @@
 package org.ndx.lifestream.goodreads.references;
 
+import static org.hamcrest.MatcherAssert.assertThat;
+
 import java.io.InputStream;
 import java.util.Collection;
 import java.util.Iterator;
@@ -11,9 +13,9 @@ import org.hamcrest.core.Is;
 import org.hamcrest.core.IsInstanceOf;
 import org.hamcrest.core.IsNot;
 import org.hamcrest.core.IsNull;
-import org.junit.Before;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 import org.ndx.lifestream.goodreads.Author;
 import org.ndx.lifestream.goodreads.Book;
 import org.ndx.lifestream.goodreads.BookInfos;
@@ -27,16 +29,14 @@ import com.dooapp.gaedo.finders.QueryBuilder;
 import com.dooapp.gaedo.finders.QueryExpression;
 import com.dooapp.gaedo.utils.CollectionUtils;
 
-import static org.junit.Assert.assertThat;
-
-@Ignore
-public class GoodreadsReferencesTest {
+@Disabled
+class GoodreadsReferencesTest {
 	private GoodreadsConfiguration configuration;
 	private Goodreads tested;
 	private FinderCrudService<BookInfos, BookInfosInformer> books;
 
-	@Before
-	public void loadAndAssembleData() throws Exception {
+	@BeforeEach
+	void loadAndAssembleData() throws Exception {
 		configuration = new GoodreadsConfiguration(VFSHelper.getRunningDir_for_tests_only());
 		tested = new Goodreads();
 		InputStream testCsvFile = getClass().getResourceAsStream("/goodreads_export_Riduidel_20310812.csv");
@@ -69,7 +69,7 @@ public class GoodreadsReferencesTest {
 	 * THEY SHOULD !
 	 */
 	@Test
-	public void testForDirectBookReference_In_EnigmaCode() {
+	void forDirectBookReferenceInEnigmaCode() {
 		BookInfos infos = getBook("9782253072362");
 		assertThat(infos, IsInstanceOf.instanceOf(Book.class));
 		Book book = (Book) infos;
@@ -113,7 +113,7 @@ public class GoodreadsReferencesTest {
 	 * and they should be resolved ... I guess levenstein distance could help, but it will be costful
 	 */
 	@Test
-	public void testForFuzzyReferences_in_Riverdream() {
+	void forFuzzyReferencesInRiverdream() {
 		BookInfos infos = getBook("9782290006733");
 		assertThat(infos, IsInstanceOf.instanceOf(Book.class));
 		Book book = (Book) infos;

@@ -1,7 +1,7 @@
 package org.ndx.lifestream.test;
 
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
 import org.ndx.lifestream.utils.web.WebClientUtils;
 
 import com.microsoft.playwright.Browser;
@@ -12,8 +12,8 @@ public class PlaywrightTest {
 	protected static Browser browser;
 	private static Playwright playwright;
 
-	@BeforeClass
-	public static void startBrowser() {
+	@BeforeAll
+	static void startBrowser() {
 		browser = WebClientUtils.createWebClient(startPlaywright());
 	}
 
@@ -22,8 +22,8 @@ public class PlaywrightTest {
 		return playwright;
 	}
 
-	@AfterClass
-	public static void stopPlaywright() {
+	@AfterAll
+	static void stopPlaywright() {
 		playwright.close();
 	}
 

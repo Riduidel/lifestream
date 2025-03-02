@@ -1,41 +1,41 @@
 package org.ndx.lifestream.rendering.output;
 
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
-import static org.junit.Assert.*;
 import static org.ndx.lifestream.rendering.output.FileNameUtils.simplify;
 
 import org.hamcrest.core.Is;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-public class FileNameUtilsTest {
+class FileNameUtilsTest {
 
 	@Test
-	public void lineReturnAreRemoved() {
+	void lineReturnAreRemoved() {
 		assertThat(simplify("a\nb"), is("ab"));
 	}
 
 	@Test
-	public void quotesAreRemoved() {
+	void quotesAreRemoved() {
 		assertThat(simplify("a'b"), is("a_b"));
 	}
 
 	@Test
-	public void doubleQuotesAreRemoved() {
+	void doubleQuotesAreRemoved() {
 		assertThat(simplify("a\"b"), is("a_b"));
 	}
 
 	@Test
-	public void startsAreRemoved() {
+	void startsAreRemoved() {
 		assertThat(simplify("a*b"), is("a_b"));
 	}
 
 	@Test
-	public void circumflexAccentsAreRemoved() {
+	void circumflexAccentsAreRemoved() {
 		assertThat(simplify("aêb"), is("aeb"));
 	}
 
 	@Test
-	public void blankCharactersAreRemoved() {
+	void blankCharactersAreRemoved() {
 		assertThat(simplify("a b\t"), is("a_b_"));
 	}
 }

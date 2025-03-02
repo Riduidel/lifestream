@@ -1,7 +1,7 @@
 package org.ndx.lifestream.goodreads;
 
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
-import static org.junit.Assert.assertThat;
 
 import java.io.IOException;
 import java.util.Collection;
@@ -11,9 +11,9 @@ import org.apache.commons.vfs2.FileSystemException;
 import org.hamcrest.CoreMatchers;
 import org.hamcrest.core.Is;
 import org.hamcrest.core.IsInstanceOf;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.ndx.lifestream.configuration.AbstractConfiguration;
 import org.ndx.lifestream.goodreads.references.Reference;
 import org.ndx.lifestream.plugin.GaedoEnvironmentProvider;
@@ -23,21 +23,24 @@ import com.dooapp.gaedo.finders.FinderCrudService;
 import com.dooapp.gaedo.utils.CollectionUtils;
 import com.microsoft.playwright.Page;
 
-public class BookImproverTest extends PlaywrightTest {
+class BookImproverTest extends PlaywrightTest {
 	private static GoodreadsConfiguration configuration;
 	private GaedoEnvironmentProvider goodreadsEnvironment;
 	private TreeMap<String, Reference> references;
 
-	@BeforeClass public static void loadConfiguration() throws FileSystemException {
+	@BeforeAll
+	static void loadConfiguration() throws FileSystemException {
 		configuration = ConnectionUtils.createConfiguration();
 	}
 
-	@Before public void loadGaedo() throws IOException {
+	@BeforeEach
+	void loadGaedo() throws IOException {
 		goodreadsEnvironment = new GaedoEnvironmentProvider();
 		references = new TreeMap<>();
 	}
 
-	@Test public void canImproveHunterAndHisPrey() throws Exception {
+	@Test
+	void canImproveHunterAndHisPrey() throws Exception {
 		Book toImprove = new Book();
 		toImprove.setIsbn13("9782070448524");
 
@@ -55,7 +58,8 @@ public class BookImproverTest extends PlaywrightTest {
 		assertThat(improved.getTitle(), Is.is("Le Chasseur et son ombre"));
 	}
 
-	@Test public void canImproveTheLastHero() throws Exception {
+	@Test
+	void canImproveTheLastHero() throws Exception {
 		Book toImprove = new Book();
 		toImprove.setIsbn13("9782841722518");
 
@@ -72,7 +76,8 @@ public class BookImproverTest extends PlaywrightTest {
 		assertThat(improved.getSeries().size(), Is.is(2));
 	}
 
-	@Test public void canParserSerieDescriptionForBattleAngelAlita() throws Exception {
+	@Test
+	void canParserSerieDescriptionForBattleAngelAlita() throws Exception {
 		Book toImprove = new Book();
 		toImprove.setIsbn13("9781591162810");
 
@@ -89,7 +94,8 @@ public class BookImproverTest extends PlaywrightTest {
 		assertThat(improved.getSeries().size(), Is.is(1));
 	}
 
-	@Test public void canImproveoneOfVorkosiganSaga() throws Exception {
+	@Test
+	void canImproveoneOfVorkosiganSaga() throws Exception {
 		Book toImprove = new Book();
 		toImprove.setIsbn13("9782277239253");
 

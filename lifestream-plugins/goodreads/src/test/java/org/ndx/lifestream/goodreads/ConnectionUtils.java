@@ -1,10 +1,10 @@
 package org.ndx.lifestream.goodreads;
 
-import static org.junit.Assert.assertThat;
+import static org.hamcrest.MatcherAssert.assertThat;
+
 
 import org.apache.commons.vfs2.FileSystemException;
 import org.hamcrest.core.IsNull;
-import org.junit.BeforeClass;
 import org.ndx.lifestream.rendering.output.VFSHelper;
 
 public class ConnectionUtils {

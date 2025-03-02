@@ -1,8 +1,8 @@
 package org.ndx.lifestream.shaarli;
 
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.IsNot.not;
 import static org.hamcrest.core.IsNull.notNullValue;
-import static org.junit.Assert.assertThat;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -13,14 +13,14 @@ import org.hamcrest.core.IsNot;
 import org.hamcrest.core.IsNull;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
-import org.junit.Before;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 import org.ndx.lifestream.rendering.output.VFSHelper;
 import org.ndx.lifestream.test.PlaywrightTest;
 import org.ndx.lifestream.utils.web.WebClientUtils;
 
-public class ShaarliTest extends PlaywrightTest {
+class ShaarliTest extends PlaywrightTest {
 
 	private String site;
 	private String login;
@@ -28,8 +28,8 @@ public class ShaarliTest extends PlaywrightTest {
 	private Shaarli tested;
 	private ShaarliConfiguration configuration;
 
-	@Before
-	public void loadCredentials() {
+	@BeforeEach
+	void loadCredentials() {
 		login = System.getProperty("shaarli.login");
 		assertThat(login, IsNull.notNullValue());
 		password = System.getProperty("shaarli.password");
@@ -42,15 +42,16 @@ public class ShaarliTest extends PlaywrightTest {
 		tested = new Shaarli();
 	}
 
-	@Test @Ignore
-	public void canLoadXMLData() {
+	@Test
+	@Disabled
+	void canLoadXMLData() {
 		String xml = tested.downloadXML(browser, configuration);
 		assertThat(xml, notNullValue());
 		assertThat(xml.length(), not(0));
 	}
 
 	@Test
-	public void canTransformStringInPostCollection() throws IOException {
+	void canTransformStringInPostCollection() throws IOException {
 		InputStream testXmlFile = getClass().getResourceAsStream("/bookmarks_all_20131204_154343.html");
 		String text = IOUtils.toString(testXmlFile);
 		Document document = Jsoup.parse(text);
