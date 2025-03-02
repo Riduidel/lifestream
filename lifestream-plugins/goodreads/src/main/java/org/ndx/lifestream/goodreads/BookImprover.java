@@ -4,6 +4,7 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -177,7 +178,7 @@ public class BookImprover implements Callable<Void> {
 				}
 			}
 			SAXBuilder builder = new SAXBuilder();
-			Document bookXmlData = builder.build(new ByteArrayInputStream(content.getBytes(Constants.UTF_8)));
+			Document bookXmlData = builder.build(new ByteArrayInputStream(content.getBytes(Charset.forName(Constants.UTF_8))));
 			return bookXmlData;
 		} catch(RuntimeException | JDOMException | IOException e) {
 			logger.log(Level.WARNING, "something failed while parsing "+getCachePath(cacheFolder, cacheKey));

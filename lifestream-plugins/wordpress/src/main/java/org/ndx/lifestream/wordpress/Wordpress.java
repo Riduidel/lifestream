@@ -4,9 +4,10 @@ import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.nio.charset.Charset;
+import java.nio.file.Path;
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
@@ -24,7 +25,6 @@ import org.ndx.lifestream.configuration.CacheLoader;
 import org.ndx.lifestream.configuration.LinkResolver;
 import org.ndx.lifestream.plugin.GaedoEnvironmentProvider;
 import org.ndx.lifestream.plugin.exceptions.UnableToDownloadContentException;
-import org.ndx.lifestream.plugin.exceptions.UnableToReadStreamAsUTF8Exception;
 import org.ndx.lifestream.rendering.Mode;
 import org.ndx.lifestream.rendering.OutputWriter;
 import org.ndx.lifestream.rendering.model.InputLoader;
@@ -60,13 +60,8 @@ public class Wordpress implements InputLoader<Post, WordpressConfiguration> {
 	public Collection<Post> load(Browser client, WordpressConfiguration configuration) {
 		Page wordpressPage = client.newPage();
 		String text = loadXML(wordpressPage, configuration);
-		ByteArrayInputStream stream;
-		try {
-			stream = new ByteArrayInputStream(text.getBytes(Constants.UTF_8));
-			return CollectionUtils.asList(buildPostCollection(wordpressPage, stream, configuration).findAll());
-		} catch (UnsupportedEncodingException e) {
-			throw new UnableToReadStreamAsUTF8Exception(e);
-		}
+		ByteArrayInputStream stream = new ByteArrayInputStream(text.getBytes(Charset.forName(Constants.UTF_8)));
+		return CollectionUtils.asList(buildPostCollection(wordpressPage, stream, configuration).findAll());
 	}
 
 	@Override
@@ -137,14 +132,14 @@ public class Wordpress implements InputLoader<Post, WordpressConfiguration> {
 			Download downloaded = browser.waitForDownload(() -> {
 				downloadFileButton.click();
 			});
-			File file = new File(WebClientUtils.getDownloadFolder(), downloaded.suggestedFilename());
-			downloaded.saveAs(file.toPath());
+			Path file = WebClientUtils.getDownloadFolder().toPath().resolve(downloaded.suggestedFilename());
+			downloaded.saveAs(file);
 			// Content should be downloaded into download folder, no ?
 			try {
 				// So read the zip content, and get the biggest file in that zip
-				return readBiggestZipContent(file);
+				return readBiggestZipContent(file.toFile());
 			} finally {
-				file.delete();
+				file.toFile().delete();
 				// This one is due to the fact that we use a zip file for Wordpress, which unmount
 				// requires a shutdown hook
 				TVFS.umount();

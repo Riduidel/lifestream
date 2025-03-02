@@ -135,7 +135,7 @@ public class Goodreads implements InputLoader<BookInfos, GoodreadsConfiguration>
 			if (v.length() == 0)
 				return 0;
 			else
-				return new Integer(v);
+				return Integer.valueOf(v);
 		}
 
 		public Float getFloat(Map<String, Integer> columns, String[] line) {
@@ -143,7 +143,7 @@ public class Goodreads implements InputLoader<BookInfos, GoodreadsConfiguration>
 			if (v.length() == 0)
 				return 0f;
 			else
-				return new Float(v);
+				return Float.valueOf(v);
 		}
 	}
 

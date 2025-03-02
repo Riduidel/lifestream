@@ -43,11 +43,11 @@ public class Authenticator {
 				String href = toProfileLink.getAttribute("href");
 				if (href.contains("/user/show")) {
 					userId = Optional.of(href.substring(href.lastIndexOf('/') + 1, href.indexOf('-')));
-					return userId.get();
+					return userId.orElseThrow();
 				}
 			}
 		}
-		return userId.get();
+		return userId.orElseThrow();
 	}
 
 }

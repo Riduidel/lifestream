@@ -3,6 +3,7 @@ package org.ndx.lifestream.shaarli;
 import java.io.File;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -114,16 +115,13 @@ public class Shaarli implements InputLoader<MicroblogEntry, ShaarliConfiguration
 		if(dd!=null) {
 			returned.setComment(HtmlToMarkdown.transformHtml(dd.text().trim()));
 		}
-		try {
-			returned.setSource(
-					String.format("%s?searchterm=%s&searchtags=%s", configuration.getSite(), 
-							URLEncoder.encode(returned.getLink(), "UTF-8"),
-							URLEncoder.encode(returned.getTags().stream().collect(Collectors.joining(" ")), "UTF-8")
-							)
-					);
-		} catch(UnsupportedEncodingException e) {
-			throw new UnableToProduceUTF8Exception(e);
-		}
+		Charset utf8 = Charset.forName("UTF-8");
+		returned.setSource(
+				String.format("%s?searchterm=%s&searchtags=%s", configuration.getSite(), 
+						URLEncoder.encode(returned.getLink(), utf8),
+						URLEncoder.encode(returned.getTags().stream().collect(Collectors.joining(" ")), utf8)
+						)
+				);
 		return returned;
 	}
 	

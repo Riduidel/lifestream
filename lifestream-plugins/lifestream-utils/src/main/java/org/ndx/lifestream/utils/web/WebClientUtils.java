@@ -3,6 +3,7 @@ package org.ndx.lifestream.utils.web;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
+import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.Map;
 import java.util.TreeMap;
@@ -38,7 +39,7 @@ public class WebClientUtils {
 		if (downloadPath == null) {
 			synchronized (WebClientUtils.class) {
 				if (downloadPath == null) {
-					downloadPath = new File(".download");
+					downloadPath = Path.of(".download").toFile();
 				}
 			}
 		}
