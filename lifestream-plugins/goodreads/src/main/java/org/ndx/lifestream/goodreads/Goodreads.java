@@ -21,6 +21,7 @@ import java.util.function.Predicate;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
@@ -78,39 +79,24 @@ public class Goodreads implements InputLoader<BookInfos, GoodreadsConfiguration>
 				.getServiceFor(BookInfos.class, BookInfosInformer.class);
 		TreeMap<String, Reference> allReferences = new TreeMap<>();
 		Map<String, Reference> references = Collections.synchronizedSortedMap(allReferences);
-		ExecutorService executor = Executors.newFixedThreadPool(configuration.getThreadCount());
 		Map<String, Integer> columns = getColumnsNamesToColumnsIndices(csv.get(0));
 		List<String[]> usableLines = csv.subList(1, csv.size());
-		// Assynchronous submit allow us to wait for completion without stopping
-		// executor service
 		Collection<Callable<Void>> toRun = new LinkedList<>();
-		for (String[] line : usableLines) {
-			Book rawBook = createBook(columns, line);
-			toRun.add(new BookImprover(rawBook, bookService, configuration));
-		}
-		// We in fact don't care about the results
-		// Bu this is the way to wait for termination of those specific tasks
-		try {
-			executor.invokeAll(toRun);
-			toRun.clear();
-			// Now build references
-			for (BookInfos b : bookService.findAll()) {
-				if (b instanceof Book) {
-					toRun.add(new ReferencesMerger((Book) b, references));
-				}
-			}
-			executor.invokeAll(toRun);
-			toRun.clear();
-			// now books have been improved, we can resolve all references
-			for (Reference reference : references.values()) {
-				toRun.add(Resolvers.resolverFor(reference, bookService));
-			}
-			executor.invokeAll(toRun);
-			executor.shutdown();
-			executor.awaitTermination(1, TimeUnit.DAYS);
-		} catch (InterruptedException e) {
-			throw new UnableTRunImprovementTasksException(e);
-		}
+		usableLines.stream()
+			.parallel()
+			.map(line -> createBook(columns, line))
+			.map(book -> new BookImprover(book, bookService, configuration))
+			.forEach(BookImprover::improveBook);
+		StreamSupport.stream(bookService.findAll().spliterator(), true)
+			.filter(bi -> bi instanceof Book)
+			.map(bi -> (Book) bi)
+			.map(book -> new ReferencesMerger(book, references))
+			.forEach(ReferencesMerger::call)
+			;
+		references.values().stream()
+			.parallel()
+			.map(reference -> Resolvers.resolverFor(reference, bookService))
+			.forEach(resolver -> resolver.call());
 		return bookService;
 	}
 

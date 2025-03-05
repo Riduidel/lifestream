@@ -15,10 +15,8 @@ public class ReferencesMerger implements Callable<Void> {
 		this.allReferences = references;
 	}
 
-	@Override
-	public Void call() throws Exception {
+	public void call() {
 		new References().load(book, allReferences);
-		return null;
 	}
 
 }

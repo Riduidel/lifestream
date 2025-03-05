@@ -32,7 +32,7 @@ import com.dooapp.gaedo.finders.FinderCrudService;
 import com.dooapp.gaedo.finders.QueryBuilder;
 import com.dooapp.gaedo.finders.QueryExpression;
 
-public class BookImprover implements Callable<Void> {
+public class BookImprover {
 	private static final Logger logger = Logger.getLogger(BookImprover.class.getName());
 	private static HttpClient httpClient = new HttpClient();
 	/**
@@ -236,13 +236,7 @@ public class BookImprover implements Callable<Void> {
 		this.configuration = configuration;
 	}
 
-	@Override
-	public Void call() throws Exception {
-		improveBook();
-		return null;
-	}
-
-	private void improveBook() {
+	public void improveBook() {
 		String query = null;
 		try {
 			if(book.getIsbn13()!=null)

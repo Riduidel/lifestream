@@ -1,14 +1,12 @@
 package org.ndx.lifestream.goodreads.references;
 
-import java.util.concurrent.Callable;
-
 import org.ndx.lifestream.goodreads.BookInfos;
 import org.ndx.lifestream.goodreads.BookInfosInformer;
 
 import com.dooapp.gaedo.finders.FinderCrudService;
 
 public abstract class Resolvers {
-	public static Callable<Void> resolverFor(Reference reference,
+	public static ReferenceResolver<?> resolverFor(Reference reference,
 			FinderCrudService<BookInfos, BookInfosInformer> bookService) {
 		if(reference instanceof DirectAuthorReference) {
 			return new DirectAuthorReferenceResolver((DirectAuthorReference) reference, bookService);

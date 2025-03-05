@@ -15,7 +15,7 @@ import com.dooapp.gaedo.finders.FinderCrudService;
 import com.dooapp.gaedo.finders.QueryBuilder;
 import com.dooapp.gaedo.finders.QueryExpression;
 
-public abstract class ReferenceResolver<ReferenceType extends Reference> implements Callable<Void>{
+public abstract class ReferenceResolver<ReferenceType extends Reference> {
 	private static final Logger logger = Logger.getLogger(DirectAuthorReferenceResolver.class.getName());
 	protected final ReferenceType reference;
 	protected final FinderCrudService<BookInfos, BookInfosInformer> service;
@@ -25,8 +25,8 @@ public abstract class ReferenceResolver<ReferenceType extends Reference> impleme
 		this.reference = reference;
 		this.service = service;
 	}
-	@Override
-	public Void call() throws Exception {
+
+	public void call() {
 		try {
 			resolveReference(reference, service);
 		} catch(Exception e) {
@@ -34,7 +34,6 @@ public abstract class ReferenceResolver<ReferenceType extends Reference> impleme
 				logger.log(Level.WARNING, "unable to resolve reference "+reference, e);
 			}
 		}
-		return null;
 	}
 	protected abstract void resolveReference(ReferenceType reference, FinderCrudService<BookInfos, BookInfosInformer> service);
 
