@@ -256,10 +256,10 @@ public class BookImprover {
 			serieFinder.improveBook(destination, workId, book, configuration);
 		} catch(RuntimeException e) {
 			logger.log(Level.WARNING, "something failed while improving book "+book, e);
-			throw e;
+//			throw e;
 		} catch(Exception e) {
 			logger.log(Level.WARNING, "something failed while improving book "+book, e);
-			throw new GoodreadsException("something failed while improving book "+book, e);
+//			throw new GoodreadsException("something failed while improving book "+book, e);
 		} catch(Throwable t) {
 			logger.log(Level.WARNING, "something failed while improving book "+book, t);
 			throw t;

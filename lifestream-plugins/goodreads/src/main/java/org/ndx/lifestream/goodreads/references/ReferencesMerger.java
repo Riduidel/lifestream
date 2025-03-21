@@ -5,7 +5,7 @@ import java.util.concurrent.Callable;
 
 import org.ndx.lifestream.goodreads.Book;
 
-public class ReferencesMerger implements Callable<Void> {
+public class ReferencesMerger {
 
 	private Book book;
 	private Map<String, Reference> allReferences;

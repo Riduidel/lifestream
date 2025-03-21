@@ -47,7 +47,7 @@ class BookImproverTest extends PlaywrightTest {
 		FinderCrudService<BookInfos, BookInfosInformer> service = goodreadsEnvironment.getServiceFor(BookInfos.class, BookInfosInformer.class);
 		BookImprover tested = new BookImprover(toImprove, service,
 				configuration);
-		tested.call();
+		tested.improveBook();
 		Collection<BookInfos> returned = CollectionUtils.asList(service.findAll());
 		// Don't forget there are ALSO authors infos there
 		assertThat(returned.size(), is(4));
@@ -66,7 +66,7 @@ class BookImproverTest extends PlaywrightTest {
 		FinderCrudService<BookInfos, BookInfosInformer> service = goodreadsEnvironment.getServiceFor(BookInfos.class, BookInfosInformer.class);
 		BookImprover tested = new BookImprover(toImprove, service,
 				configuration);
-		tested.call();
+		tested.improveBook();
 		Collection<BookInfos> returned = CollectionUtils.asList(service.findAll());
 		assertThat(returned.size(), Is.is(6));
 		BookInfos book = returned.iterator().next();
@@ -84,7 +84,7 @@ class BookImproverTest extends PlaywrightTest {
 		FinderCrudService<BookInfos, BookInfosInformer> service = goodreadsEnvironment.getServiceFor(BookInfos.class, BookInfosInformer.class);
 		BookImprover tested = new BookImprover(toImprove, service,
 				configuration);
-		tested.call();
+		tested.improveBook();
 		Collection<BookInfos> returned = CollectionUtils.asList(service.findAll());
 		assertThat(returned.size(), Is.is(3));
 		BookInfos book = returned.iterator().next();
@@ -102,7 +102,7 @@ class BookImproverTest extends PlaywrightTest {
 		FinderCrudService<BookInfos, BookInfosInformer> service = goodreadsEnvironment.getServiceFor(BookInfos.class, BookInfosInformer.class);
 		BookImprover tested = new BookImprover(toImprove, service,
 				configuration);
-		tested.call();
+		tested.improveBook();
 		Collection<BookInfos> returned = CollectionUtils.asList(service.findAll());
 		assertThat(returned.size(), Is.is(4));
 		BookInfos book = returned.iterator().next();
