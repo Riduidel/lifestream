@@ -2,7 +2,7 @@ package org.ndx.lifestream.wordpress.resolvers;
 
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.concurrent.ExecutorService;
+import java.util.stream.StreamSupport;
 
 import org.ndx.lifestream.wordpress.Post;
 import org.ndx.lifestream.wordpress.PostInformer;
@@ -22,26 +22,14 @@ public class MultiResolver {
 
 	private final WordpressConfiguration configuration;
 
-	public void resolveIn(ExecutorService executor, FinderCrudService<Post, PostInformer> service) {
-		for (Post p : service.findAll()) {
-			resolveLazily(executor, service, p);
-		}
+	public void resolveIn(FinderCrudService<Post, PostInformer> service) {
+		StreamSupport.stream(service.findAll().spliterator(), true)
+			.forEach(post -> resolve(service, post));
 	}
 
-	private void resolveLazily(final ExecutorService executor, final FinderCrudService<Post, PostInformer> service, final Post p) {
-		executor.execute(new Runnable() {
-			
-			@Override
-			public void run() {
-				resolve(executor, service, p);
-			}
-		});
-	}
-
-	protected void resolve(ExecutorService executor, FinderCrudService<Post, PostInformer> bookService, Post p) {
-		for(Resolver r : getResolvers()) {
-			r.resolve(executor, bookService, p);
-		}
+	protected void resolve(FinderCrudService<Post, PostInformer> bookService, Post p) {
+		getResolvers().stream().parallel()
+			.forEach(r -> r.resolve(bookService, p));
 	}
 
 	private Collection<Resolver> getResolvers() {

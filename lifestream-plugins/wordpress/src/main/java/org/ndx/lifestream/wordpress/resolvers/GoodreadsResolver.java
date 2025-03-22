@@ -1,7 +1,5 @@
 package org.ndx.lifestream.wordpress.resolvers;
 
-import java.util.concurrent.ExecutorService;
-
 import org.ndx.lifestream.wordpress.Post;
 import org.ndx.lifestream.wordpress.PostInformer;
 import org.ndx.lifestream.wordpress.WordpressConfiguration;
@@ -22,7 +20,7 @@ public class GoodreadsResolver extends AbstractLinkResolver implements Resolver 
 	}
 
 	@Override
-	protected void resolve(ExecutorService executor, FinderCrudService<Post, PostInformer> bookService, Post p, String url) {
+	protected void resolve(FinderCrudService<Post, PostInformer> bookService, Post p, String url) {
 		if(url.contains("goodreads.com/book")) {
 			int lastSlash = url.lastIndexOf('/');
 			int lastDot = url.lastIndexOf('.');

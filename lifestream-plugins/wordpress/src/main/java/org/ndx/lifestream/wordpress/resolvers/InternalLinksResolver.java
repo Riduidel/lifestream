@@ -1,7 +1,6 @@
 package org.ndx.lifestream.wordpress.resolvers;
 
 import java.util.List;
-import java.util.concurrent.ExecutorService;
 import java.util.logging.Logger;
 
 import org.ndx.lifestream.wordpress.Post;
@@ -26,7 +25,7 @@ public class InternalLinksResolver extends AbstractLinkResolver implements Resol
 	 * @param p
 	 */
 	@Override
-	protected void resolve(ExecutorService executor, FinderCrudService<Post, PostInformer> bookService, Post p, final String url) {
+	protected void resolve(FinderCrudService<Post, PostInformer> bookService, Post p, final String url) {
 		List<Post> matching = CollectionUtils.asList(bookService.find().matching(new QueryBuilder<PostInformer>() {
 
 			@Override

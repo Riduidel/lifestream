@@ -197,7 +197,7 @@ public class Wordpress implements InputLoader<Post, WordpressConfiguration> {
 					postService.create(post);
 				}
 			}
-			new MultiResolver(client, configuration).resolveIn(executor, postService);
+			new MultiResolver(client, configuration).resolveIn(postService);
 			executor.shutdown();
 			executor.awaitTermination(1, TimeUnit.DAYS);
 			return postService;

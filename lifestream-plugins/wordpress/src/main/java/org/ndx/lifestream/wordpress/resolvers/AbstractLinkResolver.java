@@ -1,6 +1,5 @@
 package org.ndx.lifestream.wordpress.resolvers;
 
-import java.util.concurrent.ExecutorService;
 import java.util.logging.Logger;
 
 import org.jsoup.Jsoup;
@@ -15,7 +14,7 @@ import com.dooapp.gaedo.finders.FinderCrudService;
 public abstract class AbstractLinkResolver {
 	private static final Logger logger = Logger.getLogger(AbstractLinkResolver.class.getName());
 
-	public void resolve(ExecutorService executor, FinderCrudService<Post,PostInformer> bookService, Post p) {
+	public void resolve(FinderCrudService<Post,PostInformer> bookService, Post p) {
 		Document d = Jsoup.parse(p.getText());
 		if(d==null)
 			return;
@@ -26,11 +25,11 @@ public abstract class AbstractLinkResolver {
 			if(url!=null) {
 				// All right, node has a destination (hopefully)
 				// Now check if this destination is any other link 
-				resolve(executor, bookService, p, url);
+				resolve(bookService, p, url);
 			}
 		}
 	}
 
-	protected abstract void resolve(ExecutorService executor, FinderCrudService<Post, PostInformer> bookService, Post p, String url);
+	protected abstract void resolve(FinderCrudService<Post, PostInformer> bookService, Post p, String url);
 
 }
