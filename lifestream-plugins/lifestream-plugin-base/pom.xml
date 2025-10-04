@@ -15,6 +15,15 @@
     </properties>
     <dependencies>
         <dependency>
+            <groupId>org.apache.maven.plugin-tools</groupId>
+            <artifactId>maven-plugin-annotations</artifactId>
+            <version>3.15.1</version>
+            <scope>provided</scope>
+            <!-- annotations are not used at runtime
+			because @Retention(value=CLASS), they are needed only to build the
+			plugin -->
+        </dependency>
+        <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>lifestream-utils</artifactId>
             <version>${project.version}</version>
