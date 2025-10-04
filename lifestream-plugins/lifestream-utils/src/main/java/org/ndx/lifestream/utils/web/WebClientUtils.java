@@ -77,6 +77,8 @@ public class WebClientUtils {
 			logger.info(String.format("Using remote firefox WebDriver."));
 			
 			LaunchOptions firefoxLaunchOptions = new BrowserType.LaunchOptions();
+			firefoxLaunchOptions.setHeadless(
+					Boolean.valueOf(System.getProperty("lifestream.selenium.browser.headless", "true")));
 			firefoxLaunchOptions.setFirefoxUserPrefs(options);
 			return playwright.firefox()
 					.launch(firefoxLaunchOptions)
