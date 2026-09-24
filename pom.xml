@@ -54,7 +54,7 @@
     <properties>
         <github.global.server>github</github.global.server>
         <java.version>21</java.version>
-        <freemarker.version>2.3.30</freemarker.version>
+        <freemarker.version>2.3.35</freemarker.version>
     </properties>
     <dependencyManagement>
         <dependencies>
